@@ -1,0 +1,220 @@
+import { Injectable, signal, computed } from '@angular/core';
+
+export type Language = 'ka' | 'en';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TranslationService {
+  private readonly LANG_KEY = 'geto_lang';
+  
+  currentLang = signal<Language>(this.getInitialLang());
+
+  isGeorgian = computed(() => this.currentLang() === 'ka');
+
+  private getInitialLang(): Language {
+    const saved = localStorage.getItem(this.LANG_KEY) as Language;
+    return saved === 'en' ? 'en' : 'ka'; // Default Georgian
+  }
+
+  setLanguage(lang: Language) {
+    localStorage.setItem(this.LANG_KEY, lang);
+    this.currentLang.set(lang);
+  }
+
+  toggleLanguage() {
+    this.setLanguage(this.currentLang() === 'ka' ? 'en' : 'ka');
+  }
+
+  private translations: Record<Language, Record<string, any>> = {
+    ka: {
+      // Navbar & General
+      'nav.brand': 'GETO Portal',
+      'nav.about': 'ჩვენ შესახებ',
+      'nav.recommendations': 'რეკომენდაციები',
+      'nav.deutschCourse': 'გერმანულის კურსი',
+      'nav.cabinet': 'პირადი კაბინეტი',
+      'nav.admin': 'ადმინ პანელი',
+      'nav.login': 'შესვლა',
+      'nav.register': 'რეგისტრაცია',
+      'nav.logout': 'გამოსვლა',
+      'nav.terms': 'წესები & კონფიდენციალურობა',
+
+      // About Us Page
+      'about.title': 'ჩვენ შესახებ',
+      'about.subtitle': 'სტუდენტთა მხარდაჭერა და საკონსულტაციო მომსახურება 2020 წლიდან',
+      'about.body': '2020 წლიდან დღემდე ვეწევით სტუდენტებისთვის ადმინისტრაციულ, საშუამავლო და საკონსულტაციო მომსახურებას. ვეხმარებით მათ გერმანიაში დასაქმებასთან დაკავშირებულ პროცესებში, დოკუმენტაციის მოწესრიგებასა და საჭირო ინფორმაციის მიღებაში. ჩვენ არ ვართ დამსაქმებელი — ვმოქმედებთ როგორც სტუდენტსა და პარტნიორ ორგანიზაციებს შორის დამაკავშირებელი და საკონსულტაციო მხარე.',
+      'about.stat1.title': '2020 წლიდან',
+      'about.stat1.sub': 'გამოცდილება და ნდობა',
+      'about.stat2.title': 'გერმანია',
+      'about.stat2.sub': 'დასაქმების მხარდაჭერა',
+      'about.stat3.title': '100% საკონსულტაციო',
+      'about.stat3.sub': 'დოკუმენტაციის მოწესრიგება',
+
+      // Deutsch Course Page
+      'deutsch.title': 'გერმანული ენის კურსი',
+      'deutsch.subtitle': 'ინტენსიური მომზადება გერმანიაში დასაქმებისა და სწავლისთვის',
+      'deutsch.heroText': 'ისწავლეთ გერმანული ენა A1-დან B2 დონემდე გამოცდილ პედაგოგებთან ერთად. ჩვენი კურსი სპეციალურად მორგებულია სტუდენტებზე, რომლებსაც სურთ გერმანიაში გამგზავრება.',
+      'deutsch.feature1Title': 'სალაპარაკო პრაქტიკა',
+      'deutsch.feature1Sub': 'ყოველდღიური კომუნიკაციური სავარჯიშოები',
+      'deutsch.feature2Title': 'ვიზის ინტერვიუს მომზადება',
+      'deutsch.feature2Sub': 'სპეციალური კითხვები და პასუხები',
+      'deutsch.feature3Title': 'სერტიფიცირება',
+      'deutsch.feature3Sub': 'მომზადება Goethe / TELC გამოცდებისთვის',
+      'deutsch.enrollBtn': 'კურსზე რეგისტრაცია',
+
+      // Recommendations / Reviews Page
+      'recom.title': 'რეკომენდაციები & შეფასებები',
+      'recom.subtitle': 'ჩვენი სტუდენტების გამოცდილება და წარმატებული ისტორიები გერმანიაში',
+      'recom.introText': 'გაეცანით ჩვენი მონაწილეების ფოტოებს, სარეკომენდაციო წერილებსა და რეალურ შეფასებებს GETO Project-ის შესახებ.',
+      'recom.addPhotosNote': 'თქვენი ფოტოების დასამატებლად, უბრალოდ მოგვაწოდეთ სურათები და ჩვენ მათ განვათავსებთ გალერეაში!',
+
+      // Privacy Policy Text
+      'privacy.policyTitle': 'კონფიდენციალურობის პოლიტიკა',
+      'privacy.lastUpdated': 'ბოლო განახლება: 25 აგვისტო, 2026',
+      'privacy.policyIntro': 'Geto Project პატივს სცემს მომხმარებელთა პირადულობას და ვალდებულია დაიცვას ვებგვერდის საშუალებით მიღებული პერსონალური მონაცემების კონფიდენციალურობა.',
+      'privacy.sec1Title': '1. რა ინფორმაციას ვაგროვებთ',
+      'privacy.sec1Body': 'ვებგვერდის გამოყენებისას შესაძლოა შევაგროვოთ მომხმარებლის მიერ ნებაყოფლობით მოწოდებული ინფორმაცია, მათ შორის: სახელი და გვარი, საკონტაქტო ინფორმაცია, ელფოსტა, ტელეფონის ნომერი და პროგრამებში/ვაკანსიებში მონაწილეობისათვის საჭირო სხვა მონაცემები.',
+      'privacy.sec2Title': '2. მონაცემების გამოყენების მიზანი',
+      'privacy.sec2Body': 'მიღებული ინფორმაცია გამოიყენება მომხმარებელთან კომუნიკაციისთვის, განაცხადების დამუშავებისთვის, მომსახურების მიწოდებისთვის, პროგრამებსა და დასაქმების შესაძლებლობებთან დაკავშირებული პროცესების მართვისთვის და კომპანიის მომსახურების გაუმჯობესებისთვის.',
+      'privacy.sec3Title': '3. მონაცემების დაცვა',
+      'privacy.sec3Body': 'Geto Project იღებს შესაბამის ტექნიკურ და ორგანიზაციულ ზომებს პერსონალური მონაცემების დაკარგვის, არასანქცირებული წვდომის, შეცვლის ან გამჟღავნებისგან დასაცავად.',
+      'privacy.sec4Title': '4. მონაცემების მესამე პირებისთვის გადაცემა',
+      'privacy.sec4Body': 'მომხმარებლის პერსონალური მონაცემები არ გაიყიდება და არ გადაეცემა მესამე პირებს უკანონოდ. იმ შემთხვევაში, თუ მომსახურების ან პროგრამის განხორციელებისთვის აუცილებელია მონაცემების გადაცემა პარტნიორი ორგანიზაციისთვის, ეს განხორციელდება მხოლოდ შესაბამისი მიზნის ფარგლებში და მოქმედი კანონმდებლობის შესაბამისად.',
+      'privacy.sec5Title': '5. Cookies',
+      'privacy.sec5Body': 'ვებგვერდმა შესაძლოა გამოიყენოს Cookies მომხმარებლის გამოცდილების გასაუმჯობესებლად, ვებგვერდის ფუნქციონირების უზრუნველსაყოფად და ვიზიტორთა სტატისტიკური მონაცემების ანალიზისთვის.',
+      'privacy.sec6Title': '6. მომხმარებლის უფლებები',
+      'privacy.sec6Body': 'მომხმარებელს უფლება აქვს მოითხოვოს მის შესახებ არსებული პერსონალური მონაცემების შესახებ ინფორმაციის მიღება, მათი შესწორება, განახლება ან კანონით გათვალისწინებულ შემთხვევებში წაშლა/დამუშავების შეზღუდვა.',
+      'privacy.sec7Title': '7. პოლიტიკის ცვლილება',
+      'privacy.sec7Body': 'Geto Project უფლებამოსილია პერიოდულად განაახლოს წინამდებარე კონფიდენციალურობის პოლიტიკა. განახლებული ვერსია გამოქვეყნდება ვებგვერდზე და ძალაში შევა გამოქვეყნებისთანავე. კონფიდენციალურობის პოლიტიკასთან დაკავშირებით დამატებითი ინფორმაციისთვის შეგიძლიათ დაგვიკავშირდეთ ვებგვერდზე მითითებული საკონტაქტო საშუალებების გამოყენებით.',
+
+      // Terms of Processing & Consent
+      'terms.consentTitle': 'პერსონალურ მონაცემთა დამუშავებაზე თანხმობა',
+      'terms.consentIntro': 'მე, ქვემოთ ხელმომწერი პირი, ვადასტურებ, რომ გავეცანი Geto Project-ის პერსონალურ მონაცემთა დაცვისა და კონფიდენციალურობის პოლიტიკას და თანხმობას ვაცხადებ ჩემი პერსონალური მონაცემების დამუშავებაზე მოქმედი კანონმდებლობის შესაბამისად.',
+      'terms.p1': 'თანხმობა მოიცავს ჩემ მიერ კომპანიისთვის მიწოდებული პერსონალური მონაცემების, მათ შორის საიდენტიფიკაციო და საკონტაქტო ინფორმაციის, პასპორტის მონაცემების, ფოტოსურათის, განათლებასთან დაკავშირებული ინფორმაციის, რეზიუმესა და პროგრამაში მონაწილეობისათვის საჭირო სხვა დოკუმენტაციის შეგროვებას, შენახვას, გამოყენებასა და დამუშავებას.',
+      'terms.p2': 'მონაცემთა დამუშავების მიზანია ჩემი განაცხადის განხილვა, პროგრამაში მონაწილეობის ორგანიზება, დასაქმების შესაძლებლობების მოძიება და შესაბამის დამსაქმებლებთან/პარტნიორ ორგანიზაციებთან კომუნიკაცია, ასევე აღნიშნული პროცესების ადმინისტრაციული და სამართლებრივი უზრუნველყოფა.',
+      'terms.p3': 'ვაცნობიერებ და ვეთანხმები, რომ პროგრამის განხორციელების მიზნით, საჭიროების შემთხვევაში, ჩემი პერსონალური მონაცემები შესაძლოა გადაეცეს შესაბამის დამსაქმებლებს, პარტნიორ ორგანიზაციებს, საგანმანათლებლო დაწესებულებებს, სახელმწიფო ან სხვა უფლებამოსილ უწყებებს, მხოლოდ კანონით დასაშვებ ფარგლებში და შესაბამისი მიზნის მისაღწევად.',
+      'terms.p4': 'ვადასტურებ, რომ ჩემ მიერ მოწოდებული ინფორმაცია არის ზუსტი, სრული და განახლებული. ასევე, ინფორმირებული ვარ ჩემი კანონით გათვალისწინებული უფლებების შესახებ, მათ შორის მონაცემებზე წვდომის, მათი გასწორების, განახლების და კანონით გათვალისწინებულ შემთხვევებში დამუშავების შეწყვეტის ან სხვა შესაბამისი მოთხოვნის წარდგენის უფლების შესახებ.',
+      'terms.p5': 'ჩემი თანხმობა გაცემულია ნებაყოფლობით, ინფორმირებულად და კონკრეტული მიზნებისთვის.',
+      'terms.checkbox': 'ვეთანხმები პერსონალური მონაცემების ზემოაღნიშნული წესით დამუშავებას.',
+      'terms.acceptBtn': 'თანხმობის დადასტურება',
+
+      // Dashboard & Auth
+      'dash.cabinet': 'პირადი კაბინეტი',
+      'dash.phase': 'თქვენი ეტაპი',
+      'dash.status': 'განაცხადის სტატუსი',
+      'dash.uploadTitle': 'დოკუმენტის ატვირთვა',
+      'dash.dragDrop': 'ჩააგდეთ დოკუმენტი აქ',
+      'dash.browse': 'აირჩიეთ ფაილი',
+      'dash.templatesTitle': 'ეტაპის შაბლონები',
+      'dash.myDocsTitle': 'ჩემი ატვირთული დოკუმენტები',
+      'dash.refresh': 'განახლება',
+
+      'auth.welcome': 'მოგესალმებით',
+      'auth.loginBtn': 'შესვლა',
+      'auth.registerBtn': 'რეგისტრაცია',
+      'auth.email': 'ელ-ფოსტა',
+      'auth.password': 'პაროლი',
+      'auth.name': 'სახელი',
+      'auth.lastName': 'გვარი',
+      'auth.phone': 'ტელეფონის ნომერი'
+    },
+    en: {
+      // Navbar & General
+      'nav.brand': 'GETO Portal',
+      'nav.about': 'About Us',
+      'nav.recommendations': 'Recommendations',
+      'nav.deutschCourse': 'German Course',
+      'nav.cabinet': 'Personal Cabinet',
+      'nav.admin': 'Admin Panel',
+      'nav.login': 'Sign In',
+      'nav.register': 'Register',
+      'nav.logout': 'Log Out',
+      'nav.terms': 'Terms & Privacy Policy',
+
+      // About Us Page
+      'about.title': 'About Us',
+      'about.subtitle': 'Student Administrative & Advisory Services since 2020',
+      'about.body': 'Since 2020, we have been providing administrative, intermediary, and consulting services for students. We assist them in processes related to employment in Germany, organizing documentation, and obtaining necessary information. We are not an employer — we act as a connecting and advisory intermediary between students and partner organizations.',
+      'about.stat1.title': 'Since 2020',
+      'about.stat1.sub': 'Experience & Trust',
+      'about.stat2.title': 'Germany',
+      'about.stat2.sub': 'Employment Guidance',
+      'about.stat3.title': '100% Advisory',
+      'about.stat3.sub': 'Documentation Assistance',
+
+      // Deutsch Course Page
+      'deutsch.title': 'German Language Course',
+      'deutsch.subtitle': 'Intensive Preparation for Employment and Studies in Germany',
+      'deutsch.heroText': 'Learn German from A1 to B2 level with experienced tutors. Our course is specifically tailored for students looking to move to Germany.',
+      'deutsch.feature1Title': 'Speaking Practice',
+      'deutsch.feature1Sub': 'Daily interactive communication exercises',
+      'deutsch.feature2Title': 'Visa Interview Prep',
+      'deutsch.feature2Sub': 'Custom targeted Q&A modules',
+      'deutsch.feature3Title': 'Certification',
+      'deutsch.feature3Sub': 'Preparation for Goethe / TELC exams',
+      'deutsch.enrollBtn': 'Enroll in Course',
+
+      // Recommendations / Reviews Page
+      'recom.title': 'Recommendations & Reviews',
+      'recom.subtitle': 'Real Student Experiences & Success Stories in Germany',
+      'recom.introText': 'Explore photos, recommendation letters, and real feedback from our participants about GETO Project.',
+      'recom.addPhotosNote': 'To add your recommendation photos, simply share the image files and we will display them in the gallery!',
+
+      // Privacy Policy Text
+      'privacy.policyTitle': 'Privacy Policy',
+      'privacy.lastUpdated': 'Last Updated: August 25, 2026',
+      'privacy.policyIntro': 'Geto Project respects user privacy and is committed to protecting the confidentiality of personal data collected through the website.',
+      'privacy.sec1Title': '1. Information We Collect',
+      'privacy.sec1Body': 'When using the website, we may collect voluntarily provided information, including: full name, contact information, email, phone number, and other data required for participation in programs/vacancies.',
+      'privacy.sec2Title': '2. Purpose of Data Use',
+      'privacy.sec2Body': 'The collected information is used to communicate with users, process applications, deliver services, manage processes related to programs and employment opportunities, and improve company services.',
+      'privacy.sec3Title': '3. Data Security',
+      'privacy.sec3Body': 'Geto Project takes appropriate technical and organizational measures to protect personal data against loss, unauthorized access, alteration, or disclosure.',
+      'privacy.sec4Title': '4. Data Transfer to Third Parties',
+      'privacy.sec4Body': 'User personal data will not be sold or unlawfully transferred to third parties. If transferring data to partner organizations is necessary for service or program delivery, it will be done solely within permissible legal scope.',
+      'privacy.sec5Title': '5. Cookies',
+      'privacy.sec5Body': 'The website may use Cookies to enhance user experience, ensure website functionality, and analyze visitor statistics.',
+      'privacy.sec6Title': '6. User Rights',
+      'privacy.sec6Body': 'Users have the right to request information regarding their personal data, correct or update data, or request deletion/restriction of processing where applicable by law.',
+      'privacy.sec7Title': '7. Policy Changes',
+      'privacy.sec7Body': 'Geto Project reserves the right to update this privacy policy periodically. Updated versions will be published on the website and take effect immediately. For further information, contact us via listed communication channels.',
+
+      // Terms of Processing & Consent
+      'terms.consentTitle': 'Consent to Processing of Personal Data',
+      'terms.consentIntro': 'I, the undersigned, confirm that I have read the Personal Data Protection and Privacy Policy of Geto Project and agree to the processing of my personal data in accordance with applicable legislation.',
+      'terms.p1': 'Consent includes the collection, storage, use, and processing of personal data provided by me to the company, including identification and contact information, passport details, photographs, education-related information, resume, and other documentation required for participation in the program.',
+      'terms.p2': 'The purpose of data processing is to review my application, organize participation in the program, search for employment opportunities, communicate with relevant employers/partner organizations, as well as ensure administrative and legal support.',
+      'terms.p3': 'I understand and agree that for the implementation of the program, if necessary, my personal data may be transferred to relevant employers, partner organizations, educational institutions, state or other authorized bodies, only within legally permissible limits.',
+      'terms.p4': 'I confirm that the information provided by me is accurate, complete, and up to date. I am also informed of my legal rights, including access to data, correction, updating, and termination of processing in legal cases.',
+      'terms.p5': 'My consent is given voluntarily, knowledgeably, and for specific purposes.',
+      'terms.checkbox': 'I agree to the processing of my personal data as described above.',
+      'terms.acceptBtn': 'Confirm & Proceed',
+
+      // Dashboard & Auth
+      'dash.cabinet': 'Personal Cabinet',
+      'dash.phase': 'Your Phase',
+      'dash.status': 'Application Status',
+      'dash.uploadTitle': 'Upload Document',
+      'dash.dragDrop': 'Drag & drop document here',
+      'dash.browse': 'browse files',
+      'dash.templatesTitle': 'Phase Template Forms',
+      'dash.myDocsTitle': 'My Uploaded Documents',
+      'dash.refresh': 'Refresh',
+
+      'auth.welcome': 'Welcome Back',
+      'auth.loginBtn': 'Sign In',
+      'auth.registerBtn': 'Register Account',
+      'auth.email': 'Email Address',
+      'auth.password': 'Password',
+      'auth.name': 'First Name',
+      'auth.lastName': 'Last Name',
+      'auth.phone': 'Phone Number'
+    }
+  };
+
+  t(key: string): string {
+    const lang = this.currentLang();
+    return this.translations[lang]?.[key] || this.translations['en']?.[key] || key;
+  }
+}
