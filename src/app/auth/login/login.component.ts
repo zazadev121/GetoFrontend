@@ -4,11 +4,13 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { TranslationService } from '../../core/services/translation.service';
+import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
       <div class="glass-card max-w-md w-full p-8 border-slate-700/50 relative overflow-hidden shadow-2xl">
@@ -16,18 +18,29 @@ import { NotificationService } from '../../core/services/notification.service';
         <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
+        <!-- Embedded Language Selector Switcher -->
+        <div class="absolute top-4 right-4 z-20">
+          <button (click)="translationService.toggleLanguage()" 
+            class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-xs font-bold text-slate-300 transition-colors flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-globe text-blue-400 text-xs"></i>
+            {{ translationService.isGeorgian() ? 'GE' : 'EN' }}
+          </button>
+        </div>
+
         <div class="text-center mb-8 relative z-10">
           <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 mx-auto flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-500/30 mb-4 transform hover:scale-105 transition-transform">
             <i class="fa-solid fa-lock"></i>
           </div>
-          <h2 class="text-2xl font-extrabold text-white font-heading tracking-tight">Welcome Back</h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">Sign in to access your GETO Portal cabinet</p>
+          <h2 class="text-2xl font-extrabold text-white font-heading tracking-tight">{{ 'auth.welcome' | translate }}</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">{{ 'auth.loginSub' | translate }}</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5 relative z-10">
           <!-- Email Field -->
           <div>
-            <label class="form-label text-xs uppercase tracking-wider text-slate-300 font-semibold" for="login-email">Email Address</label>
+            <label class="form-label text-xs uppercase tracking-wider text-slate-300 font-semibold" for="login-email">
+              {{ 'auth.email' | translate }}
+            </label>
             <div class="relative flex items-center">
               <i class="fa-solid fa-envelope absolute left-3.5 text-slate-400 text-sm pointer-events-none"></i>
               <input 
@@ -40,17 +53,19 @@ import { NotificationService } from '../../core/services/notification.service';
             </div>
             <div *ngIf="isFieldInvalid('email')" class="form-error">
               <i class="fa-solid fa-circle-exclamation"></i>
-              <span *ngIf="loginForm.get('email')?.errors?.['required']">Email address is required</span>
-              <span *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">{{ 'auth.emailRequired' | translate }}</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">{{ 'auth.emailValid' | translate }}</span>
             </div>
           </div>
 
           <!-- Password Field -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <label class="form-label text-xs uppercase tracking-wider text-slate-300 font-semibold mb-0" for="login-password">Password</label>
+              <label class="form-label text-xs uppercase tracking-wider text-slate-300 font-semibold mb-0" for="login-password">
+                {{ 'auth.password' | translate }}
+              </label>
               <a routerLink="/auth/reset-password" class="text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                Forgot password?
+                {{ 'auth.forgotPassword' | translate }}
               </a>
             </div>
             <div class="relative flex items-center">
@@ -71,7 +86,7 @@ import { NotificationService } from '../../core/services/notification.service';
             </div>
             <div *ngIf="isFieldInvalid('password')" class="form-error">
               <i class="fa-solid fa-circle-exclamation"></i>
-              Password is required
+              {{ 'auth.passwordRequired' | translate }}
             </div>
           </div>
 
@@ -81,18 +96,18 @@ import { NotificationService } from '../../core/services/notification.service';
             [disabled]="loginForm.invalid || isLoading"
             class="btn btn-primary w-full mt-3 py-3 font-bold text-sm tracking-wide shadow-lg shadow-blue-500/25">
             <span *ngIf="!isLoading" class="flex items-center justify-center gap-2">
-              <i class="fa-solid fa-right-to-bracket"></i> Sign In
+              <i class="fa-solid fa-right-to-bracket"></i> {{ 'auth.loginBtn' | translate }}
             </span>
             <span *ngIf="isLoading" class="flex items-center justify-center gap-2">
-              <i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...
+              <i class="fa-solid fa-circle-notch fa-spin"></i> {{ 'auth.authenticating' | translate }}
             </span>
           </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400 relative z-10">
-          Don't have an account? 
+          {{ 'auth.dontHaveAccount' | translate }} 
           <a routerLink="/auth/register" class="text-blue-400 font-bold hover:text-blue-300 transition-colors ml-1">
-            Create an account
+            {{ 'auth.createAccount' | translate }}
           </a>
         </div>
       </div>
@@ -103,6 +118,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
+  translationService = inject(TranslationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 

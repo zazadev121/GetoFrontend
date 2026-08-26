@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../core/services/admin.service';
 import { NotificationService } from '../core/services/notification.service';
+import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
 import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
+import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 
 interface ManagedTemplateItem {
@@ -29,6 +31,7 @@ interface ManagedTemplateItem {
     StatusLabelPipe, 
     PhaseLabelPipe, 
     FileSizePipe,
+    TranslatePipe,
     ConfirmDialogComponent
   ],
   template: `
@@ -37,16 +40,26 @@ interface ManagedTemplateItem {
       <!-- Admin Header -->
       <div class="glass-card p-5 sm:p-8 relative overflow-hidden">
         <div class="flex flex-col gap-5 relative z-10">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-pink-600 to-purple-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold shadow-lg shadow-pink-500/20 shrink-0">
-              <i class="fa-solid fa-shield-halved"></i>
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-pink-600 to-purple-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold shadow-lg shadow-pink-500/20 shrink-0">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <div class="overflow-hidden">
+                <h1 class="text-xl sm:text-2xl font-extrabold text-white font-heading truncate">
+                  {{ 'admin.title' | translate }}
+                </h1>
+                <p class="text-xs text-slate-400 truncate">{{ 'admin.sub' | translate }}</p>
+              </div>
             </div>
-            <div class="overflow-hidden">
-              <h1 class="text-xl sm:text-2xl font-extrabold text-white font-heading truncate">
-                Admin Panel
-              </h1>
-              <p class="text-xs text-slate-400 truncate">Manage clients, documents, and templates</p>
-            </div>
+
+            <!-- Language Switcher in Admin Header -->
+            <button 
+              (click)="translationService.toggleLanguage()"
+              class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-xs font-bold text-slate-200 transition-colors flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-globe text-pink-400"></i>
+              {{ translationService.isGeorgian() ? 'GE' : 'EN' }}
+            </button>
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
@@ -54,17 +67,17 @@ interface ManagedTemplateItem {
               (click)="openTemplateManagerModal()" 
               class="btn btn-secondary text-xs">
               <i class="fa-solid fa-folder-tree"></i>
-              Templates
+              {{ 'admin.templates' | translate }}
             </button>
             <button 
               (click)="openBulkUploadModal()" 
               class="btn btn-primary bg-gradient-to-r from-pink-600 to-purple-600 text-xs">
               <i class="fa-solid fa-file-circle-plus"></i>
-              Distribute
+              {{ 'admin.distribute' | translate }}
             </button>
             <button (click)="loadUsers()" class="btn btn-secondary text-xs">
               <i class="fa-solid fa-rotate-right" [class.fa-spin]="isLoadingUsers"></i>
-              Refresh
+              {{ 'admin.refresh' | translate }}
             </button>
           </div>
         </div>
@@ -81,7 +94,7 @@ interface ManagedTemplateItem {
               type="text" 
               [(ngModel)]="searchQuery" 
               (input)="onSearchInput()"
-              placeholder="Search client..." 
+              [placeholder]="'admin.searchPlaceholder' | translate" 
               class="form-control pl-9 text-xs py-2 w-full">
             <button 
               *ngIf="searchQuery" 
@@ -91,7 +104,7 @@ interface ManagedTemplateItem {
             </button>
           </div>
           <span class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 font-semibold text-xs text-slate-300 shrink-0 self-start sm:self-auto">
-            {{ users.length }} clients
+            {{ users.length }} {{ 'admin.clientsCount' | translate }}
           </span>
         </div>
 
@@ -100,12 +113,12 @@ interface ManagedTemplateItem {
           <table *ngIf="users.length > 0" class="custom-table w-full">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Client</th>
-                <th>Status</th>
-                <th>Phase</th>
-                <th>Files</th>
-                <th class="text-right">Actions</th>
+                <th>{{ 'admin.id' | translate }}</th>
+                <th>{{ 'admin.client' | translate }}</th>
+                <th>{{ 'admin.status' | translate }}</th>
+                <th>{{ 'admin.phase' | translate }}</th>
+                <th>{{ 'admin.files' | translate }}</th>
+                <th class="text-right">{{ 'admin.actions' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -128,10 +141,10 @@ interface ManagedTemplateItem {
                     (ngModelChange)="onUpdateStatus(u, $event)"
                     class="form-control form-select py-1 px-2 text-xs w-32 font-semibold"
                     [ngClass]="getStatusSelectClass(u.status)">
-                    <option [value]="0">Pending</option>
-                    <option [value]="1">Rejected</option>
-                    <option [value]="2">Approved</option>
-                    <option [value]="3">Resubmission</option>
+                    <option [value]="0">{{ 'status.pending' | translate }}</option>
+                    <option [value]="1">{{ 'status.rejected' | translate }}</option>
+                    <option [value]="2">{{ 'status.approved' | translate }}</option>
+                    <option [value]="3">{{ 'status.resubmission' | translate }}</option>
                   </select>
                 </td>
                 <td>
@@ -139,10 +152,10 @@ interface ManagedTemplateItem {
                     [ngModel]="u.userPhase" 
                     (ngModelChange)="onUpdatePhase(u, $event)"
                     class="form-control form-select py-1 px-2 text-xs w-32 font-semibold">
-                    <option [value]="0">Phase One</option>
-                    <option [value]="1">Phase Two</option>
-                    <option [value]="2">Phase Three</option>
-                    <option [value]="3">Canceled</option>
+                    <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
+                    <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
+                    <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
+                    <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                   </select>
                 </td>
                 <td>
@@ -150,13 +163,13 @@ interface ManagedTemplateItem {
                 </td>
                 <td class="text-right">
                   <div class="flex items-center justify-end gap-1.5">
-                    <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm px-2 py-1 text-xs" title="View Files">
+                    <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm px-2 py-1 text-xs" [title]="'admin.view' | translate">
                       <i class="fa-solid fa-eye"></i>
                     </button>
-                    <button (click)="promptDeleteUserDocs(u)" class="btn btn-secondary btn-sm px-2 py-1 text-xs" title="Clear Docs">
+                    <button (click)="promptDeleteUserDocs(u)" class="btn btn-secondary btn-sm px-2 py-1 text-xs" [title]="'admin.clearDocs' | translate">
                       <i class="fa-solid fa-folder-minus"></i>
                     </button>
-                    <button (click)="promptDeleteUser(u)" class="btn btn-danger btn-sm px-2 py-1 text-xs" title="Delete">
+                    <button (click)="promptDeleteUser(u)" class="btn btn-danger btn-sm px-2 py-1 text-xs" [title]="'admin.delete' | translate">
                       <i class="fa-solid fa-trash"></i>
                     </button>
                   </div>
@@ -186,26 +199,26 @@ interface ManagedTemplateItem {
             <!-- Selects row -->
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="text-[10px] text-slate-500 block mb-1">Status</label>
+                <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.status' | translate }}</label>
                 <select 
                   [ngModel]="u.status" (ngModelChange)="onUpdateStatus(u, $event)"
                   class="form-control form-select py-1.5 px-2 text-xs w-full font-semibold"
                   [ngClass]="getStatusSelectClass(u.status)">
-                  <option [value]="0">Pending</option>
-                  <option [value]="1">Rejected</option>
-                  <option [value]="2">Approved</option>
-                  <option [value]="3">Resubmission</option>
+                  <option [value]="0">{{ 'status.pending' | translate }}</option>
+                  <option [value]="1">{{ 'status.rejected' | translate }}</option>
+                  <option [value]="2">{{ 'status.approved' | translate }}</option>
+                  <option [value]="3">{{ 'status.resubmission' | translate }}</option>
                 </select>
               </div>
               <div>
-                <label class="text-[10px] text-slate-500 block mb-1">Phase</label>
+                <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</label>
                 <select 
                   [ngModel]="u.userPhase" (ngModelChange)="onUpdatePhase(u, $event)"
                   class="form-control form-select py-1.5 px-2 text-xs w-full font-semibold">
-                  <option [value]="0">Phase One</option>
-                  <option [value]="1">Phase Two</option>
-                  <option [value]="2">Phase Three</option>
-                  <option [value]="3">Canceled</option>
+                  <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
+                  <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
+                  <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
+                  <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                 </select>
               </div>
             </div>
@@ -215,7 +228,7 @@ interface ManagedTemplateItem {
               <span class="text-xs text-slate-400">{{ u.documents.length }} files</span>
               <div class="flex items-center gap-1.5">
                 <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
-                  <i class="fa-solid fa-eye"></i> View
+                  <i class="fa-solid fa-eye"></i> {{ 'admin.view' | translate }}
                 </button>
                 <button (click)="promptDeleteUserDocs(u)" class="btn btn-secondary btn-sm text-xs px-2 py-1">
                   <i class="fa-solid fa-folder-minus"></i>
@@ -231,13 +244,13 @@ interface ManagedTemplateItem {
         <!-- Empty State -->
         <div *ngIf="!isLoadingUsers && users.length === 0" class="py-10 text-center text-slate-400 space-y-2">
           <i class="fa-solid fa-users-slash text-xl text-slate-600"></i>
-          <div class="text-sm font-medium">No clients found</div>
+          <div class="text-sm font-medium">{{ 'admin.noClients' | translate }}</div>
         </div>
 
         <!-- Loading State -->
         <div *ngIf="isLoadingUsers" class="py-10 text-center text-slate-500">
           <i class="fa-solid fa-circle-notch fa-spin text-xl text-pink-500 mb-2"></i>
-          <div class="text-xs">Loading...</div>
+          <div class="text-xs">{{ 'admin.loading' | translate }}</div>
         </div>
 
       </div>
@@ -267,21 +280,21 @@ interface ManagedTemplateItem {
           <!-- User Stats Cards Grid -->
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span class="text-slate-500 block mb-1">Status</span>
+              <span class="text-slate-500 block mb-1">{{ 'admin.status' | translate }}</span>
               <span class="badge" [ngClass]="getStatusBadgeClass(selectedUserForInspect.status)">
                 {{ selectedUserForInspect.status | statusLabel }}
               </span>
             </div>
 
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span class="text-slate-500 block mb-1">Phase</span>
+              <span class="text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</span>
               <span class="badge badge-phase">
                 {{ selectedUserForInspect.userPhase | phaseLabel }}
               </span>
             </div>
 
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span class="text-slate-500 block mb-1">Uploaded Files</span>
+              <span class="text-slate-500 block mb-1">{{ 'admin.files' | translate }}</span>
               <span class="font-bold text-white text-sm">{{ selectedUserForInspect.documents.length }} Files</span>
             </div>
           </div>
@@ -291,13 +304,13 @@ interface ManagedTemplateItem {
             <div class="flex items-center justify-between">
               <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
                 <i class="fa-solid fa-folder-tree text-blue-400"></i>
-                Files Uploaded by Client
+                {{ 'admin.uploadedFiles' | translate }}
               </h4>
               <button 
                 *ngIf="selectedUserForInspect.documents.length > 0"
                 (click)="promptDeleteUserDocs(selectedUserForInspect)" 
                 class="btn btn-danger btn-sm text-xs px-2.5 py-1">
-                <i class="fa-solid fa-trash"></i> Delete All Files
+                <i class="fa-solid fa-trash"></i> {{ 'admin.clearDocs' | translate }}
               </button>
             </div>
 
@@ -324,13 +337,13 @@ interface ManagedTemplateItem {
                   <button 
                     (click)="downloadUserDoc(selectedUserForInspect.id, doc)" 
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
-                    <i class="fa-solid fa-download"></i> Download
+                    <i class="fa-solid fa-download"></i> {{ 'admin.download' | translate }}
                   </button>
 
                   <button 
                     (click)="promptDeleteSingleBackendDoc(selectedUserForInspect.id, doc)" 
                     class="btn btn-danger btn-sm text-xs px-2.5 py-1"
-                    title="Delete this file from database">
+                    [title]="'admin.delete' | translate">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
@@ -339,7 +352,7 @@ interface ManagedTemplateItem {
           </div>
 
           <div class="pt-4 border-t border-white/10 flex justify-end">
-            <button (click)="selectedUserForInspect = null" class="btn btn-secondary btn-sm">Close Inspector</button>
+            <button (click)="selectedUserForInspect = null" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
           </div>
         </div>
       </div>
@@ -350,7 +363,7 @@ interface ManagedTemplateItem {
           <div class="flex items-center justify-between border-b border-white/10 pb-3">
             <div class="flex items-center gap-2 text-purple-400 font-bold">
               <i class="fa-solid fa-folder-tree text-lg"></i>
-              <h3 class="text-lg text-white font-heading">General & Backend Template Files Manager</h3>
+              <h3 class="text-lg text-white font-heading">{{ 'admin.templateManagerTitle' | translate }}</h3>
             </div>
             <button (click)="showTemplateManagerModal = false" class="text-slate-400 hover:text-white">
               <i class="fa-solid fa-xmark"></i>
@@ -358,7 +371,7 @@ interface ManagedTemplateItem {
           </div>
 
           <p class="text-xs text-slate-400 leading-relaxed">
-            Here you can view all template files displayed to students. You can delete any backend database uploaded file or disable frontend static files.
+            {{ 'admin.templateManagerSub' | translate }}
           </p>
 
           <!-- Search or Filter -->
@@ -379,7 +392,7 @@ interface ManagedTemplateItem {
                       {{ tpl.phaseName }}
                     </span>
                     <span *ngIf="tpl.isBackendFile" class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30">
-                      Backend File
+                      {{ 'admin.backendFile' | translate }}
                     </span>
                   </div>
                   <div class="text-[10px] text-slate-400 truncate mt-0.5">{{ tpl.fileUrl }}</div>
@@ -392,23 +405,22 @@ interface ManagedTemplateItem {
                   [href]="tpl.fileUrl" 
                   target="_blank"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1"
-                  title="View / Download template file">
+                  [title]="'admin.view' | translate">
                   <i class="fa-solid fa-eye text-blue-400"></i>
                 </a>
 
                 <button 
                   (click)="promptDeleteTemplate(tpl)" 
-                  class="btn btn-danger btn-sm text-xs px-2.5 py-1"
-                  [title]="tpl.isDisabled ? 'Restore Template File' : 'Delete / Remove Template File'">
+                  class="btn btn-danger btn-sm text-xs px-2.5 py-1">
                   <i class="fa-solid" [ngClass]="tpl.isDisabled ? 'fa-rotate-left' : 'fa-trash'"></i>
-                  <span>{{ tpl.isDisabled ? 'Restore' : 'Delete' }}</span>
+                  <span>{{ tpl.isDisabled ? ('admin.restore' | translate) : ('admin.delete' | translate) }}</span>
                 </button>
               </div>
             </div>
           </div>
 
           <div class="pt-3 border-t border-white/10 flex justify-end">
-            <button (click)="showTemplateManagerModal = false" class="btn btn-secondary btn-sm">Close Manager</button>
+            <button (click)="showTemplateManagerModal = false" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
           </div>
         </div>
       </div>
@@ -419,7 +431,7 @@ interface ManagedTemplateItem {
           <div class="flex items-center justify-between border-b border-white/10 pb-3">
             <div class="flex items-center gap-2 text-pink-400 font-bold">
               <i class="fa-solid fa-file-circle-plus text-lg"></i>
-              <h3 class="text-lg text-white font-heading">Bulk Template Upload</h3>
+              <h3 class="text-lg text-white font-heading">{{ 'admin.bulkUploadTitle' | translate }}</h3>
             </div>
             <button (click)="showBulkModal = false" class="text-slate-400 hover:text-white">
               <i class="fa-solid fa-xmark"></i>
@@ -427,23 +439,23 @@ interface ManagedTemplateItem {
           </div>
 
           <p class="text-xs text-slate-400 leading-relaxed">
-            Upload a template document (Form/Requirement) and assign it to all clients currently assigned to the selected Phase.
+            {{ 'admin.bulkUploadSub' | translate }}
           </p>
 
           <!-- Phase Dropdown -->
           <div>
-            <label class="form-label" for="bulk-phase">Target Phase</label>
+            <label class="form-label" for="bulk-phase">{{ 'admin.targetPhase' | translate }}</label>
             <select id="bulk-phase" [(ngModel)]="bulkPhase" class="form-control form-select">
-              <option [value]="0">Phase One</option>
-              <option [value]="1">Phase Two</option>
-              <option [value]="2">Phase Three</option>
-              <option [value]="3">Canceled</option>
+              <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
+              <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
+              <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
+              <option [value]="3">{{ 'phase.canceled' | translate }}</option>
             </select>
           </div>
 
           <!-- File Input -->
           <div>
-            <label class="form-label" for="bulk-file">Select Template File</label>
+            <label class="form-label" for="bulk-file">{{ 'admin.selectFile' | translate }}</label>
             <input 
               id="bulk-file"
               type="file" 
@@ -462,7 +474,7 @@ interface ManagedTemplateItem {
               (click)="submitBulkUpload()" 
               [disabled]="!bulkFile || isUploadingBulk" 
               class="btn btn-primary btn-sm bg-gradient-to-r from-pink-600 to-purple-600">
-              <span *ngIf="!isUploadingBulk"><i class="fa-solid fa-paper-plane"></i> Distribute Template</span>
+              <span *ngIf="!isUploadingBulk"><i class="fa-solid fa-paper-plane"></i> {{ 'admin.distributeBtn' | translate }}</span>
               <span *ngIf="isUploadingBulk"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
             </button>
           </div>
@@ -512,6 +524,7 @@ interface ManagedTemplateItem {
 export class AdminPanelComponent implements OnInit {
   adminService = inject(AdminService);
   notificationService = inject(NotificationService);
+  translationService = inject(TranslationService);
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;

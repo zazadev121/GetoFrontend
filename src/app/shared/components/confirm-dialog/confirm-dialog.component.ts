@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div *ngIf="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
       <div class="glass-card max-w-md w-full p-6 border-slate-700/50 shadow-2xl space-y-4">
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">{{ title }}</h3>
-            <p class="text-xs text-slate-400">Action cannot be undone</p>
+            <p class="text-xs text-slate-400">{{ 'confirm.warning' | translate }}</p>
           </div>
         </div>
 
@@ -22,7 +23,7 @@ import { CommonModule } from '@angular/common';
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button (click)="onCancel()" class="btn btn-secondary btn-sm">
-            Cancel
+            {{ 'confirm.cancel' | translate }}
           </button>
           <button (click)="onConfirm()" class="btn btn-danger btn-sm">
             <i class="fa-solid fa-trash-can"></i> {{ confirmText }}
