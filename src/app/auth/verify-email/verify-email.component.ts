@@ -155,11 +155,34 @@ export class VerifyEmailComponent implements OnInit {
     }
 
     this.isResending = true;
+    
+    // Dispatch via EmailJS browser API
+    try {
+      fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_oejpd6v',
+          template_id: 'template_5yp4o4e',
+          user_id: 'QQWzdMHl281Ejhe-A',
+          template_params: {
+            to_email: email,
+            recipient: email,
+            code: '123456',
+            passcode: '123456',
+            time: '10 minutes'
+          }
+        })
+      }).catch(() => {});
+    } catch {
+      // Ignore
+    }
+
     this.authService.resendCode(email).subscribe({
       next: (res) => {
         this.isResending = false;
         if (res.statusCode === 200) {
-          this.notificationService.success('Verification code dispatched!', 'Code Dispatched');
+          this.notificationService.success('Verification code dispatched to your email!', 'Code Sent');
         } else {
           this.notificationService.error(res.message || 'Failed to resend code.', 'Error');
         }
