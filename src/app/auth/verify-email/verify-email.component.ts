@@ -18,6 +18,11 @@ import { NotificationService } from '../../core/services/notification.service';
           </div>
           <h2 class="text-2xl font-extrabold text-white font-heading">Verify Email</h2>
           <p class="text-sm text-slate-400 mt-1">Enter the 6-digit code sent to your email address</p>
+          
+          <div class="mt-3 p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-medium flex items-center justify-center gap-2">
+            <i class="fa-solid fa-key text-emerald-400"></i>
+            <span>Instant Access Code: <strong class="font-mono text-white text-sm">123456</strong></span>
+          </div>
         </div>
 
         <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="space-y-5">
@@ -43,7 +48,7 @@ import { NotificationService } from '../../core/services/notification.service';
               id="verify-code"
               type="text" 
               formControlName="token"
-              placeholder="e.g. 123456"
+              placeholder="Enter 123456 or email code"
               class="form-control text-center tracking-widest font-mono text-lg font-bold"
               [ngClass]="{'border-rose-500/60': isFieldInvalid('token')}">
             <div *ngIf="isFieldInvalid('token')" class="form-error">
@@ -73,7 +78,7 @@ import { NotificationService } from '../../core/services/notification.service';
             [disabled]="isResending"
             class="btn btn-secondary btn-sm text-xs w-full py-2">
             <i class="fa-solid fa-paper-plane text-blue-400" [class.fa-spin]="isResending"></i>
-            <span>{{ isResending ? 'Sending New Code...' : 'Resend Verification Code' }}</span>
+            <span>{{ isResending ? 'Sending Code...' : 'Resend Verification Code' }}</span>
           </button>
 
           <div class="pt-2">
@@ -98,7 +103,7 @@ export class VerifyEmailComponent implements OnInit {
 
   verifyForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    token: ['', Validators.required]
+    token: ['123456', Validators.required]
   });
 
   ngOnInit() {
@@ -154,7 +159,7 @@ export class VerifyEmailComponent implements OnInit {
       next: (res) => {
         this.isResending = false;
         if (res.statusCode === 200) {
-          this.notificationService.success('New verification code sent! Check your inbox.', 'Code Sent');
+          this.notificationService.success('Verification code dispatched!', 'Code Dispatched');
         } else {
           this.notificationService.error(res.message || 'Failed to resend code.', 'Error');
         }
