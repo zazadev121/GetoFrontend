@@ -17,7 +17,7 @@ import { NotificationService } from '../../core/services/notification.service';
             <i class="fa-solid fa-shield-check"></i>
           </div>
           <h2 class="text-2xl font-extrabold text-white font-heading">Verify Email</h2>
-          <p class="text-sm text-slate-400 mt-1">Enter the verification code sent to your email address</p>
+          <p class="text-sm text-slate-400 mt-1">Enter the 6-digit code sent to your email address</p>
         </div>
 
         <form [formGroup]="verifyForm" (ngSubmit)="onSubmit()" class="space-y-5">
@@ -65,11 +65,22 @@ import { NotificationService } from '../../core/services/notification.service';
           </button>
         </form>
 
-        <div class="mt-6 text-center text-xs text-slate-400">
-          Didn't receive code? Check your inbox/spam folder or 
-          <a routerLink="/auth/login" class="text-blue-400 font-semibold hover:text-blue-300 transition-colors">
-            Return to Login
-          </a>
+        <!-- Resend Code Action -->
+        <div class="mt-6 pt-4 border-t border-white/10 text-center space-y-2">
+          <p class="text-xs text-slate-400">Didn't receive the email code?</p>
+          <button 
+            (click)="onResendCode()" 
+            [disabled]="isResending"
+            class="btn btn-secondary btn-sm text-xs w-full py-2">
+            <i class="fa-solid fa-paper-plane text-blue-400" [class.fa-spin]="isResending"></i>
+            <span>{{ isResending ? 'Sending New Code...' : 'Resend Verification Code' }}</span>
+          </button>
+
+          <div class="pt-2">
+            <a routerLink="/auth/login" class="text-xs text-slate-400 hover:text-white transition-colors">
+              Return to Login
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -83,6 +94,7 @@ export class VerifyEmailComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   isLoading = false;
+  isResending = false;
 
   verifyForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -126,6 +138,29 @@ export class VerifyEmailComponent implements OnInit {
       },
       error: () => {
         this.isLoading = false;
+      }
+    });
+  }
+
+  onResendCode() {
+    const email = this.verifyForm.get('email')?.value;
+    if (!email) {
+      this.notificationService.error('Please enter your email address to resend the code.', 'Email Required');
+      return;
+    }
+
+    this.isResending = true;
+    this.authService.resendCode(email).subscribe({
+      next: (res) => {
+        this.isResending = false;
+        if (res.statusCode === 200) {
+          this.notificationService.success('New verification code sent! Check your inbox.', 'Code Sent');
+        } else {
+          this.notificationService.error(res.message || 'Failed to resend code.', 'Error');
+        }
+      },
+      error: () => {
+        this.isResending = false;
       }
     });
   }

@@ -105,6 +105,10 @@ export class AuthService {
     return this.http.post<ApiResponse<string>>(`${this.baseUrl}/ForgotPassword/${encodeURIComponent(email)}`, {});
   }
 
+  resendCode(email: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.baseUrl}/ResendCode/${encodeURIComponent(email)}`, {});
+  }
+
   resetPassword(req: ResetPasswordRequest): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(`${this.baseUrl}/ResetPassword`, req);
   }
