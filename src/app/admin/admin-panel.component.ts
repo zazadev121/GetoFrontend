@@ -554,25 +554,81 @@ interface ManagedTemplateItem {
               </button>
             </div>
 
-            <div class="space-y-3">
-              <div>
-                <label class="form-label" for="news-title">{{ 'news.inputTitle' | translate }}</label>
-                <input 
-                  id="news-title"
-                  type="text" 
-                  [(ngModel)]="newNewsTitle" 
-                  [placeholder]="'news.titlePlaceholder' | translate" 
-                  class="form-control text-xs">
-              </div>
+            <!-- Language Tab Switcher -->
+            <div class="flex gap-1 p-1 bg-slate-950/60 rounded-lg border border-slate-800 w-fit">
+              <button
+                (click)="newsFormLang = 'ka'"
+                [ngClass]="newsFormLang === 'ka' ? 'bg-blue-600/80 text-white shadow-sm' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5">
+                🇬🇪 {{ 'news.langTabGeo' | translate }}
+              </button>
+              <button
+                (click)="newsFormLang = 'en'"
+                [ngClass]="newsFormLang === 'en' ? 'bg-indigo-600/80 text-white shadow-sm' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5">
+                🇬🇧 {{ 'news.langTabEng' | translate }}
+              </button>
+            </div>
 
-              <div>
-                <label class="form-label" for="news-text">{{ 'news.inputText' | translate }}</label>
-                <textarea 
-                  id="news-text"
-                  rows="3" 
-                  [(ngModel)]="newNewsText" 
-                  [placeholder]="'news.textPlaceholder' | translate" 
-                  class="form-control text-xs resize-none"></textarea>
+            <div class="space-y-3">
+              <!-- Georgian Fields -->
+              <ng-container *ngIf="newsFormLang === 'ka'">
+                <div>
+                  <label class="form-label" for="news-title-ka">{{ 'news.inputTitle' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
+                  <input 
+                    id="news-title-ka"
+                    type="text" 
+                    [(ngModel)]="newNewsTitle" 
+                    [placeholder]="'news.titlePlaceholder' | translate" 
+                    class="form-control text-xs">
+                </div>
+                <div>
+                  <label class="form-label" for="news-text-ka">{{ 'news.inputText' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
+                  <textarea 
+                    id="news-text-ka"
+                    rows="4" 
+                    [(ngModel)]="newNewsText" 
+                    [placeholder]="'news.textPlaceholder' | translate" 
+                    class="form-control text-xs resize-none"></textarea>
+                </div>
+              </ng-container>
+
+              <!-- English Fields -->
+              <ng-container *ngIf="newsFormLang === 'en'">
+                <div>
+                  <label class="form-label" for="news-title-en">
+                    {{ 'news.inputTitle' | translate }} (English)
+                    <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional — Georgian shown as fallback)</span>
+                  </label>
+                  <input 
+                    id="news-title-en"
+                    type="text" 
+                    [(ngModel)]="newNewsTitleEn" 
+                    [placeholder]="'news.titleEnPlaceholder' | translate" 
+                    class="form-control text-xs border-indigo-500/30 focus:border-indigo-500/60">
+                </div>
+                <div>
+                  <label class="form-label" for="news-text-en">
+                    {{ 'news.inputText' | translate }} (English)
+                    <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional)</span>
+                  </label>
+                  <textarea 
+                    id="news-text-en"
+                    rows="4" 
+                    [(ngModel)]="newNewsTextEn" 
+                    [placeholder]="'news.textEnPlaceholder' | translate" 
+                    class="form-control text-xs resize-none border-indigo-500/30 focus:border-indigo-500/60"></textarea>
+                </div>
+              </ng-container>
+
+              <!-- Translation Status Indicators -->
+              <div class="flex items-center gap-3 text-[10px] font-semibold">
+                <span class="flex items-center gap-1" [ngClass]="newNewsTitle.trim() ? 'text-emerald-400' : 'text-slate-500'">
+                  <i class="fa-solid" [ngClass]="newNewsTitle.trim() ? 'fa-circle-check' : 'fa-circle'"></i> 🇬🇪 GEO
+                </span>
+                <span class="flex items-center gap-1" [ngClass]="newNewsTitleEn.trim() ? 'text-emerald-400' : 'text-amber-500'">
+                  <i class="fa-solid" [ngClass]="newNewsTitleEn.trim() ? 'fa-circle-check' : 'fa-circle-exclamation'"></i> 🇬🇧 ENG {{ newNewsTitleEn.trim() ? '' : '(fallback)' }}
+                </span>
               </div>
 
               <div class="flex justify-end gap-2">
@@ -622,11 +678,17 @@ interface ManagedTemplateItem {
                 *ngFor="let news of newsList" 
                 class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div class="overflow-hidden flex-1 space-y-1">
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2 flex-wrap">
                     <span class="font-bold text-sm text-white truncate">{{ news.title }}</span>
                     <span class="text-[10px] text-slate-400 font-mono">({{ news.dateCreated | date:'short' }})</span>
+                    <!-- Translation status badges -->
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase"
+                      [ngClass]="news.titleEn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'">
+                      🇬🇧 {{ news.titleEn ? 'EN ✓' : 'EN missing' }}
+                    </span>
                   </div>
-                  <p class="text-xs text-slate-300 line-clamp-2">{{ news.text }}</p>
+                  <p class="text-xs text-slate-400 line-clamp-1 italic">🇬🇪 {{ news.text }}</p>
+                  <p *ngIf="news.textEn" class="text-xs text-indigo-300 line-clamp-1 italic">🇬🇧 {{ news.textEn }}</p>
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
@@ -679,6 +741,9 @@ export class AdminPanelComponent implements OnInit {
   showNewsModal = false;
   newNewsTitle = '';
   newNewsText = '';
+  newNewsTitleEn = '';
+  newNewsTextEn = '';
+  newsFormLang: 'ka' | 'en' = 'ka';
   isPostingNews = false;
   editingNews: NewsDto | null = null;
   isUpdatingNews = false;
@@ -1100,7 +1165,9 @@ export class AdminPanelComponent implements OnInit {
     this.isPostingNews = true;
     this.newsService.createNews({
       title: this.newNewsTitle.trim(),
-      text: this.newNewsText.trim()
+      text: this.newNewsText.trim(),
+      titleEn: this.newNewsTitleEn.trim() || undefined,
+      textEn: this.newNewsTextEn.trim() || undefined
     }).subscribe({
       next: (res) => {
         this.isPostingNews = false;
@@ -1108,6 +1175,9 @@ export class AdminPanelComponent implements OnInit {
           this.notificationService.success('News item posted successfully.', 'News Posted');
           this.newNewsTitle = '';
           this.newNewsText = '';
+          this.newNewsTitleEn = '';
+          this.newNewsTextEn = '';
+          this.newsFormLang = 'ka';
           this.loadNewsForAdmin();
         } else {
           this.notificationService.error(res.message || 'Failed to post news item', 'Error');
@@ -1125,12 +1195,18 @@ export class AdminPanelComponent implements OnInit {
     this.editingNews = news;
     this.newNewsTitle = news.title;
     this.newNewsText = news.text;
+    this.newNewsTitleEn = news.titleEn || '';
+    this.newNewsTextEn = news.textEn || '';
+    this.newsFormLang = 'ka';
   }
 
   cancelEditNews() {
     this.editingNews = null;
     this.newNewsTitle = '';
     this.newNewsText = '';
+    this.newNewsTitleEn = '';
+    this.newNewsTextEn = '';
+    this.newsFormLang = 'ka';
   }
 
   submitUpdateNews() {
@@ -1139,7 +1215,9 @@ export class AdminPanelComponent implements OnInit {
     this.isUpdatingNews = true;
     this.newsService.updateNews(this.editingNews.id, {
       title: this.newNewsTitle.trim(),
-      text: this.newNewsText.trim()
+      text: this.newNewsText.trim(),
+      titleEn: this.newNewsTitleEn.trim() || undefined,
+      textEn: this.newNewsTextEn.trim() || undefined
     }).subscribe({
       next: (res) => {
         this.isUpdatingNews = false;

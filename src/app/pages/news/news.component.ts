@@ -60,20 +60,30 @@ import { NewsDto } from '../../core/models/news.model';
                 <i class="fa-solid fa-bullhorn"></i>
               </div>
               <h2 class="text-xl sm:text-2xl font-bold text-white font-heading tracking-tight leading-snug">
-                {{ news.title }}
+                {{ getTitle(news) }}
               </h2>
             </div>
 
-            <div class="flex items-center gap-2 text-xs text-slate-400 font-medium shrink-0 self-start sm:self-auto bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-              <i class="fa-regular fa-calendar-check text-blue-400"></i>
-              <span>{{ news.dateCreated | date:'mediumDate' }}</span>
-              <span class="text-slate-600">&bull;</span>
-              <span>{{ news.dateCreated | date:'shortTime' }}</span>
+            <div class="flex items-center gap-2 flex-wrap justify-end">
+              <!-- Georgian fallback badge when English is selected but no English translation exists -->
+              <span 
+                *ngIf="isEnglish() && !news.titleEn"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider"
+                title="No English translation available — showing Georgian">
+                <i class="fa-solid fa-language"></i> GE
+              </span>
+
+              <div class="flex items-center gap-2 text-xs text-slate-400 font-medium shrink-0 self-start sm:self-auto bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                <i class="fa-regular fa-calendar-check text-blue-400"></i>
+                <span>{{ news.dateCreated | date:'mediumDate' }}</span>
+                <span class="text-slate-600">&bull;</span>
+                <span>{{ news.dateCreated | date:'shortTime' }}</span>
+              </div>
             </div>
           </div>
 
           <div class="text-slate-200 text-sm sm:text-base leading-relaxed whitespace-pre-line pt-2">
-            {{ news.text }}
+            {{ getText(news) }}
           </div>
         </div>
       </div>
@@ -90,6 +100,24 @@ export class NewsComponent implements OnInit {
 
   ngOnInit() {
     this.loadNews();
+  }
+
+  isEnglish(): boolean {
+    return this.translationService.currentLang() === 'en';
+  }
+
+  getTitle(news: NewsDto): string {
+    if (this.isEnglish() && news.titleEn) {
+      return news.titleEn;
+    }
+    return news.title;
+  }
+
+  getText(news: NewsDto): string {
+    if (this.isEnglish() && news.textEn) {
+      return news.textEn;
+    }
+    return news.text;
   }
 
   loadNews() {
