@@ -65,6 +65,10 @@ export class TranslationService {
       'news.titlePlaceholder': 'შეიყვანეთ სიახლის სათაური...',
       'news.textPlaceholder': 'შეიყვანეთ სიახლის ან განცხადების დეტალური ტექსტი...',
       'news.deleteConfirm': 'ნამდვილად გსურთ სიახლის წაშლა?',
+      'news.editBtn': 'რედაქტირება',
+      'news.editTitle': 'სიახლის რედაქტირება',
+      'news.saveChanges': 'ცვლილებების შენახვა',
+      'news.cancelEdit': 'გაუქმება',
 
       // Deutsch Course Page
       'deutsch.title': 'გერმანული ენის კურსი',
@@ -239,6 +243,10 @@ export class TranslationService {
       'news.titlePlaceholder': 'Enter news title...',
       'news.textPlaceholder': 'Enter detailed news or announcement text...',
       'news.deleteConfirm': 'Are you sure you want to delete this news item?',
+      'news.editBtn': 'Edit',
+      'news.editTitle': 'Edit News Item',
+      'news.saveChanges': 'Save Changes',
+      'news.cancelEdit': 'Cancel Edit',
 
       // Deutsch Course Page
       'deutsch.title': 'German Language Course',

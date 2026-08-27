@@ -20,6 +20,10 @@ export class NewsService {
     return this.http.post<ApiResponse<NewsDto>>(this.baseUrl, dto);
   }
 
+  updateNews(id: number, dto: CreateNewsDto): Observable<ApiResponse<NewsDto>> {
+    return this.http.put<ApiResponse<NewsDto>>(`${this.baseUrl}/${id}`, dto);
+  }
+
   deleteNews(id: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/${id}`);
   }

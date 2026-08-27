@@ -539,12 +539,20 @@ interface ManagedTemplateItem {
             </button>
           </div>
 
-          <!-- Post New News Form -->
+          <!-- Post / Edit News Form -->
           <div class="p-4 bg-slate-900/90 rounded-xl border border-blue-500/20 space-y-4">
-            <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
-              <i class="fa-solid fa-pen-to-square text-blue-400"></i>
-              {{ 'news.addBtn' | translate }}
-            </h4>
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
+                <i class="fa-solid" [ngClass]="editingNews ? 'fa-pen text-amber-400' : 'fa-pen-to-square text-blue-400'"></i>
+                {{ editingNews ? ('news.editTitle' | translate) : ('news.addBtn' | translate) }}
+              </h4>
+              <button 
+                *ngIf="editingNews" 
+                (click)="cancelEditNews()" 
+                class="btn btn-secondary btn-sm text-xs px-2 py-0.5">
+                <i class="fa-solid fa-xmark"></i> {{ 'news.cancelEdit' | translate }}
+              </button>
+            </div>
 
             <div class="space-y-3">
               <div>
@@ -567,13 +575,30 @@ interface ManagedTemplateItem {
                   class="form-control text-xs resize-none"></textarea>
               </div>
 
-              <div class="flex justify-end">
+              <div class="flex justify-end gap-2">
                 <button 
+                  *ngIf="editingNews"
+                  (click)="cancelEditNews()"
+                  class="btn btn-secondary btn-sm text-xs">
+                  {{ 'news.cancelEdit' | translate }}
+                </button>
+
+                <button 
+                  *ngIf="!editingNews"
                   (click)="submitCreateNews()" 
                   [disabled]="!newNewsTitle.trim() || !newNewsText.trim() || isPostingNews"
                   class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
                   <span *ngIf="!isPostingNews"><i class="fa-solid fa-paper-plane mr-1"></i> {{ 'news.addBtn' | translate }}</span>
                   <span *ngIf="isPostingNews"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Posting...</span>
+                </button>
+
+                <button 
+                  *ngIf="editingNews"
+                  (click)="submitUpdateNews()" 
+                  [disabled]="!newNewsTitle.trim() || !newNewsText.trim() || isUpdatingNews"
+                  class="btn btn-primary btn-sm bg-gradient-to-r from-amber-500 to-amber-600 text-xs text-slate-950 font-bold">
+                  <span *ngIf="!isUpdatingNews"><i class="fa-solid fa-floppy-disk mr-1"></i> {{ 'news.saveChanges' | translate }}</span>
+                  <span *ngIf="isUpdatingNews"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...</span>
                 </button>
               </div>
             </div>
@@ -604,11 +629,19 @@ interface ManagedTemplateItem {
                   <p class="text-xs text-slate-300 line-clamp-2">{{ news.text }}</p>
                 </div>
 
-                <button 
-                  (click)="promptDeleteNews(news)" 
-                  class="btn btn-danger btn-sm text-xs px-2.5 py-1 shrink-0 self-end sm:self-center">
-                  <i class="fa-solid fa-trash"></i> {{ 'admin.delete' | translate }}
-                </button>
+                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                  <button 
+                    (click)="startEditNews(news)" 
+                    class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
+                    <i class="fa-solid fa-pen text-amber-400"></i> {{ 'news.editBtn' | translate }}
+                  </button>
+
+                  <button 
+                    (click)="promptDeleteNews(news)" 
+                    class="btn btn-danger btn-sm text-xs px-2.5 py-1">
+                    <i class="fa-solid fa-trash"></i> {{ 'admin.delete' | translate }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -647,6 +680,8 @@ export class AdminPanelComponent implements OnInit {
   newNewsTitle = '';
   newNewsText = '';
   isPostingNews = false;
+  editingNews: NewsDto | null = null;
+  isUpdatingNews = false;
   selectedNewsForDelete: NewsDto | null = null;
   showDeleteNewsModal = false;
 
@@ -1078,9 +1113,48 @@ export class AdminPanelComponent implements OnInit {
           this.notificationService.error(res.message || 'Failed to post news item', 'Error');
         }
       },
-      error: () => {
+      error: (err) => {
         this.isPostingNews = false;
-        this.notificationService.error('Failed to post news item', 'Error');
+        const msg = err?.error?.message || err?.message || 'Failed to post news item';
+        this.notificationService.error(msg, 'Error');
+      }
+    });
+  }
+
+  startEditNews(news: NewsDto) {
+    this.editingNews = news;
+    this.newNewsTitle = news.title;
+    this.newNewsText = news.text;
+  }
+
+  cancelEditNews() {
+    this.editingNews = null;
+    this.newNewsTitle = '';
+    this.newNewsText = '';
+  }
+
+  submitUpdateNews() {
+    if (!this.editingNews || !this.newNewsTitle.trim() || !this.newNewsText.trim()) return;
+
+    this.isUpdatingNews = true;
+    this.newsService.updateNews(this.editingNews.id, {
+      title: this.newNewsTitle.trim(),
+      text: this.newNewsText.trim()
+    }).subscribe({
+      next: (res) => {
+        this.isUpdatingNews = false;
+        if (res.statusCode === 200) {
+          this.notificationService.success('News item updated successfully.', 'News Updated');
+          this.cancelEditNews();
+          this.loadNewsForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to update news item', 'Error');
+        }
+      },
+      error: (err) => {
+        this.isUpdatingNews = false;
+        const msg = err?.error?.message || err?.message || 'Failed to update news item';
+        this.notificationService.error(msg, 'Error');
       }
     });
   }
