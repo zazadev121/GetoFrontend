@@ -432,7 +432,7 @@ interface StaticTemplateItem {
                     : 'In Phase 1 registration, submitting your Resume (CV) is required.' 
                   }}
                 </p>
-                <p class="leading-relaxed font-semibold text-emerald-400">
+                <p class="leading-relaxed font-extrabold text-amber-400">
                   {{ translationService.isGeorgian() 
                     ? 'რეზიუმეების გადარჩევის შემდეგ, წარმატებული კანდიდატებისთვის რეგისტრაციის საფასური შეადგენს 150 ლარს.' 
                     : 'Following screening, the registration fee for successful candidates is 150 GEL.' 

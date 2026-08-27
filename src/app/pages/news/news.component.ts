@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { NewsDto } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, FileSizePipe],
   template: `
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 animate-fade-in">
       
@@ -85,6 +86,58 @@ import { NewsDto } from '../../core/models/news.model';
           <div class="text-slate-200 text-sm sm:text-base leading-relaxed whitespace-pre-line pt-2">
             {{ getText(news) }}
           </div>
+
+          <!-- Interactive Links Section -->
+          <div *ngIf="news.links && news.links.length > 0" class="pt-3 border-t border-slate-800/80 space-y-2">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-link text-blue-400"></i>
+              <span>{{ translationService.isGeorgian() ? 'ბმულები' : 'Links' }}</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <a 
+                *ngFor="let link of news.links" 
+                [href]="link.url" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="btn btn-secondary text-xs py-1.5 px-3 bg-blue-950/40 border-blue-500/30 text-blue-300 hover:bg-blue-900/60 hover:text-white flex items-center gap-1.5 transition-colors">
+                <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
+                <span>{{ link.label }}</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Downloadable File Attachments Section -->
+          <div *ngIf="news.attachments && news.attachments.length > 0" class="pt-3 border-t border-slate-800/80 space-y-2">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-paperclip text-emerald-400"></i>
+              <span>{{ translationService.isGeorgian() ? 'მიმაგრებული ფაილები' : 'Attachments' }}</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <div 
+                *ngFor="let att of news.attachments" 
+                class="p-3 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl flex items-center justify-between transition-all gap-2 group/att">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm shrink-0">
+                    <i class="fa-solid" [ngClass]="getFileIcon(att.fileName)"></i>
+                  </div>
+                  <div class="truncate">
+                    <div class="text-xs font-semibold text-slate-200 truncate group-hover/att:text-white transition-colors" [title]="att.fileName">{{ att.fileName }}</div>
+                    <div class="text-[10px] text-slate-400">{{ att.fileSize | fileSize }}</div>
+                  </div>
+                </div>
+
+                <a 
+                  [href]="newsService.getAttachmentDownloadUrl(att.id)" 
+                  target="_blank"
+                  [download]="att.fileName"
+                  class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0 bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors">
+                  <i class="fa-solid fa-download text-[10px]"></i>
+                  <span>{{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -118,6 +171,15 @@ export class NewsComponent implements OnInit {
       return news.textEn;
     }
     return news.text;
+  }
+
+  getFileIcon(filename: string): string {
+    const ext = filename.toLowerCase().split('.').pop();
+    if (ext === 'pdf') return 'fa-file-pdf text-rose-400';
+    if (ext === 'docx' || ext === 'doc') return 'fa-file-word text-blue-400';
+    if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext || '')) return 'fa-file-image text-purple-400';
+    if (['zip', 'rar', '7z'].includes(ext || '')) return 'fa-file-zipper text-amber-400';
+    return 'fa-file-lines text-emerald-400';
   }
 
   loadNews() {

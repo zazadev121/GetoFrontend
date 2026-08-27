@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../config/api.config';
 import { ApiResponse } from '../models/api-response.model';
-import { NewsDto, CreateNewsDto } from '../models/news.model';
+import { NewsDto, CreateNewsDto, NewsAttachmentDto } from '../models/news.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +26,24 @@ export class NewsService {
 
   deleteNews(id: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/${id}`);
+  }
+
+  uploadAttachment(newsId: number, file: File): Observable<ApiResponse<NewsAttachmentDto>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiResponse<NewsAttachmentDto>>(`${this.baseUrl}/${newsId}/attachments`, formData);
+  }
+
+  deleteAttachment(attachmentId: number): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.baseUrl}/attachments/${attachmentId}`);
+  }
+
+  getAttachmentDownloadUrl(attachmentId: number): string {
+    return `${this.baseUrl}/attachments/${attachmentId}/download`;
+  }
+
+  downloadAttachment(attachmentId: number, fileName: string): Observable<Blob> {
+    const url = this.getAttachmentDownloadUrl(attachmentId);
+    return this.http.get(url, { responseType: 'blob' });
   }
 }

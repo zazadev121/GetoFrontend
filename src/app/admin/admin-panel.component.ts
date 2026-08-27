@@ -7,7 +7,7 @@ import { NotificationService } from '../core/services/notification.service';
 import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
-import { NewsDto } from '../core/models/news.model';
+import { NewsDto, NewsLinkDto, NewsAttachmentDto } from '../core/models/news.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
 import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
@@ -621,6 +621,94 @@ interface ManagedTemplateItem {
                 </div>
               </ng-container>
 
+              <!-- Links Section -->
+              <div class="p-3 bg-slate-950/60 rounded-lg border border-slate-800 space-y-3">
+                <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-link text-blue-400"></i>
+                  <span>Links / External URLs</span>
+                </div>
+
+                <!-- Active links list -->
+                <div *ngIf="newsLinks.length > 0" class="space-y-1.5">
+                  <div *ngFor="let link of newsLinks; let i = index" class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded border border-slate-800">
+                    <div class="truncate mr-2">
+                      <span class="font-semibold text-white">{{ link.label }}</span>
+                      <span class="text-slate-400 text-[11px] ml-2 font-mono">({{ link.url }})</span>
+                    </div>
+                    <button type="button" (click)="removeNewsLink(i)" class="text-rose-400 hover:text-rose-300 px-1">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="newLinkLabel" 
+                    placeholder="Link Label (e.g. Website)" 
+                    class="form-control text-xs sm:col-span-2">
+                  <input 
+                    type="url" 
+                    [(ngModel)]="newLinkUrl" 
+                    placeholder="https://example.com" 
+                    class="form-control text-xs sm:col-span-2">
+                  <button 
+                    type="button" 
+                    (click)="addNewsLink()" 
+                    [disabled]="!newLinkLabel.trim() || !newLinkUrl.trim()" 
+                    class="btn btn-secondary btn-sm text-xs sm:col-span-1">
+                    <i class="fa-solid fa-plus"></i> Add Link
+                  </button>
+                </div>
+              </div>
+
+              <!-- Attachments / Files Section -->
+              <div class="p-3 bg-slate-950/60 rounded-lg border border-slate-800 space-y-3">
+                <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-paperclip text-emerald-400"></i>
+                  <span>File Attachments</span>
+                </div>
+
+                <!-- Existing attachments when editing -->
+                <div *ngIf="editingNews && editingNews.attachments && editingNews.attachments.length > 0" class="space-y-1.5">
+                  <div *ngFor="let att of editingNews.attachments" class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded border border-slate-800">
+                    <div class="flex items-center gap-2 truncate">
+                      <i class="fa-solid fa-file text-blue-400"></i>
+                      <span class="font-semibold text-white truncate">{{ att.fileName }}</span>
+                      <span class="text-[10px] text-slate-400">({{ att.fileSize | fileSize }})</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <a [href]="newsService.getAttachmentDownloadUrl(att.id)" target="_blank" download class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
+                        <i class="fa-solid fa-download"></i>
+                      </a>
+                      <button type="button" (click)="deleteNewsAttachment(att.id)" class="btn btn-danger btn-sm text-[10px] px-2 py-0.5">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Selected pending files -->
+                <div *ngIf="selectedNewsFiles.length > 0" class="space-y-1 text-xs">
+                  <div *ngFor="let f of selectedNewsFiles; let i = index" class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded border border-emerald-500/30">
+                    <span class="truncate text-emerald-300"><i class="fa-solid fa-file-arrow-up mr-1"></i>{{ f.name }}</span>
+                    <button type="button" (click)="removeSelectedNewsFile(i)" class="text-rose-400 hover:text-rose-300 text-xs px-1">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- File input -->
+                <div>
+                  <input 
+                    type="file" 
+                    multiple 
+                    (change)="onNewsFileSelected($event)" 
+                    class="form-control text-xs">
+                  <p class="text-[10px] text-slate-500 mt-1">Select files to attach to this news post (PDF, DOCX, Images, etc.)</p>
+                </div>
+              </div>
+
               <!-- Translation Status Indicators -->
               <div class="flex items-center gap-3 text-[10px] font-semibold">
                 <span class="flex items-center gap-1" [ngClass]="newNewsTitle.trim() ? 'text-emerald-400' : 'text-slate-500'">
@@ -744,6 +832,10 @@ export class AdminPanelComponent implements OnInit {
   newNewsTitleEn = '';
   newNewsTextEn = '';
   newsFormLang: 'ka' | 'en' = 'ka';
+  newsLinks: NewsLinkDto[] = [];
+  newLinkLabel = '';
+  newLinkUrl = '';
+  selectedNewsFiles: File[] = [];
   isPostingNews = false;
   editingNews: NewsDto | null = null;
   isUpdatingNews = false;
@@ -1159,6 +1251,50 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+  // News Links and Files methods
+  addNewsLink() {
+    if (!this.newLinkLabel.trim() || !this.newLinkUrl.trim()) return;
+    let url = this.newLinkUrl.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    this.newsLinks.push({ label: this.newLinkLabel.trim(), url });
+    this.newLinkLabel = '';
+    this.newLinkUrl = '';
+  }
+
+  removeNewsLink(index: number) {
+    this.newsLinks.splice(index, 1);
+  }
+
+  onNewsFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      for (let i = 0; i < event.target.files.length; i++) {
+        this.selectedNewsFiles.push(event.target.files[i]);
+      }
+    }
+  }
+
+  removeSelectedNewsFile(index: number) {
+    this.selectedNewsFiles.splice(index, 1);
+  }
+
+  deleteNewsAttachment(attachmentId: number) {
+    this.newsService.deleteAttachment(attachmentId).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          this.notificationService.success('Attachment deleted', 'Deleted');
+          if (this.editingNews && this.editingNews.attachments) {
+            this.editingNews.attachments = this.editingNews.attachments.filter(a => a.id !== attachmentId);
+          }
+          this.loadNewsForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to delete attachment', 'Error');
+        }
+      }
+    });
+  }
+
   submitCreateNews() {
     if (!this.newNewsTitle.trim() || !this.newNewsText.trim()) return;
 
@@ -1167,19 +1303,37 @@ export class AdminPanelComponent implements OnInit {
       title: this.newNewsTitle.trim(),
       text: this.newNewsText.trim(),
       titleEn: this.newNewsTitleEn.trim() || undefined,
-      textEn: this.newNewsTextEn.trim() || undefined
+      textEn: this.newNewsTextEn.trim() || undefined,
+      links: this.newsLinks.length > 0 ? this.newsLinks : undefined
     }).subscribe({
       next: (res) => {
-        this.isPostingNews = false;
-        if (res.statusCode === 200) {
-          this.notificationService.success('News item posted successfully.', 'News Posted');
-          this.newNewsTitle = '';
-          this.newNewsText = '';
-          this.newNewsTitleEn = '';
-          this.newNewsTextEn = '';
-          this.newsFormLang = 'ka';
-          this.loadNewsForAdmin();
+        if (res.statusCode === 200 && res.data) {
+          const createdNews = res.data;
+          // Upload files if any selected
+          if (this.selectedNewsFiles.length > 0) {
+            let uploadedCount = 0;
+            const filesToUpload = [...this.selectedNewsFiles];
+            filesToUpload.forEach(file => {
+              this.newsService.uploadAttachment(createdNews.id, file).subscribe({
+                next: () => {
+                  uploadedCount++;
+                  if (uploadedCount === filesToUpload.length) {
+                    this.finishCreateNews();
+                  }
+                },
+                error: () => {
+                  uploadedCount++;
+                  if (uploadedCount === filesToUpload.length) {
+                    this.finishCreateNews();
+                  }
+                }
+              });
+            });
+          } else {
+            this.finishCreateNews();
+          }
         } else {
+          this.isPostingNews = false;
           this.notificationService.error(res.message || 'Failed to post news item', 'Error');
         }
       },
@@ -1191,6 +1345,26 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+  private finishCreateNews() {
+    this.isPostingNews = false;
+    this.notificationService.success('News item posted successfully.', 'News Posted');
+    this.resetNewsForm();
+    this.loadNewsForAdmin();
+  }
+
+  private resetNewsForm() {
+    this.newNewsTitle = '';
+    this.newNewsText = '';
+    this.newNewsTitleEn = '';
+    this.newNewsTextEn = '';
+    this.newsFormLang = 'ka';
+    this.newsLinks = [];
+    this.newLinkLabel = '';
+    this.newLinkUrl = '';
+    this.selectedNewsFiles = [];
+    this.editingNews = null;
+  }
+
   startEditNews(news: NewsDto) {
     this.editingNews = news;
     this.newNewsTitle = news.title;
@@ -1198,34 +1372,52 @@ export class AdminPanelComponent implements OnInit {
     this.newNewsTitleEn = news.titleEn || '';
     this.newNewsTextEn = news.textEn || '';
     this.newsFormLang = 'ka';
+    this.newsLinks = news.links ? [...news.links] : [];
+    this.selectedNewsFiles = [];
   }
 
   cancelEditNews() {
-    this.editingNews = null;
-    this.newNewsTitle = '';
-    this.newNewsText = '';
-    this.newNewsTitleEn = '';
-    this.newNewsTextEn = '';
-    this.newsFormLang = 'ka';
+    this.resetNewsForm();
   }
 
   submitUpdateNews() {
     if (!this.editingNews || !this.newNewsTitle.trim() || !this.newNewsText.trim()) return;
 
     this.isUpdatingNews = true;
-    this.newsService.updateNews(this.editingNews.id, {
+    const newsId = this.editingNews.id;
+    this.newsService.updateNews(newsId, {
       title: this.newNewsTitle.trim(),
       text: this.newNewsText.trim(),
       titleEn: this.newNewsTitleEn.trim() || undefined,
-      textEn: this.newNewsTextEn.trim() || undefined
+      textEn: this.newNewsTextEn.trim() || undefined,
+      links: this.newsLinks.length > 0 ? this.newsLinks : undefined
     }).subscribe({
       next: (res) => {
-        this.isUpdatingNews = false;
         if (res.statusCode === 200) {
-          this.notificationService.success('News item updated successfully.', 'News Updated');
-          this.cancelEditNews();
-          this.loadNewsForAdmin();
+          if (this.selectedNewsFiles.length > 0) {
+            let uploadedCount = 0;
+            const filesToUpload = [...this.selectedNewsFiles];
+            filesToUpload.forEach(file => {
+              this.newsService.uploadAttachment(newsId, file).subscribe({
+                next: () => {
+                  uploadedCount++;
+                  if (uploadedCount === filesToUpload.length) {
+                    this.finishUpdateNews();
+                  }
+                },
+                error: () => {
+                  uploadedCount++;
+                  if (uploadedCount === filesToUpload.length) {
+                    this.finishUpdateNews();
+                  }
+                }
+              });
+            });
+          } else {
+            this.finishUpdateNews();
+          }
         } else {
+          this.isUpdatingNews = false;
           this.notificationService.error(res.message || 'Failed to update news item', 'Error');
         }
       },
@@ -1235,6 +1427,13 @@ export class AdminPanelComponent implements OnInit {
         this.notificationService.error(msg, 'Error');
       }
     });
+  }
+
+  private finishUpdateNews() {
+    this.isUpdatingNews = false;
+    this.notificationService.success('News item updated successfully.', 'News Updated');
+    this.resetNewsForm();
+    this.loadNewsForAdmin();
   }
 
   promptDeleteNews(news: NewsDto) {
