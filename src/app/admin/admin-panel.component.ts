@@ -2,10 +2,12 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../core/services/admin.service';
+import { NewsService } from '../core/services/news.service';
 import { NotificationService } from '../core/services/notification.service';
 import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
+import { NewsDto } from '../core/models/news.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
 import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
@@ -63,6 +65,12 @@ interface ManagedTemplateItem {
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
+            <button 
+              (click)="openNewsModal()" 
+              class="btn btn-secondary text-xs">
+              <i class="fa-solid fa-newspaper text-blue-400"></i>
+              {{ 'news.adminTitle' | translate }}
+            </button>
             <button 
               (click)="openTemplateManagerModal()" 
               class="btn btn-secondary text-xs">
@@ -518,17 +526,129 @@ interface ManagedTemplateItem {
         (cancelled)="showDeleteTemplateModal = false">
       </app-confirm-dialog>
 
+      <!-- News Management Modal -->
+      <div *ngIf="showNewsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+        <div class="glass-card max-w-3xl w-full p-6 border-blue-500/30 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div class="flex items-center gap-2 text-blue-400 font-bold">
+              <i class="fa-solid fa-newspaper text-lg"></i>
+              <h3 class="text-lg text-white font-heading">{{ 'news.adminTitle' | translate }}</h3>
+            </div>
+            <button (click)="showNewsModal = false" class="text-slate-400 hover:text-white">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Post New News Form -->
+          <div class="p-4 bg-slate-900/90 rounded-xl border border-blue-500/20 space-y-4">
+            <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-blue-400"></i>
+              {{ 'news.addBtn' | translate }}
+            </h4>
+
+            <div class="space-y-3">
+              <div>
+                <label class="form-label" for="news-title">{{ 'news.inputTitle' | translate }}</label>
+                <input 
+                  id="news-title"
+                  type="text" 
+                  [(ngModel)]="newNewsTitle" 
+                  [placeholder]="'news.titlePlaceholder' | translate" 
+                  class="form-control text-xs">
+              </div>
+
+              <div>
+                <label class="form-label" for="news-text">{{ 'news.inputText' | translate }}</label>
+                <textarea 
+                  id="news-text"
+                  rows="3" 
+                  [(ngModel)]="newNewsText" 
+                  [placeholder]="'news.textPlaceholder' | translate" 
+                  class="form-control text-xs resize-none"></textarea>
+              </div>
+
+              <div class="flex justify-end">
+                <button 
+                  (click)="submitCreateNews()" 
+                  [disabled]="!newNewsTitle.trim() || !newNewsText.trim() || isPostingNews"
+                  class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
+                  <span *ngIf="!isPostingNews"><i class="fa-solid fa-paper-plane mr-1"></i> {{ 'news.addBtn' | translate }}</span>
+                  <span *ngIf="isPostingNews"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Posting...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- List of Posted News Items -->
+          <div class="space-y-3">
+            <h4 class="text-sm font-bold text-white font-heading">Posted News ({{ newsList.length }})</h4>
+
+            <div *ngIf="isLoadingNews" class="py-6 text-center text-xs text-slate-400">
+              <i class="fa-solid fa-spinner fa-spin text-lg text-blue-500 mb-1"></i>
+              <div>Loading news items...</div>
+            </div>
+
+            <div *ngIf="!isLoadingNews && newsList.length === 0" class="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              No news items posted yet.
+            </div>
+
+            <div *ngIf="!isLoadingNews && newsList.length > 0" class="space-y-2">
+              <div 
+                *ngFor="let news of newsList" 
+                class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="overflow-hidden flex-1 space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-sm text-white truncate">{{ news.title }}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">({{ news.dateCreated | date:'short' }})</span>
+                  </div>
+                  <p class="text-xs text-slate-300 line-clamp-2">{{ news.text }}</p>
+                </div>
+
+                <button 
+                  (click)="promptDeleteNews(news)" 
+                  class="btn btn-danger btn-sm text-xs px-2.5 py-1 shrink-0 self-end sm:self-center">
+                  <i class="fa-solid fa-trash"></i> {{ 'admin.delete' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-white/10 flex justify-end">
+            <button (click)="showNewsModal = false" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
+          </div>
+        </div>
+      </div>
+
+      <app-confirm-dialog
+        [isOpen]="showDeleteNewsModal"
+        title="Delete News Item"
+        [message]="getDeleteNewsMessage()"
+        confirmText="Delete News"
+        (confirmed)="confirmDeleteNews()"
+        (cancelled)="showDeleteNewsModal = false">
+      </app-confirm-dialog>
+
     </div>
   `
 })
 export class AdminPanelComponent implements OnInit {
   adminService = inject(AdminService);
+  newsService = inject(NewsService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;
   searchQuery = '';
+
+  newsList: NewsDto[] = [];
+  isLoadingNews = false;
+  showNewsModal = false;
+  newNewsTitle = '';
+  newNewsText = '';
+  isPostingNews = false;
+  selectedNewsForDelete: NewsDto | null = null;
+  showDeleteNewsModal = false;
 
   selectedUserForInspect: UserWithDocumentsDto | null = null;
   selectedUserForDelete: UserWithDocumentsDto | null = null;
@@ -916,5 +1036,84 @@ export class AdminPanelComponent implements OnInit {
       case 3: return 'text-purple-400 bg-purple-950/40 border-purple-500/30';
       default: return '';
     }
+  }
+
+  // News Management Methods
+  openNewsModal() {
+    this.showNewsModal = true;
+    this.loadNewsForAdmin();
+  }
+
+  loadNewsForAdmin() {
+    this.isLoadingNews = true;
+    this.newsService.getAllNews().subscribe({
+      next: (res) => {
+        this.isLoadingNews = false;
+        if (res.statusCode === 200 && Array.isArray(res.data)) {
+          this.newsList = res.data;
+        }
+      },
+      error: () => {
+        this.isLoadingNews = false;
+      }
+    });
+  }
+
+  submitCreateNews() {
+    if (!this.newNewsTitle.trim() || !this.newNewsText.trim()) return;
+
+    this.isPostingNews = true;
+    this.newsService.createNews({
+      title: this.newNewsTitle.trim(),
+      text: this.newNewsText.trim()
+    }).subscribe({
+      next: (res) => {
+        this.isPostingNews = false;
+        if (res.statusCode === 200) {
+          this.notificationService.success('News item posted successfully.', 'News Posted');
+          this.newNewsTitle = '';
+          this.newNewsText = '';
+          this.loadNewsForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to post news item', 'Error');
+        }
+      },
+      error: () => {
+        this.isPostingNews = false;
+        this.notificationService.error('Failed to post news item', 'Error');
+      }
+    });
+  }
+
+  promptDeleteNews(news: NewsDto) {
+    this.selectedNewsForDelete = news;
+    this.showDeleteNewsModal = true;
+  }
+
+  confirmDeleteNews() {
+    if (!this.selectedNewsForDelete) return;
+    const id = this.selectedNewsForDelete.id;
+
+    this.newsService.deleteNews(id).subscribe({
+      next: (res) => {
+        this.showDeleteNewsModal = false;
+        this.selectedNewsForDelete = null;
+        if (res.statusCode === 200) {
+          this.notificationService.success('News item deleted.', 'Deleted');
+          this.loadNewsForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to delete news item', 'Error');
+        }
+      },
+      error: () => {
+        this.showDeleteNewsModal = false;
+        this.notificationService.error('Failed to delete news item', 'Error');
+      }
+    });
+  }
+
+  getDeleteNewsMessage(): string {
+    const title = this.selectedNewsForDelete?.title || '';
+    return `Are you sure you want to delete news item "${title}"?`;
   }
 }

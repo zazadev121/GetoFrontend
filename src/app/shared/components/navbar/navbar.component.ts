@@ -209,9 +209,9 @@ export class NavbarComponent {
   isMobileMenuOpen = false;
 
   navLinks = [
-    { path: '/about', icon: 'fa-circle-info', color: '#3b82f6', labelEn: 'About', labelKa: 'ჩვენს შესახებ' },
-    { path: '/recommendations', icon: 'fa-star', color: '#f59e0b', labelEn: 'Reviews', labelKa: 'რეკომენდაციები' },
-    { path: '/german-course', icon: 'fa-language', color: '#10b981', labelEn: 'German Course', labelKa: 'გერმანული კურსი' },
+    { path: '/about', icon: 'fa-circle-info', color: '#3b82f6', labelEn: 'About', labelKa: 'ჩვენ შესახებ' },
+    { path: '/news', icon: 'fa-newspaper', color: '#3b82f6', labelEn: 'News', labelKa: 'სიახლეები' },
+    { path: '/german-course', icon: 'fa-language', color: '#10b981', labelEn: 'German Course', labelKa: 'გერმანული ენის კურსი' },
     { path: '/steuer', icon: 'fa-receipt', color: '#14b8a6', labelEn: 'Steuer', labelKa: 'შტოიერი' },
     { path: '/contact', icon: 'fa-phone', color: '#6366f1', labelEn: 'Contact', labelKa: 'კონტაქტი' },
   ];

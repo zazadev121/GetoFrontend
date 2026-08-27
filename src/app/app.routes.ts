@@ -12,8 +12,8 @@ export const routes: Routes = [
     loadComponent: () => import('./about/about-us.component').then(m => m.AboutUsComponent)
   },
   {
-    path: 'recommendations',
-    loadComponent: () => import('./pages/recommendations/recommendations.component').then(m => m.RecommendationsComponent)
+    path: 'news',
+    loadComponent: () => import('./pages/news/news.component').then(m => m.NewsComponent)
   },
   {
     path: 'german-course',
