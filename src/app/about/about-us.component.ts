@@ -55,36 +55,36 @@ import { TranslatePipe } from '../shared/pipes/translate.pipe';
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-blue-500/40 transition-colors">
           <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-calendar-check"></i>
+            <i class="fa-solid fa-handshake-angle"></i>
           </div>
           <h3 class="text-lg font-bold text-white font-heading">
             {{ 'about.stat1.title' | translate }}
           </h3>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs text-slate-400 leading-relaxed">
             {{ 'about.stat1.sub' | translate }}
           </p>
         </div>
 
         <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-emerald-500/40 transition-colors">
           <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-plane-departure"></i>
+            <i class="fa-solid fa-comments"></i>
           </div>
           <h3 class="text-lg font-bold text-white font-heading">
             {{ 'about.stat2.title' | translate }}
           </h3>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs text-slate-400 leading-relaxed">
             {{ 'about.stat2.sub' | translate }}
           </p>
         </div>
 
         <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-purple-500/40 transition-colors">
           <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-file-contract"></i>
+            <i class="fa-solid fa-file-signature"></i>
           </div>
           <h3 class="text-lg font-bold text-white font-heading">
             {{ 'about.stat3.title' | translate }}
           </h3>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs text-slate-400 leading-relaxed">
             {{ 'about.stat3.sub' | translate }}
           </p>
         </div>
