@@ -24,8 +24,8 @@ import { NotificationService } from '../../core/services/notification.service';
 
         <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
           {{ translationService.isGeorgian() 
-            ? 'გაქვთ შეკითხვები გერმანიაში დასაქმებასთან, გერმანული ენის კურსებთან ან „შტოიერის“ დაბრუნებასთან დაკავშირებით? დაგვიკავშირდით ნებისმიერ დროს!' 
-            : 'Have questions regarding employment in Germany, German language courses, or Steuer tax refund? Contact us anytime!' 
+            ? 'კითხვების, კონსულტაციისა და დოკუმენტაციის საკითხებზე დაგვიკავშირდით თქვენთვის სასურველი საკომუნიკაციო არხით.' 
+            : 'For questions, consultation, and documentation matters, contact us through your preferred communication channel.' 
           }}
         </p>
       </div>
