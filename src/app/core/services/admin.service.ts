@@ -56,16 +56,20 @@ export class AdminService {
     );
   }
 
-  updateUserStatus(userId: number, status: number): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/status`, null, {
-      params: { status: status.toString() }
-    });
+  updateUserStatus(userId: number, status: number, comment?: string): Observable<ApiResponse<any>> {
+    const params: any = { status: status.toString() };
+    if (comment && comment.trim()) {
+      params.comment = comment.trim();
+    }
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/status`, null, { params });
   }
 
-  updateUserPhase(userId: number, phase: number): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/phase`, null, {
-      params: { phase: phase.toString() }
-    });
+  updateUserPhase(userId: number, phase: number, comment?: string): Observable<ApiResponse<any>> {
+    const params: any = { phase: phase.toString() };
+    if (comment && comment.trim()) {
+      params.comment = comment.trim();
+    }
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/phase`, null, { params });
   }
 
   deleteUser(userId: number): Observable<ApiResponse<any>> {

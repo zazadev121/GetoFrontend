@@ -489,6 +489,57 @@ interface ManagedTemplateItem {
         </div>
       </div>
 
+      <!-- Status / Phase Change Comment Dialog Modal -->
+      <div *ngIf="showChangeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+        <div class="glass-card max-w-md w-full p-6 border-blue-500/30 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div class="flex items-center gap-2 text-blue-400 font-bold">
+              <i class="fa-solid" [ngClass]="changeType === 'status' ? 'fa-user-check' : 'fa-layer-group'"></i>
+              <h3 class="text-base text-white font-heading">
+                {{ changeType === 'status' ? 'Update User Status' : 'Update User Phase' }}
+              </h3>
+            </div>
+            <button (click)="cancelChangeModal()" class="text-slate-400 hover:text-white">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs space-y-1">
+            <div class="font-bold text-white">{{ targetUserForChange?.name }} {{ targetUserForChange?.lastName }}</div>
+            <div class="text-slate-400 text-[11px] font-mono">{{ targetUserForChange?.email }}</div>
+            <div class="pt-2 text-slate-300 flex items-center gap-2 font-medium">
+              <span>Change {{ changeType === 'status' ? 'Status' : 'Phase' }}:</span>
+              <span class="text-amber-400 font-bold">{{ getChangeSummaryText() }}</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label text-xs block mb-1 font-semibold text-slate-300">
+              კომენტარი / მიზეზი (Comment / Reason — Optional):
+            </label>
+            <textarea 
+              rows="3" 
+              [(ngModel)]="changeComment" 
+              placeholder="e.g. გაუქმების მიზეზი, დამატებითი ინსტრუქცია სტუდენტისთვის..."
+              class="form-control text-xs resize-none"></textarea>
+            <p class="text-[10px] text-slate-500 mt-1">This comment will be included at the end of the email notification sent to the student.</p>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2">
+            <button (click)="cancelChangeModal()" class="btn btn-secondary btn-sm text-xs">
+              Cancel
+            </button>
+            <button 
+              (click)="confirmChangeModal()" 
+              [disabled]="isSubmittingChange"
+              class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
+              <span *ngIf="!isSubmittingChange"><i class="fa-solid fa-paper-plane mr-1"></i> Confirm & Send Email</span>
+              <span *ngIf="isSubmittingChange"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Updating...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Confirmation Modals -->
       <app-confirm-dialog
         [isOpen]="showDeleteUserModal"
@@ -857,6 +908,13 @@ export class AdminPanelComponent implements OnInit {
   showBulkModal = false;
   showTemplateManagerModal = false;
 
+  showChangeModal = false;
+  changeType: 'status' | 'phase' = 'status';
+  targetUserForChange: UserWithDocumentsDto | null = null;
+  targetNewValue: number = 0;
+  changeComment = '';
+  isSubmittingChange = false;
+
   bulkPhase: number = 0;
   bulkFile: File | null = null;
   isUploadingBulk = false;
@@ -1068,33 +1126,107 @@ export class AdminPanelComponent implements OnInit {
     this.loadUsers();
   }
 
-  // Update Status & Phase Handlers
+  // Update Status & Phase Handlers with Comment Dialog
   onUpdateStatus(user: UserWithDocumentsDto, newStatus: number) {
     const statusNum = Number(newStatus);
-    this.adminService.updateUserStatus(user.id, statusNum).subscribe({
-      next: (res) => {
-        if (res.statusCode === 200) {
-          user.status = statusNum;
-          this.notificationService.success(`Status for ${user.name} updated to status ${statusNum}`, 'Status Updated');
-        } else {
-          this.notificationService.error(res.message || 'Failed to update status', 'Error');
-        }
-      }
-    });
+    if (statusNum === user.status) return;
+
+    this.targetUserForChange = user;
+    this.changeType = 'status';
+    this.targetNewValue = statusNum;
+    this.changeComment = '';
+    this.showChangeModal = true;
   }
 
   onUpdatePhase(user: UserWithDocumentsDto, newPhase: number) {
     const phaseNum = Number(newPhase);
-    this.adminService.updateUserPhase(user.id, phaseNum).subscribe({
-      next: (res) => {
-        if (res.statusCode === 200) {
-          user.userPhase = phaseNum;
-          this.notificationService.success(`Phase for ${user.name} updated to phase ${phaseNum}`, 'Phase Updated');
-        } else {
-          this.notificationService.error(res.message || 'Failed to update phase', 'Error');
+    if (phaseNum === user.userPhase) return;
+
+    this.targetUserForChange = user;
+    this.changeType = 'phase';
+    this.targetNewValue = phaseNum;
+    this.changeComment = '';
+    this.showChangeModal = true;
+  }
+
+  cancelChangeModal() {
+    this.showChangeModal = false;
+    this.targetUserForChange = null;
+    this.changeComment = '';
+  }
+
+  getChangeSummaryText(): string {
+    if (!this.targetUserForChange) return '';
+    if (this.changeType === 'status') {
+      const oldLabel = this.getStatusName(this.targetUserForChange.status);
+      const newLabel = this.getStatusName(this.targetNewValue);
+      return `${oldLabel} ➔ ${newLabel}`;
+    } else {
+      const oldLabel = this.getPhaseName(this.targetUserForChange.userPhase);
+      const newLabel = this.getPhaseName(this.targetNewValue);
+      return `${oldLabel} ➔ ${newLabel}`;
+    }
+  }
+
+  getStatusName(val: number): string {
+    switch (Number(val)) {
+      case 0: return 'Pending';
+      case 1: return 'Rejected';
+      case 2: return 'Approved';
+      case 3: return 'Resubmission';
+      default: return 'Unknown';
+    }
+  }
+
+  getPhaseName(val: number): string {
+    switch (Number(val)) {
+      case 0: return 'Phase 1';
+      case 1: return 'Phase 2';
+      case 2: return 'Phase 3';
+      case 3: return 'Canceled';
+      default: return 'Unknown';
+    }
+  }
+
+  confirmChangeModal() {
+    if (!this.targetUserForChange) return;
+
+    const user = this.targetUserForChange;
+    this.isSubmittingChange = true;
+
+    if (this.changeType === 'status') {
+      this.adminService.updateUserStatus(user.id, this.targetNewValue, this.changeComment).subscribe({
+        next: (res) => {
+          this.isSubmittingChange = false;
+          this.showChangeModal = false;
+          if (res.statusCode === 200) {
+            user.status = this.targetNewValue;
+            this.notificationService.success(`Status for ${user.name} updated & email sent!`, 'Status Updated');
+          } else {
+            this.notificationService.error(res.message || 'Failed to update status', 'Error');
+          }
+        },
+        error: () => {
+          this.isSubmittingChange = false;
         }
-      }
-    });
+      });
+    } else {
+      this.adminService.updateUserPhase(user.id, this.targetNewValue, this.changeComment).subscribe({
+        next: (res) => {
+          this.isSubmittingChange = false;
+          this.showChangeModal = false;
+          if (res.statusCode === 200) {
+            user.userPhase = this.targetNewValue;
+            this.notificationService.success(`Phase for ${user.name} updated & email sent!`, 'Phase Updated');
+          } else {
+            this.notificationService.error(res.message || 'Failed to update phase', 'Error');
+          }
+        },
+        error: () => {
+          this.isSubmittingChange = false;
+        }
+      });
+    }
   }
 
   // Inspector & Download
