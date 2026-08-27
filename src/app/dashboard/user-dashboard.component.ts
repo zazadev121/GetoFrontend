@@ -451,7 +451,7 @@ interface StaticTemplateItem {
                     : 'The 150 GEL registration fee covers receiving, processing, and mailing your required documents to Germany for Phase 2 in January.'
                   }}
                 </p>
-                <p class="leading-relaxed text-xs text-amber-300/90 font-medium pt-2 border-t border-amber-500/20">
+                <p class="leading-relaxed text-xs text-amber-300 font-semibold pt-2 border-t border-amber-500/20">
                   {{ translationService.isGeorgian()
                     ? 'გთხოვთ, გაითვალისწინოთ: თუ სტუდენტი საკუთარი მიზეზით არ წარმოადგენს სრულყოფილ და მოთხოვნილ დოკუმენტაციას, ან დროულად არ მოგვაწვდის საჭირო დოკუმენტებს, გადახდილი სარეგისტრაციო საფასური არ ექვემდებარება დაბრუნებას.'
                     : 'Please note: if a student fails to submit complete documents on time for personal reasons, the paid registration fee is non-refundable.'

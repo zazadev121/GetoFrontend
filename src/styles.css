@@ -211,9 +211,19 @@ html.light .bg-slate-950\/85, html.light .bg-slate-950\/90, html.light .bg-slate
   background-color: #f1f5f9 !important;
 }
 html.light .bg-blue-950\/30, html.light .bg-blue-950\/40,
-html.light .bg-amber-950\/40, html.light .bg-amber-950\/30,
 html.light .bg-purple-950\/40 {
   background-color: #f1f5f9 !important;
+}
+html.light .bg-amber-950\/40, html.light .bg-amber-950\/30 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+html.light .border-amber-500\/30, html.light .border-amber-500\/20 {
+  border-color: #fde68a !important;
+}
+html.light .text-amber-300, html.light .text-amber-300\/90,
+html.light .text-amber-400, html.light .text-amber-500 {
+  color: #b45309 !important; /* Rich dark amber with high contrast for white background */
 }
 html.light .bg-slate-800 { background-color: #e2e8f0 !important; }
 
