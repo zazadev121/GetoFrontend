@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TranslationService } from '../../../core/services/translation.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { WebPushService } from '../../../core/services/web-push.service';
+import { PollNotificationService } from '../../../core/services/poll-notification.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
@@ -218,6 +219,7 @@ export class NavbarComponent {
   translationService = inject(TranslationService);
   themeService = inject(ThemeService);
   webPushService = inject(WebPushService);
+  pollNotificationService = inject(PollNotificationService);
   notificationService = inject(NotificationService);
   isMobileMenuOpen = false;
 
@@ -226,13 +228,20 @@ export class NavbarComponent {
   }
 
   async enableNotifications() {
+    if (('Notification' in window) && Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+
+    await this.pollNotificationService.init();
     await this.webPushService.init();
+
     if (('Notification' in window) && Notification.permission === 'granted') {
+      this.pollNotificationService.sendTestNotification();
       try {
         const res: any = await this.webPushService.sendTestPush();
-        this.notificationService.success(res?.message || 'Test notification sent to your browser!', 'Push Active');
+        this.notificationService.success(res?.message || 'Test notification sent!', 'Notifications Active');
       } catch (err: any) {
-        this.notificationService.info('Chrome notifications active on this device.', 'Subscribed');
+        this.notificationService.success('Browser notifications active on this device.', 'Notifications Active');
       }
     } else {
       this.notificationService.warning('Please allow notification permissions in browser settings.', 'Permission Required');

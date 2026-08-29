@@ -12,6 +12,7 @@ import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { PrivacyPolicyModalComponent } from '../shared/components/privacy-policy-modal/privacy-policy-modal.component';
 import { WebPushService } from '../core/services/web-push.service';
+import { PollNotificationService } from '../core/services/poll-notification.service';
 
 interface StaticTemplateItem {
   id: string;
@@ -586,6 +587,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
   webPushService = inject(WebPushService);
+  pollNotificationService = inject(PollNotificationService);
 
   currentUser = this.authService.currentUserSignal();
   
@@ -680,8 +682,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.loadUserProfile();
     this.loadUserDocuments();
     this.loadAdminPhaseDocuments();
-    // Register push notifications (works even with tab closed)
+    // Register push notifications & poll fallback (works across all browsers)
     this.webPushService.init();
+    this.pollNotificationService.init();
   }
 
   ngOnDestroy() {

@@ -155,6 +155,21 @@ export class PollNotificationService {
     });
   }
 
+  sendTestNotification(): void {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') {
+      const n = new Notification('🔔 GETO Project Test Notification', {
+        body: 'Notifications are working active on your browser!',
+        icon: '/recommendations/Geto Logo.jpg',
+        badge: '/recommendations/Geto Logo.jpg'
+      });
+      n.onclick = () => {
+        window.focus();
+        n.close();
+      };
+    }
+  }
+
   // ─── Show notification ───────────────────────────────────────
   private showNotification(title: string, body: string, url: string): void {
     if (!this.canNotify()) return;
