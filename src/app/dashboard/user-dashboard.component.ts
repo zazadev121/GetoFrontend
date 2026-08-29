@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/services/auth.service';
 import { DocumentService } from '../core/services/document.service';
@@ -11,6 +11,7 @@ import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { PrivacyPolicyModalComponent } from '../shared/components/privacy-policy-modal/privacy-policy-modal.component';
+import { PollNotificationService } from '../core/services/poll-notification.service';
 
 interface StaticTemplateItem {
   id: string;
@@ -579,11 +580,12 @@ interface StaticTemplateItem {
     </div>
   `
 })
-export class UserDashboardComponent implements OnInit {
+export class UserDashboardComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   documentService = inject(DocumentService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
+  pollNotificationService = inject(PollNotificationService);
 
   currentUser = this.authService.currentUserSignal();
   
@@ -678,6 +680,12 @@ export class UserDashboardComponent implements OnInit {
     this.loadUserProfile();
     this.loadUserDocuments();
     this.loadAdminPhaseDocuments();
+    // Start browser notification polling (status, phase, news changes)
+    this.pollNotificationService.init();
+  }
+
+  ngOnDestroy() {
+    this.pollNotificationService.destroy();
   }
 
   getDisabledTemplateIds(): string[] {
