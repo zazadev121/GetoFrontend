@@ -610,7 +610,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'p1_resume',
       phase: 0,
       fileName: 'Resume--.docx',
-      fileUrl: '/partners/Resume--.docx',
+      fileUrl: '/templates/phase1/Resume--.docx',
       fileSize: 11940,
       descriptionKa: 'პირველი ეტაპის რეზიუმეს (CV) შაბლონის ჩამოტვირთვა',
       descriptionEn: 'Phase 1 Resume (CV) Template Form Download'

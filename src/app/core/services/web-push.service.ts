@@ -14,7 +14,6 @@ export class WebPushService {
 
   async init(): Promise<void> {
     if (!this.authService.isLoggedIn()) return;
-    if (this.authService.isAdmin()) return; // admins don't need to subscribe
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.warn('[WebPush] Not supported in this browser');
       return;
@@ -25,17 +24,21 @@ export class WebPushService {
       const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
       await navigator.serviceWorker.ready;
 
-      // Request notification permission
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        console.warn('[WebPush] Notification permission denied');
+      // Request notification permission if default
+      if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          console.warn('[WebPush] Notification permission denied by user');
+          return;
+        }
+      } else if (Notification.permission !== 'granted') {
+        console.warn('[WebPush] Notification permission blocked');
         return;
       }
 
       // Check if already subscribed
       const existing = await registration.pushManager.getSubscription();
       if (existing && localStorage.getItem(VAPID_LOCAL_KEY)) {
-        // Already subscribed — nothing to do
         return;
       }
 

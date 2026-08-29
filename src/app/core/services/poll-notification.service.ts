@@ -21,7 +21,6 @@ export class PollNotificationService {
   // ─── Public API ─────────────────────────────────────────────
   async init(): Promise<void> {
     if (!this.authService.isLoggedIn()) return;
-    if (this.authService.isAdmin()) return; // admins don't need notifications
 
     await this.requestPermission();
     await this.takeInitialSnapshot();

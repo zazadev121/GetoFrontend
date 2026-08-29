@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TranslationService } from '../../../core/services/translation.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { WebPushService } from '../../../core/services/web-push.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
@@ -60,6 +61,15 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
           <!-- Desktop Right -->
           <div class="hidden lg:flex items-center gap-2">
+            <button *ngIf="authService.isLoggedIn()" (click)="enableNotifications()"
+              class="nav-btn p-2 rounded-lg border transition-all flex items-center justify-center relative"
+              [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
+              [style.border-color]="themeService.isDark() ? 'rgba(51,65,85,0.6)' : '#cbd5e1'"
+              [style.color]="notificationPermission === 'granted' ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
+              [title]="notificationPermission === 'granted' ? 'Chrome Notifications Enabled' : 'Click to Enable Chrome Notifications'">
+              <i class="fa-solid" [ngClass]="notificationPermission === 'granted' ? 'fa-bell' : 'fa-bell-slash'"></i>
+            </button>
+
             <button (click)="themeService.toggleTheme()"
               class="nav-btn p-2 rounded-lg border transition-all flex items-center justify-center"
               [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
@@ -206,7 +216,16 @@ export class NavbarComponent {
   authService = inject(AuthService);
   translationService = inject(TranslationService);
   themeService = inject(ThemeService);
+  webPushService = inject(WebPushService);
   isMobileMenuOpen = false;
+
+  get notificationPermission(): string {
+    return ('Notification' in window) ? Notification.permission : 'denied';
+  }
+
+  async enableNotifications() {
+    await this.webPushService.init();
+  }
 
   navLinks = [
     { path: '/about', icon: 'fa-circle-info', color: '#3b82f6', labelEn: 'About', labelKa: 'ჩვენ შესახებ' },

@@ -923,9 +923,9 @@ export class AdminPanelComponent implements OnInit {
     {
       id: 'p1_resume',
       phaseName: 'Phase 1',
-      fileName: 'Resume_template.docx',
-      fileUrl: '/templates/phase1/Resume_template.docx',
-      fileSize: 27016,
+      fileName: 'Resume--.docx',
+      fileUrl: '/templates/phase1/Resume--.docx',
+      fileSize: 11940,
       isDisabled: false
     },
     {
