@@ -150,7 +150,7 @@ interface ManagedTemplateItem {
                   <select 
                     [ngModel]="u.status" 
                     (ngModelChange)="onUpdateStatus(u, $event)"
-                    class="form-control form-select py-1 px-2 text-xs w-32 font-semibold"
+                    class="form-control form-select form-select-compact py-1 px-2 text-xs w-full min-w-[12rem] font-semibold"
                     [ngClass]="getStatusSelectClass(u.status)">
                     <option [value]="0">{{ 'status.pending' | translate }}</option>
                     <option [value]="1">{{ 'status.rejected' | translate }}</option>
@@ -162,7 +162,7 @@ interface ManagedTemplateItem {
                   <select 
                     [ngModel]="u.userPhase" 
                     (ngModelChange)="onUpdatePhase(u, $event)"
-                    class="form-control form-select py-1 px-2 text-xs w-32 font-semibold">
+                    class="form-control form-select form-select-compact py-1 px-2 text-xs w-full min-w-[9.5rem] font-semibold">
                     <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
                     <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
                     <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
@@ -208,12 +208,12 @@ interface ManagedTemplateItem {
             </div>
 
             <!-- Selects row -->
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.status' | translate }}</label>
                 <select 
                   [ngModel]="u.status" (ngModelChange)="onUpdateStatus(u, $event)"
-                  class="form-control form-select py-1.5 px-2 text-xs w-full font-semibold"
+                  class="form-control form-select form-select-compact py-1.5 px-2 text-xs w-full font-semibold"
                   [ngClass]="getStatusSelectClass(u.status)">
                   <option [value]="0">{{ 'status.pending' | translate }}</option>
                   <option [value]="1">{{ 'status.rejected' | translate }}</option>
@@ -225,7 +225,7 @@ interface ManagedTemplateItem {
                 <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</label>
                 <select 
                   [ngModel]="u.userPhase" (ngModelChange)="onUpdatePhase(u, $event)"
-                  class="form-control form-select py-1.5 px-2 text-xs w-full font-semibold">
+                  class="form-control form-select form-select-compact py-1.5 px-2 text-xs w-full font-semibold">
                   <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
                   <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
                   <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>

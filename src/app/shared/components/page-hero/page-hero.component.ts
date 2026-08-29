@@ -29,8 +29,6 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
             <i class="fa-solid" [ngClass]="icon"></i>
           </span>
 
-          <p class="eyebrow whitespace-nowrap" *ngIf="eyebrow">{{ eyebrow }}</p>
-
           <span class="h-px flex-1 min-w-4"
             [style.background]="'linear-gradient(90deg, rgb(var(--c-' + accent + '-400) / .45), transparent)'"></span>
 
@@ -64,7 +62,6 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
   `]
 })
 export class PageHeroComponent {
-  @Input() eyebrow = '';
   @Input() title = '';
   @Input() lead = '';
   @Input() icon = 'fa-star';

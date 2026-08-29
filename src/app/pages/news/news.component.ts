@@ -14,7 +14,6 @@ import { NewsDto } from '../../core/models/news.model';
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14">
 
       <app-page-hero
-        [eyebrow]="'news.badge' | translate"
         [title]="'news.title' | translate"
         [lead]="'news.subtitle' | translate"
         icon="fa-newspaper"

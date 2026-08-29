@@ -15,7 +15,6 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-16 sm:space-y-24">
 
       <app-page-hero
-        [eyebrow]="translationService.isGeorgian() ? 'Geto Project · 2020 წლიდან' : 'Geto Project · since 2020'"
         [title]="'about.title' | translate"
         [lead]="'about.subtitle' | translate"
         icon="fa-handshake"

@@ -512,6 +512,15 @@ html.light .form-control { background: #fff; }
   padding-right: 2.6rem;
 }
 .form-select option { background: rgb(var(--c-n-950)); color: var(--text-primary); }
+
+/* Small controls need the chevron tucked in, or long labels (Georgian status
+   names especially) get clipped by the arrow's reserved space. */
+.form-select-compact {
+  background-position: right .5rem center;
+  background-size: 1rem;
+  padding-right: 1.85rem;
+  text-overflow: ellipsis;
+}
 .form-error { color: rgb(var(--c-berry-400)); font-size: .8rem; margin-top: .35rem; display: flex; align-items: center; gap: .3rem; }
 
 /* --------------------------------------------------------------------------

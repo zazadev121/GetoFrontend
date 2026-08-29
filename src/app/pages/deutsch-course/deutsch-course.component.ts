@@ -12,7 +12,6 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14">
 
       <app-page-hero
-        [eyebrow]="'deutsch.badge' | translate"
         [title]="'deutsch.title' | translate"
         icon="fa-language"
         accent="honey"

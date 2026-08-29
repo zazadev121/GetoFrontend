@@ -11,7 +11,6 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full overflow-hidden">
 
       <app-page-hero
-        [eyebrow]="translationService.isGeorgian() ? 'შტოიერი' : 'Tax refund'"
         [title]="translationService.isGeorgian() ? '„შტოიერის“ დაბრუნება' : 'German Tax Refund'"
         [lead]="translationService.isGeorgian()
           ? 'გერმანიაში დასაქმებისას გადახდილი გადასახადის ნაწილის დაბრუნება, ე.წ. „შტოიერის“ დაბრუნება, შესაძლებელია შესაბამისი პირობების დაკმაყოფილების შემთხვევაში.'

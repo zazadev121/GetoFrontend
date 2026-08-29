@@ -12,7 +12,6 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full overflow-hidden">
 
       <app-page-hero
-        [eyebrow]="translationService.isGeorgian() ? 'კონტაქტი' : 'Get in touch'"
         [title]="translationService.isGeorgian() ? 'დაგვიკავშირდით' : 'Contact Us'"
         [lead]="translationService.isGeorgian()
           ? 'კითხვების, კონსულტაციისა და დოკუმენტაციის საკითხებზე დაგვიკავშირდით თქვენთვის სასურველი საკომუნიკაციო არხით.'
