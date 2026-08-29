@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { NewsService } from './news.service';
 
 const STORAGE_KEY = 'geto_poll_snapshot';
-const POLL_INTERVAL_MS = 60_000; // 60 seconds
+const POLL_INTERVAL_MS = 15_000; // 15 seconds (fast checking for news & status updates)
 
 interface Snapshot {
   status: number;
