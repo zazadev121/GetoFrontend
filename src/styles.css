@@ -239,9 +239,9 @@ body h1, body h2, body h3, body h4, body h5, body h6 {
   font-variation-settings: 'SOFT' 40, 'WONK' 1;
   text-wrap: balance;
 }
-body h1 { font-size: clamp(1.8rem, 1.2rem + 2.5vw, 3.15rem); font-weight: 800; letter-spacing: -0.028em; }
-body h2 { font-size: clamp(1.3rem, 1.05rem + 1.3vw, 2.1rem); }
-body h3 { font-size: clamp(1.05rem, .95rem + .6vw, 1.4rem); }
+body h1 { font-size: clamp(1.65rem, 1.15rem + 2.1vw, 2.8rem); font-weight: 800; letter-spacing: -0.026em; }
+body h2 { font-size: clamp(1.2rem, 1rem + 1.1vw, 1.9rem); }
+body h3 { font-size: clamp(1rem, .93rem + .5vw, 1.3rem); }
 body h4 { font-size: 1.05rem; }
 
 /* An explicit Tailwind text size on a heading still wins — those utilities are
@@ -256,16 +256,16 @@ body h4 { font-size: 1.05rem; }
 .display-xl {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(1.9rem, 1.1rem + 3.2vw, 3.5rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.7rem, 1.05rem + 2.6vw, 3.05rem);
+  line-height: 1.06;
+  letter-spacing: -0.028em;
   font-variation-settings: 'SOFT' 60, 'WONK' 1, 'opsz' 96;
   text-wrap: balance;
 }
 .display-lead {
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: clamp(1rem, .92rem + .5vw, 1.2rem);
+  font-size: clamp(.95rem, .9rem + .35vw, 1.1rem);
   line-height: 1.6;
   letter-spacing: 0;
 }

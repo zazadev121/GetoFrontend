@@ -28,10 +28,9 @@ export const routes: Routes = [
     path: 'steuer',
     loadComponent: () => import('./pages/steuer/steuer.component').then(m => m.SteuerComponent)
   },
-  {
-    path: 'contact',
-    loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)
-  },
+
+  // The contact page was folded into the footer; keep old links working.
+  { path: 'contact', redirectTo: 'about', pathMatch: 'full' },
 
   // Auth Routes
   {

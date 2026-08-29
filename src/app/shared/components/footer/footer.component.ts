@@ -17,9 +17,10 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
 
-          <!-- Wordmark, set large: the footer signs the page off -->
-          <div class="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-            <div class="space-y-5 max-w-md">
+          <div class="reveal grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+
+            <!-- Who we are -->
+            <div class="space-y-5">
               <div class="flex items-center gap-3.5">
                 <span class="w-12 h-12 squircle bg-slate-950 border border-blue-500/30 grid place-items-center p-0.5 shrink-0">
                   <img src="/icons/icon-192.png" alt="GETO" class="w-full h-full object-cover squircle">
@@ -30,40 +31,56 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
                 </span>
               </div>
 
-              <p class="text-sm leading-relaxed text-slate-400">
+              <p class="text-sm leading-relaxed text-slate-300 max-w-md">
                 {{ translationService.isGeorgian()
-                  ? 'სტუდენტთა მხარდაჭერა, დოკუმენტაცია და სრული საორგანიზაციო მომსახურება გერმანიაში დასაქმებისა და სწავლის გზაზე.'
-                  : 'Student support, documentation and a full organisational service on the way to work and study in Germany.' }}
+                  ? 'დოკუმენტაციის წარდგენასა და პროგრამასთან დაკავშირებული საკითხების შესახებ კონსულტაციის მისაღებად, გთხოვთ, დაგვიკავშირდეთ.'
+                  : 'For consultation on document submission and programme-related matters, please get in touch with us.' }}
+              </p>
+
+              <p class="text-xs text-slate-500">
+                {{ translationService.isGeorgian()
+                  ? 'შპს გეთო ფროჯექთი (GETO Project LLC)'
+                  : 'GETO Project LLC' }}
               </p>
             </div>
 
-            <app-seal-badge class="hidden sm:block shrink-0"
-              text="GETO PROJECT · TBILISI · BERLIN · "
-              icon="fa-stamp"></app-seal-badge>
+            <!-- Reach us: this replaces the standalone contact page -->
+            <div class="space-y-4">
+              <div class="flex items-center justify-between gap-4">
+                <h3 class="eyebrow">{{ translationService.isGeorgian() ? 'კონტაქტი' : 'Contact' }}</h3>
+                <app-seal-badge class="hidden sm:block shrink-0 scale-[.6] origin-right -my-5"
+                  text="GETO PROJECT · TBILISI · BERLIN · "
+                  icon="fa-stamp"></app-seal-badge>
+              </div>
+
+              <ul class="grid sm:grid-cols-2 gap-2.5">
+                <li *ngFor="let channel of channels">
+                  <a [href]="channel.href"
+                    [attr.target]="channel.external ? '_blank' : null"
+                    [attr.rel]="channel.external ? 'noopener noreferrer' : null"
+                    class="group flex items-center gap-3 rounded-2xl border border-slate-700/50 bg-slate-950/40 p-3
+                           hover:border-blue-500/45 transition-colors no-underline">
+                    <span class="w-9 h-9 rounded-xl grid place-items-center text-sm shrink-0 transition-transform group-hover:scale-110"
+                      [style.background]="'rgb(var(--c-' + channel.accent + '-500) / .15)'"
+                      [style.color]="'rgb(var(--c-' + channel.accent + '-400))'">
+                      <i [ngClass]="channel.icon"></i>
+                    </span>
+                    <span class="min-w-0">
+                      <span class="block text-[10px] uppercase tracking-wider text-slate-500">{{ channel.label }}</span>
+                      <span class="block text-xs font-semibold text-slate-200 truncate">{{ channel.value }}</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="rule-gold my-10 sm:my-12"></div>
 
-          <!-- Reach us -->
-          <div class="reveal flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-            <div class="flex flex-wrap items-center gap-3">
-              <a href="https://wa.me/995577547577" target="_blank" rel="noopener noreferrer"
-                class="icon-btn" aria-label="WhatsApp">
-                <i class="fa-brands fa-whatsapp"></i>
-              </a>
-              <a href="https://www.facebook.com/Getoproject2020" target="_blank" rel="noopener noreferrer"
-                class="icon-btn" aria-label="Facebook">
-                <i class="fa-brands fa-facebook-f"></i>
-              </a>
-              <a href="tel:+995577547577" class="icon-btn" aria-label="Phone">
-                <i class="fa-solid fa-phone"></i>
-              </a>
-              <a href="mailto:getogeto2020@gmail.com" class="icon-btn" aria-label="Email">
-                <i class="fa-solid fa-envelope"></i>
-              </a>
-
-              <span class="ml-1 text-xs text-slate-500 font-mono hidden sm:inline">getogeto2020&#64;gmail.com</span>
-            </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <p class="text-xs text-slate-600">
+              &copy; 2026 GETO Project LLC. {{ translationService.isGeorgian() ? 'ყველა უფლება დაცულია.' : 'All rights reserved.' }}
+            </p>
 
             <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
               <button type="button" (click)="openModal()"
@@ -76,10 +93,6 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
               </button>
             </div>
           </div>
-
-          <p class="mt-10 text-xs text-slate-600">
-            &copy; 2026 GETO Project LLC. {{ translationService.isGeorgian() ? 'ყველა უფლება დაცულია.' : 'All rights reserved.' }}
-          </p>
         </div>
       </div>
 
@@ -95,6 +108,41 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
 export class FooterComponent {
   translationService = inject(TranslationService);
   showModal = false;
+
+  channels = [
+    {
+      label: 'WhatsApp',
+      value: '+995 577 54 75 77',
+      href: 'https://wa.me/995577547577',
+      icon: 'fa-brands fa-whatsapp',
+      accent: 'sage',
+      external: true
+    },
+    {
+      label: 'Facebook',
+      value: '@Getoproject2020',
+      href: 'https://www.facebook.com/Getoproject2020',
+      icon: 'fa-brands fa-facebook-f',
+      accent: 'clay',
+      external: true
+    },
+    {
+      label: 'Phone',
+      value: '577 54 75 77',
+      href: 'tel:+995577547577',
+      icon: 'fa-solid fa-phone',
+      accent: 'honey',
+      external: false
+    },
+    {
+      label: 'Email',
+      value: 'getogeto2020@gmail.com',
+      href: 'mailto:getogeto2020@gmail.com',
+      icon: 'fa-solid fa-envelope',
+      accent: 'plum',
+      external: false
+    }
+  ];
 
   openModal() {
     this.showModal = true;

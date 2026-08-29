@@ -228,8 +228,7 @@ export class NavbarComponent {
     { path: '/about', icon: 'fa-circle-info', labelEn: 'About', labelKa: 'ჩვენ შესახებ' },
     { path: '/news', icon: 'fa-newspaper', labelEn: 'News', labelKa: 'სიახლეები' },
     { path: '/german-course', icon: 'fa-language', labelEn: 'German Course', labelKa: 'გერმანული ენის კურსი' },
-    { path: '/steuer', icon: 'fa-receipt', labelEn: 'Steuer', labelKa: 'შტოიერი' },
-    { path: '/contact', icon: 'fa-phone', labelEn: 'Contact', labelKa: 'კონტაქტი' }
+    { path: '/steuer', icon: 'fa-receipt', labelEn: 'Steuer', labelKa: 'შტოიერი' }
   ];
 
   /**

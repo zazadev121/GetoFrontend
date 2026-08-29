@@ -106,31 +106,6 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
         </div>
       </section>
 
-      <!-- Partners -->
-      <section class="reveal reveal-left space-y-5">
-        <div class="flex items-center gap-4">
-          <span class="w-12 h-12 blob grid place-items-center text-lg shrink-0"
-            style="background: rgb(var(--c-teal-500) / .16); color: rgb(var(--c-teal-400))">
-            <i class="fa-solid fa-building-columns"></i>
-          </span>
-          <div>
-            <p class="eyebrow">{{ translationService.isGeorgian() ? 'ქსელი' : 'Network' }}</p>
-            <h2 class="font-heading text-white">
-              {{ translationService.isGeorgian() ? 'ჩვენი პარტნიორები' : 'Our Business Partners' }}
-            </h2>
-          </div>
-        </div>
-
-        <div class="paper-card overflow-hidden p-2 sm:p-3">
-          <img
-            src="/recommendations/Partners.png"
-            alt="GETO Business Partners"
-            loading="lazy"
-            class="w-full h-auto object-cover block rounded-2xl hover:scale-[1.01] transition-transform duration-500"
-            (error)="onPartnerImgError($event)">
-        </div>
-      </section>
-
     </div>
   `
 })
@@ -150,7 +125,4 @@ export class AboutUsComponent {
       : ['Full organisational service', 'German language', 'Documentation', 'Work permit'];
   }
 
-  onPartnerImgError(event: any) {
-    event.target.style.display = 'none';
-  }
 }
