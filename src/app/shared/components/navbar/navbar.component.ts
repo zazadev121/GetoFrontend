@@ -115,6 +115,15 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
           <!-- Mobile Controls -->
           <div class="flex items-center gap-1.5 lg:hidden">
+            <button *ngIf="authService.isLoggedIn()" (click)="enableNotifications()"
+              class="p-2 rounded-lg border flex items-center justify-center transition-all"
+              [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
+              [style.border-color]="themeService.isDark() ? 'rgba(51,65,85,0.6)' : '#cbd5e1'"
+              [style.color]="notificationPermission === 'granted' ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
+              [title]="notificationPermission === 'granted' ? 'Mobile Push Notifications Active' : 'Tap to Enable Mobile Push Notifications'">
+              <i class="fa-solid text-sm" [ngClass]="notificationPermission === 'granted' ? 'fa-bell' : 'fa-bell-slash'"></i>
+            </button>
+
             <button (click)="themeService.toggleTheme()"
               class="p-2 rounded-lg border"
               [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
