@@ -146,8 +146,8 @@ export class AboutUsComponent {
 
   heroTags(): string[] {
     return this.translationService.isGeorgian()
-      ? ['სრული თანხლება', 'გერმანული ენა', 'დოკუმენტაცია', 'სამუშაო ნებართვა']
-      : ['End-to-end support', 'German language', 'Documentation', 'Work permit'];
+      ? ['სრული საორგანიზაციო მომსახურება', 'გერმანული ენა', 'დოკუმენტაცია', 'სამუშაო ნებართვა']
+      : ['Full organisational service', 'German language', 'Documentation', 'Work permit'];
   }
 
   onPartnerImgError(event: any) {

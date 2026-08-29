@@ -14,14 +14,14 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
   standalone: true,
   imports: [CommonModule, SealBadgeComponent],
   template: `
-    <header class="relative pt-10 sm:pt-16 lg:pt-20 pb-8 sm:pb-10">
+    <header class="relative pt-8 sm:pt-12 lg:pt-14 pb-6 sm:pb-8">
       <!-- one soft wash, parallaxed by the page scroll -->
       <div class="wash hero-wash w-[34rem] h-[34rem] -top-52 -left-40"
         [style.background]="'rgb(var(--c-' + accent + '-500) / .16)'"></div>
 
       <div class="relative z-10">
         <!-- Eyebrow row: marker, label, hairline -->
-        <div class="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 animate-fade-in">
+        <div class="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-6 animate-fade-in">
           <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center text-xs shrink-0 border"
             [style.color]="'rgb(var(--c-' + accent + '-400))'"
             [style.border-color]="'rgb(var(--c-' + accent + '-400) / .35)'"
@@ -36,7 +36,7 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
             [text]="sealText" [icon]="sealIcon"></app-seal-badge>
         </div>
 
-        <div class="max-w-4xl space-y-5 sm:space-y-6">
+        <div class="max-w-3xl space-y-4 sm:space-y-5">
           <h1 class="display-xl text-white animate-rise">{{ title }}</h1>
 
           <p *ngIf="lead" class="display-lead text-slate-300 max-w-2xl animate-rise delay-2">{{ lead }}</p>
@@ -53,7 +53,7 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
       </div>
 
       <!-- closing rule, so the hero hands off to the page instead of stopping dead -->
-      <div class="mt-10 sm:mt-14 h-px"
+      <div class="mt-8 sm:mt-10 h-px"
         style="background: linear-gradient(90deg, rgb(var(--c-n-700) / .9), rgb(var(--c-n-700) / .15) 60%, transparent)"></div>
     </header>
   `,

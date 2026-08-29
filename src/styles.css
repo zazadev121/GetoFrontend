@@ -239,9 +239,9 @@ body h1, body h2, body h3, body h4, body h5, body h6 {
   font-variation-settings: 'SOFT' 40, 'WONK' 1;
   text-wrap: balance;
 }
-body h1 { font-size: clamp(1.9rem, 1.3rem + 2.9vw, 3.6rem); font-weight: 800; letter-spacing: -0.03em; }
-body h2 { font-size: clamp(1.4rem, 1.1rem + 1.6vw, 2.4rem); }
-body h3 { font-size: clamp(1.1rem, .98rem + .7vw, 1.55rem); }
+body h1 { font-size: clamp(1.8rem, 1.2rem + 2.5vw, 3.15rem); font-weight: 800; letter-spacing: -0.028em; }
+body h2 { font-size: clamp(1.3rem, 1.05rem + 1.3vw, 2.1rem); }
+body h3 { font-size: clamp(1.05rem, .95rem + .6vw, 1.4rem); }
 body h4 { font-size: 1.05rem; }
 
 /* An explicit Tailwind text size on a heading still wins — those utilities are
@@ -250,21 +250,24 @@ body h4 { font-size: 1.05rem; }
 .font-heading, .font-display { font-family: var(--font-heading) !important; }
 
 /* The display voice: oversized, tight, optically soft — the anchor of the look */
+/* The page opener. Sized to stay calm rather than shout: Georgian headlines
+   are wide, so an oversized scale pushed almost every title onto two or three
+   lines and buried the real content below the fold. */
 .display-xl {
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: clamp(2.3rem, 1.2rem + 5vw, 5.4rem);
-  line-height: .96;
-  letter-spacing: -0.035em;
-  font-variation-settings: 'SOFT' 60, 'WONK' 1, 'opsz' 120;
+  font-size: clamp(1.9rem, 1.1rem + 3.2vw, 3.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-variation-settings: 'SOFT' 60, 'WONK' 1, 'opsz' 96;
   text-wrap: balance;
 }
 .display-lead {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: clamp(1.1rem, .95rem + .9vw, 1.55rem);
-  line-height: 1.35;
-  letter-spacing: -0.01em;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(1rem, .92rem + .5vw, 1.2rem);
+  line-height: 1.6;
+  letter-spacing: 0;
 }
 .eyebrow {
   font-family: var(--font-body);
@@ -275,8 +278,13 @@ body h4 { font-size: 1.05rem; }
   color: rgb(var(--c-clay-400));
 }
 
-/* Georgian copy wants a touch more leading than Latin */
-:lang(ka) { line-height: 1.75; }
+/* Georgian copy wants a touch more leading than Latin — but body text only.
+   The bare `:lang(ka)` this replaces is a pseudo-class, so it outranked every
+   heading rule below and was silently forcing display type to 1.75 leading. */
+:lang(ka) p,
+:lang(ka) li,
+:lang(ka) td,
+:lang(ka) label { line-height: 1.8; }
 
 /* --------------------------------------------------------------------------
    6. SURFACES — tactile paper cards (replaces the old glass look)

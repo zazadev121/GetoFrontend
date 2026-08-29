@@ -32,8 +32,8 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
 
               <p class="text-sm leading-relaxed text-slate-400">
                 {{ translationService.isGeorgian()
-                  ? 'სტუდენტთა მხარდაჭერა, დოკუმენტაცია და სრული თანხლება გერმანიაში დასაქმებისა და სწავლის გზაზე.'
-                  : 'Student support, documentation and end-to-end guidance on the way to work and study in Germany.' }}
+                  ? 'სტუდენტთა მხარდაჭერა, დოკუმენტაცია და სრული საორგანიზაციო მომსახურება გერმანიაში დასაქმებისა და სწავლის გზაზე.'
+                  : 'Student support, documentation and a full organisational service on the way to work and study in Germany.' }}
               </p>
             </div>
 
