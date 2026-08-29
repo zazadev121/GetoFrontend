@@ -5,14 +5,13 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TranslationService } from '../../../core/services/translation.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { WebPushService } from '../../../core/services/web-push.service';
-import { PollNotificationService } from '../../../core/services/poll-notification.service';
-import { NotificationService } from '../../../core/services/notification.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { NotificationSettingsComponent } from '../notification-settings/notification-settings.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, TranslatePipe],
+  imports: [CommonModule, RouterLink, RouterLinkActive, TranslatePipe, NotificationSettingsComponent],
   template: `
     <header class="sticky top-0 z-50 w-full backdrop-blur-xl border-b" 
       [style.background-color]="themeService.isDark() ? 'rgba(9,13,22,0.92)' : 'rgba(255,255,255,0.96)'"
@@ -63,13 +62,13 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
           <!-- Desktop Right -->
           <div class="hidden lg:flex items-center gap-2">
-            <button *ngIf="authService.isLoggedIn()" (click)="enableNotifications()"
+            <button *ngIf="authService.isLoggedIn()" (click)="openNotificationSettings()"
               class="nav-btn p-2 rounded-lg border transition-all flex items-center justify-center relative"
               [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
               [style.border-color]="themeService.isDark() ? 'rgba(51,65,85,0.6)' : '#cbd5e1'"
-              [style.color]="notificationPermission === 'granted' ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
-              [title]="notificationPermission === 'granted' ? 'Chrome Notifications Enabled' : 'Click to Enable Chrome Notifications'">
-              <i class="fa-solid" [ngClass]="notificationPermission === 'granted' ? 'fa-bell' : 'fa-bell-slash'"></i>
+              [style.color]="webPushService.enabled() ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
+              [title]="'notify.title' | translate">
+              <i class="fa-solid" [ngClass]="webPushService.enabled() ? 'fa-bell' : 'fa-bell-slash'"></i>
             </button>
 
             <button (click)="themeService.toggleTheme()"
@@ -115,13 +114,13 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 
           <!-- Mobile Controls -->
           <div class="flex items-center gap-1.5 lg:hidden">
-            <button *ngIf="authService.isLoggedIn()" (click)="enableNotifications()"
+            <button *ngIf="authService.isLoggedIn()" (click)="openNotificationSettings()"
               class="p-2 rounded-lg border flex items-center justify-center transition-all"
               [style.background-color]="themeService.isDark() ? 'rgba(15,23,42,0.8)' : '#f1f5f9'"
               [style.border-color]="themeService.isDark() ? 'rgba(51,65,85,0.6)' : '#cbd5e1'"
-              [style.color]="notificationPermission === 'granted' ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
-              [title]="notificationPermission === 'granted' ? 'Mobile Push Notifications Active' : 'Tap to Enable Mobile Push Notifications'">
-              <i class="fa-solid text-sm" [ngClass]="notificationPermission === 'granted' ? 'fa-bell' : 'fa-bell-slash'"></i>
+              [style.color]="webPushService.enabled() ? '#10b981' : (themeService.isDark() ? '#94a3b8' : '#64748b')"
+              [title]="'notify.title' | translate">
+              <i class="fa-solid text-sm" [ngClass]="webPushService.enabled() ? 'fa-bell' : 'fa-bell-slash'"></i>
             </button>
 
             <button (click)="themeService.toggleTheme()"
@@ -217,6 +216,11 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
         </div>
       </div>
     </header>
+
+    <app-notification-settings
+      [isOpen]="showNotificationSettings"
+      (closed)="showNotificationSettings = false">
+    </app-notification-settings>
   `,
   styles: [`
     .nav-item:hover { background: rgba(0,82,255,0.06); color: #0052ff !important; }
@@ -228,46 +232,12 @@ export class NavbarComponent {
   translationService = inject(TranslationService);
   themeService = inject(ThemeService);
   webPushService = inject(WebPushService);
-  pollNotificationService = inject(PollNotificationService);
-  notificationService = inject(NotificationService);
   isMobileMenuOpen = false;
+  showNotificationSettings = false;
 
-  get notificationPermission(): string {
-    return ('Notification' in window) ? Notification.permission : 'denied';
-  }
-
-  async enableNotifications() {
-    if (!('Notification' in window)) {
-      this.notificationService.warning('Notifications are not supported in this browser.', 'Not Supported');
-      return;
-    }
-
-    // Request permission IMMEDIATELY on click gesture so Chrome presents its native popup modal
-    let perm = Notification.permission;
-    if (perm === 'default') {
-      perm = await Notification.requestPermission();
-    }
-
-    if (perm === 'denied') {
-      this.notificationService.error(
-        'Notifications blocked by browser. Click the Lock/Tune icon next to the URL in your address bar and select ALLOW.',
-        'Permission Blocked'
-      );
-      return;
-    }
-
-    await this.pollNotificationService.init();
-    await this.webPushService.init(true);
-
-    if (perm === 'granted') {
-      this.pollNotificationService.sendTestNotification();
-      try {
-        const res: any = await this.webPushService.sendTestPush();
-        this.notificationService.success(res?.message || 'Test notification sent!', 'Notifications Active');
-      } catch (err: any) {
-        this.notificationService.success('Browser notifications active on this device.', 'Notifications Active');
-      }
-    }
+  openNotificationSettings() {
+    this.webPushService.refreshPermission();
+    this.showNotificationSettings = true;
   }
 
   navLinks = [

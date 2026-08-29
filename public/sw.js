@@ -1,15 +1,35 @@
 // GETO Project — Web Push Service Worker
-// Receives background push events from the backend and displays native OS/mobile notifications
+// Stays registered so Chrome can wake this page and show OS notifications
+// even when the tab is closed and the phone is locked.
+
+self.addEventListener('install', function (event) {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', function (event) {
+  event.waitUntil(self.clients.claim());
+});
 
 self.addEventListener('push', function (event) {
-  let data = { title: 'GETO Project', body: 'ახალი შეტყობინება', url: '/dashboard', icon: '/recommendations/Geto Logo.jpg' };
+  let data = {
+    title: 'GETO Project',
+    body: 'ახალი შეტყობინება',
+    url: '/dashboard',
+    icon: '/recommendations/Geto Logo.jpg'
+  };
 
   try {
     if (event.data) {
       data = Object.assign(data, event.data.json());
     }
   } catch (e) {
-    console.warn('[SW] Could not parse push payload', e);
+    try {
+      if (event.data) {
+        data.body = event.data.text();
+      }
+    } catch (e2) {
+      console.warn('[SW] Could not parse push payload', e);
+    }
   }
 
   const title = data.title || 'GETO Project';
@@ -20,18 +40,17 @@ self.addEventListener('push', function (event) {
     icon: iconUrl,
     badge: iconUrl,
     data: { url: data.url || '/dashboard' },
-    tag: `geto-push-${Date.now()}`,
+    tag: data.tag || ('geto-push-' + Date.now()),
     renotify: true,
     requireInteraction: true,
-    vibrate: [300, 100, 300, 100, 300]
+    silent: false,
+    vibrate: [300, 100, 300, 100, 300],
+    timestamp: Date.now()
   };
 
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+  event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// When user taps/clicks the notification — open/focus the app and navigate
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
@@ -39,17 +58,27 @@ self.addEventListener('notificationclick', function (event) {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
-      // If app is already open in a tab, focus it and navigate
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
           client.navigate(targetUrl);
           return client.focus();
         }
       }
-      // Otherwise open a new browser window/tab
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
     })
   );
+});
+
+self.addEventListener('pushsubscriptionchange', function (event) {
+  event.waitUntil((async function () {
+    try {
+      const oldSub = event.oldSubscription;
+      const options = oldSub ? oldSub.options : { userVisibleOnly: true };
+      await self.registration.pushManager.subscribe(options);
+    } catch (err) {
+      console.warn('[SW] Could not renew push subscription', err);
+    }
+  })());
 });

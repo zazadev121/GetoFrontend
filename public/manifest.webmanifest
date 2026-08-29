@@ -1,0 +1,26 @@
+{
+  "name": "GETO Project",
+  "short_name": "GETO",
+  "description": "GETO Project client cabinet and notifications",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#0052ff",
+  "lang": "ka",
+  "icons": [
+    {
+      "src": "/recommendations/Geto Logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/recommendations/Geto Logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

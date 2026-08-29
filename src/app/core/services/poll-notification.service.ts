@@ -21,8 +21,8 @@ export class PollNotificationService {
   // ─── Public API ─────────────────────────────────────────────
   async init(): Promise<void> {
     if (!this.authService.isLoggedIn()) return;
+    if (!this.canNotify()) return;
 
-    await this.requestPermission();
     await this.takeInitialSnapshot();
     this.startPolling();
   }
@@ -31,14 +31,6 @@ export class PollNotificationService {
     if (this.intervalId !== null) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-    }
-  }
-
-  // ─── Permission ──────────────────────────────────────────────
-  private async requestPermission(): Promise<void> {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'default') {
-      await Notification.requestPermission();
     }
   }
 
@@ -155,24 +147,28 @@ export class PollNotificationService {
     });
   }
 
-  sendTestNotification(): void {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'granted') {
-      const n = new Notification('🔔 GETO Project Test Notification', {
-        body: 'Notifications are working active on your browser!',
-        icon: '/recommendations/Geto Logo.jpg',
-        badge: '/recommendations/Geto Logo.jpg'
-      });
-      n.onclick = () => {
-        window.focus();
-        n.close();
-      };
-    }
-  }
-
   // ─── Show notification ───────────────────────────────────────
-  private showNotification(title: string, body: string, url: string): void {
+  private async showNotification(title: string, body: string, url: string): Promise<void> {
     if (!this.canNotify()) return;
+
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        await registration.showNotification(title, {
+          body,
+          icon: '/recommendations/Geto Logo.jpg',
+          badge: '/recommendations/Geto Logo.jpg',
+          tag: `geto-${Date.now()}`,
+          data: { url },
+          requireInteraction: true,
+          silent: false
+        });
+        return;
+      } catch {
+        // fall through to Notification constructor
+      }
+    }
+
     const n = new Notification(title, {
       body,
       icon: '/recommendations/Geto Logo.jpg',

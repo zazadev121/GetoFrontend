@@ -208,7 +208,23 @@ export class TranslationService {
       'admin.download': 'ჩამოტვირთვა',
       'admin.backendFile': 'ბაზის ფაილი',
       'confirm.cancel': 'გაუქმება',
-      'confirm.warning': 'მოქმედება შეუქცევადია'
+      'confirm.warning': 'მოქმედება შეუქცევადია',
+
+      'notify.title': 'შეტყობინებების პარამეტრები',
+      'notify.body': 'დაუშვით Chrome შეტყობინებები, რომ მიიღოთ სიახლეები და სტატუსის განახლებები 24/7 — ტელეფონის დაბლოკვისასაც. ნებისმიერ დროს შეგიძლიათ ჩართოთ ან გამორთოთ ზარი.',
+      'notify.allow': 'დაშვება',
+      'notify.decline': 'უარყოფა',
+      'notify.turnOff': 'გამორთვა',
+      'notify.test': 'ტესტი',
+      'notify.statusOn': 'შეტყობინებები ჩართულია',
+      'notify.statusOff': 'შეტყობინებები გამორთულია',
+      'notify.statusBlocked': 'ბრაუზერმა დაბლოკა შეტყობინებები',
+      'notify.statusUnsupported': 'ეს ბრაუზერი არ უჭერს მხარს შეტყობინებებს',
+      'notify.blockedHelp': 'შეტყობინებები დაბლოკილია. Chrome-ში დააჭირეთ საკეტის ან საიტის პარამეტრების ხატულას მისამართის ზოლში და აირჩიეთ Allow. შემდეგ ისევ დააჭირეთ ზარს.',
+      'notify.notSupported': 'შეტყობინებები ამ ბრაუზერში არ არის მხარდაჭერილი.',
+      'notify.active': 'Chrome შეტყობინებები აქტიურია ამ მოწყობილობაზე.',
+      'notify.turnedOff': 'შეტყობინებები გამორთულია. ნებისმიერ დროს შეგიძლიათ ისევ ჩართოთ ზარის ხატულით.',
+      'notify.testBody': 'შეტყობინებები მუშაობს. ტელეფონის დაბლოკვისასაც მიიღებთ განახლებებს.'
     },
     en: {
       // Navbar & General
@@ -391,7 +407,23 @@ export class TranslationService {
       'admin.download': 'Download',
       'admin.backendFile': 'Backend File',
       'confirm.cancel': 'Cancel',
-      'confirm.warning': 'Action cannot be undone'
+      'confirm.warning': 'Action cannot be undone',
+
+      'notify.title': 'Notification settings',
+      'notify.body': 'Allow Chrome notifications to receive news and status updates 24/7 — even when your phone is locked. You can turn this on or off anytime from the bell icon.',
+      'notify.allow': 'Allow',
+      'notify.decline': 'Decline',
+      'notify.turnOff': 'Turn off',
+      'notify.test': 'Send test',
+      'notify.statusOn': 'Notifications are on',
+      'notify.statusOff': 'Notifications are off',
+      'notify.statusBlocked': 'Notifications blocked by the browser',
+      'notify.statusUnsupported': 'Notifications are not supported in this browser',
+      'notify.blockedHelp': 'Notifications are blocked. In Chrome, tap the lock or site-settings icon next to the URL, set Notifications to Allow, then tap the bell again.',
+      'notify.notSupported': 'Notifications are not supported in this browser.',
+      'notify.active': 'Chrome notifications are active on this device.',
+      'notify.turnedOff': 'Notifications are off. Tap the bell anytime to turn them back on.',
+      'notify.testBody': 'Notifications are working. You will still get updates when your phone is locked.'
     }
   };
 
