@@ -80,8 +80,12 @@ export class WebPushService {
 
       localStorage.setItem(VAPID_LOCAL_KEY, 'true');
       console.log('[WebPush] Successfully subscribed to push notifications');
-    } catch (err) {
-      console.error('[WebPush] Init error:', err);
+    } catch (err: any) {
+      if (err?.name === 'AbortError' || err?.message?.includes('push service error')) {
+        console.warn('[WebPush] Push subscription disabled or blocked by browser (Incognito mode, VPN, or Push Service restriction).');
+      } else {
+        console.warn('[WebPush] Push initialization note:', err?.message || err);
+      }
     }
   }
 
