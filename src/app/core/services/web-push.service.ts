@@ -36,40 +36,38 @@ export class WebPushService {
         return;
       }
 
-      // Check if already subscribed
-      const existing = await registration.pushManager.getSubscription();
-      if (existing && localStorage.getItem(VAPID_LOCAL_KEY)) {
-        return;
-      }
+      // Check if browser already has a PushManager subscription
+      let subscription = await registration.pushManager.getSubscription();
 
-      // Get VAPID public key from backend
-      let vapidPublicKey = '';
-      try {
-        const keyRes: any = await firstValueFrom(
-          this.http.get(`${BASE_URL}/vapid-public-key`)
-        );
-        vapidPublicKey = keyRes?.publicKey;
-      } catch (err: any) {
-        if (err?.status === 404) {
-          console.info('[WebPush] Backend WebPush service is deploying or warming up on Render.');
-        } else {
-          console.warn('[WebPush] Could not fetch VAPID key from server:', err?.message || err);
+      if (!subscription) {
+        // Get VAPID public key from backend
+        let vapidPublicKey = '';
+        try {
+          const keyRes: any = await firstValueFrom(
+            this.http.get(`${BASE_URL}/vapid-public-key`)
+          );
+          vapidPublicKey = keyRes?.publicKey;
+        } catch (err: any) {
+          if (err?.status === 404) {
+            console.info('[WebPush] Backend WebPush service is deploying or warming up on Render.');
+          } else {
+            console.warn('[WebPush] Could not fetch VAPID key from server:', err?.message || err);
+          }
+          return;
         }
-        return;
+
+        if (!vapidPublicKey) return;
+        const applicationServerKey = this.urlBase64ToUint8Array(vapidPublicKey);
+
+        // Subscribe to push in browser
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey
+        });
       }
 
-      if (!vapidPublicKey) return;
-      const applicationServerKey = this.urlBase64ToUint8Array(vapidPublicKey);
-
-      // Subscribe to push
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey
-      });
-
+      // ALWAYS sync active subscription to backend DB for currently logged-in user
       const sub = subscription.toJSON();
-
-      // Send subscription to backend
       await firstValueFrom(
         this.http.post(`${BASE_URL}/subscribe`, {
           endpoint: sub.endpoint,
@@ -79,7 +77,7 @@ export class WebPushService {
       );
 
       localStorage.setItem(VAPID_LOCAL_KEY, 'true');
-      console.log('[WebPush] Successfully subscribed to push notifications');
+      console.log('[WebPush] Successfully subscribed & synced to backend for user');
     } catch (err: any) {
       if (err?.name === 'AbortError' || err?.message?.includes('push service error')) {
         console.warn('[WebPush] Push subscription disabled or blocked by browser (Incognito mode, VPN, or Push Service restriction).');
@@ -87,6 +85,10 @@ export class WebPushService {
         console.warn('[WebPush] Push initialization note:', err?.message || err);
       }
     }
+  }
+
+  async sendTestPush(): Promise<any> {
+    return firstValueFrom(this.http.post(`${BASE_URL}/test-push`, {}));
   }
 
   async unsubscribe(): Promise<void> {

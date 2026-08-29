@@ -5,6 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TranslationService } from '../../../core/services/translation.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { WebPushService } from '../../../core/services/web-push.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
@@ -217,6 +218,7 @@ export class NavbarComponent {
   translationService = inject(TranslationService);
   themeService = inject(ThemeService);
   webPushService = inject(WebPushService);
+  notificationService = inject(NotificationService);
   isMobileMenuOpen = false;
 
   get notificationPermission(): string {
@@ -225,6 +227,16 @@ export class NavbarComponent {
 
   async enableNotifications() {
     await this.webPushService.init();
+    if (('Notification' in window) && Notification.permission === 'granted') {
+      try {
+        const res: any = await this.webPushService.sendTestPush();
+        this.notificationService.success(res?.message || 'Test notification sent to your browser!', 'Push Active');
+      } catch (err: any) {
+        this.notificationService.info('Chrome notifications active on this device.', 'Subscribed');
+      }
+    } else {
+      this.notificationService.warning('Please allow notification permissions in browser settings.', 'Permission Required');
+    }
   }
 
   navLinks = [
