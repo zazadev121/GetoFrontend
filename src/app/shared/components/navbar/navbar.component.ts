@@ -237,14 +237,29 @@ export class NavbarComponent {
   }
 
   async enableNotifications() {
-    if (('Notification' in window) && Notification.permission === 'default') {
-      await Notification.requestPermission();
+    if (!('Notification' in window)) {
+      this.notificationService.warning('Notifications are not supported in this browser.', 'Not Supported');
+      return;
+    }
+
+    // Request permission IMMEDIATELY on click gesture so Chrome presents its native popup modal
+    let perm = Notification.permission;
+    if (perm === 'default') {
+      perm = await Notification.requestPermission();
+    }
+
+    if (perm === 'denied') {
+      this.notificationService.error(
+        'Notifications blocked by browser. Click the Lock/Tune icon next to the URL in your address bar and select ALLOW.',
+        'Permission Blocked'
+      );
+      return;
     }
 
     await this.pollNotificationService.init();
-    await this.webPushService.init();
+    await this.webPushService.init(true);
 
-    if (('Notification' in window) && Notification.permission === 'granted') {
+    if (perm === 'granted') {
       this.pollNotificationService.sendTestNotification();
       try {
         const res: any = await this.webPushService.sendTestPush();
@@ -252,8 +267,6 @@ export class NavbarComponent {
       } catch (err: any) {
         this.notificationService.success('Browser notifications active on this device.', 'Notifications Active');
       }
-    } else {
-      this.notificationService.warning('Please allow notification permissions in browser settings.', 'Permission Required');
     }
   }
 

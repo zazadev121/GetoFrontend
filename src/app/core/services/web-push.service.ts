@@ -12,7 +12,7 @@ export class WebPushService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  async init(): Promise<void> {
+  async init(forceSync: boolean = false): Promise<void> {
     if (!this.authService.isLoggedIn()) return;
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.warn('[WebPush] Not supported in this browser');
@@ -20,23 +20,22 @@ export class WebPushService {
     }
 
     try {
-      // Register service worker
-      const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-      await navigator.serviceWorker.ready;
+      // 1. Check permission
+      let permission = Notification.permission;
+      if (permission === 'default') {
+        permission = await Notification.requestPermission();
+      }
 
-      // Request notification permission if default
-      if (Notification.permission === 'default') {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-          console.warn('[WebPush] Notification permission denied by user');
-          return;
-        }
-      } else if (Notification.permission !== 'granted') {
-        console.warn('[WebPush] Notification permission blocked');
+      if (permission !== 'granted') {
+        console.warn('[WebPush] Notification permission not granted');
         return;
       }
 
-      // Check if browser already has a PushManager subscription
+      // 2. Register service worker
+      const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      await navigator.serviceWorker.ready;
+
+      // 3. Check if browser already has a PushManager subscription
       let subscription = await registration.pushManager.getSubscription();
 
       if (!subscription) {
