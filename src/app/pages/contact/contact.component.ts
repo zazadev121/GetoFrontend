@@ -132,7 +132,7 @@ import { NotificationService } from '../../core/services/notification.service';
         </h3>
         <p class="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
           {{ translationService.isGeorgian() 
-            ? 'ჩვენი გუნდი მზად არის დაგეხმაროთ ყოველ სამუშაო დღეს. დოკუმენტაციის გაგზავნისთვის ან კონსულტაციისთვის გამოიყენეთ ზემოთ მოცემული საკონტაქტო არხები.' 
+            ? 'დოკუმენტაციის წარდგენასა და პროგრამასთან დაკავშირებული საკითხების შესახებ კონსულტაციის მისაღებად, გთხოვთ, დაგვიკავშირდეთ ზემოთ მითითებული საკონტაქტო არხების საშუალებით.' 
             : 'Our support team is ready to assist you every working day. Please use the contact channels above for document submissions or consultation.' 
           }}
         </p>

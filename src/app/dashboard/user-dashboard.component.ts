@@ -607,9 +607,9 @@ export class UserDashboardComponent implements OnInit {
     {
       id: 'p1_resume',
       phase: 0,
-      fileName: 'Resume_template.docx',
-      fileUrl: '/templates/phase1/Resume_template.docx',
-      fileSize: 27016,
+      fileName: 'Resume--.docx',
+      fileUrl: '/partners/Resume--.docx',
+      fileSize: 11940,
       descriptionKa: 'პირველი ეტაპის რეზიუმეს (CV) შაბლონის ჩამოტვირთვა',
       descriptionEn: 'Phase 1 Resume (CV) Template Form Download'
     },

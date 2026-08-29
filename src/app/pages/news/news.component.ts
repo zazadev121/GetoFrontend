@@ -3,16 +3,15 @@ import { CommonModule } from '@angular/common';
 import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
-import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
 import { NewsDto } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, FileSizePipe],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 animate-fade-in">
-      
+
       <!-- Hero Header Section -->
       <div class="glass-card p-8 sm:p-12 border-slate-700/50 relative overflow-hidden text-center space-y-4">
         <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
@@ -49,96 +48,46 @@ import { NewsDto } from '../../core/models/news.model';
         <p class="text-sm text-slate-400 leading-relaxed">{{ 'news.noNewsDesc' | translate }}</p>
       </div>
 
-      <!-- News Feed Grid -->
-      <div *ngIf="!isLoading && newsList.length > 0" class="space-y-6">
-        <div 
-          *ngFor="let news of newsList" 
-          class="glass-card p-6 sm:p-8 border-slate-700/50 hover:border-blue-500/40 transition-all duration-300 space-y-4 relative group">
-          
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 text-lg">
-                <i class="fa-solid fa-bullhorn"></i>
-              </div>
-              <h2 class="text-xl sm:text-2xl font-bold text-white font-heading tracking-tight leading-snug">
-                {{ getTitle(news) }}
-              </h2>
-            </div>
+      <!-- News Feed — Title Cards Only, each is a full clickable <a> -->
+      <div *ngIf="!isLoading && newsList.length > 0" class="space-y-4">
+        <a
+          *ngFor="let news of newsList"
+          [href]="'/news/' + news.id"
+          class="glass-card p-5 sm:p-7 border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 flex items-center justify-between gap-4 group cursor-pointer no-underline block">
 
-            <div class="flex items-center gap-2 flex-wrap justify-end">
-              <!-- Georgian fallback badge when English is selected but no English translation exists -->
-              <span 
+          <div class="flex items-center gap-4 overflow-hidden">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 text-lg group-hover:bg-blue-500/20 transition-colors">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="overflow-hidden">
+              <span
                 *ngIf="isEnglish() && !news.titleEn"
-                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider"
-                title="No English translation available — showing Georgian">
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider mb-1"
+                title="No English translation — showing Georgian">
                 <i class="fa-solid fa-language"></i> GE
               </span>
-
-              <div class="flex items-center gap-2 text-xs text-slate-400 font-medium shrink-0 self-start sm:self-auto bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
-                <i class="fa-regular fa-calendar-check text-blue-400"></i>
+              <div class="text-base sm:text-lg font-bold text-white font-heading tracking-tight leading-snug group-hover:text-blue-300 transition-colors truncate">
+                {{ getTitle(news) }}
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-500 mt-1 font-medium flex-wrap">
+                <i class="fa-regular fa-calendar-check text-slate-600"></i>
                 <span>{{ news.dateCreated | date:'mediumDate' }}</span>
-                <span class="text-slate-600">&bull;</span>
+                <span class="text-slate-700">&bull;</span>
                 <span>{{ news.dateCreated | date:'shortTime' }}</span>
+                <span *ngIf="news.attachments && news.attachments.length > 0" class="inline-flex items-center gap-1 text-emerald-500 ml-2">
+                  <i class="fa-solid fa-paperclip text-[10px]"></i> {{ news.attachments.length }}
+                </span>
+                <span *ngIf="news.links && news.links.length > 0" class="inline-flex items-center gap-1 text-blue-500 ml-1">
+                  <i class="fa-solid fa-link text-[10px]"></i> {{ news.links.length }}
+                </span>
               </div>
             </div>
           </div>
 
-          <div class="text-slate-200 text-sm sm:text-base leading-relaxed whitespace-pre-line pt-2">
-            {{ getText(news) }}
+          <div class="shrink-0 w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 group-hover:text-blue-400 group-hover:border-blue-500/40 flex items-center justify-center text-sm transition-all">
+            <i class="fa-solid fa-chevron-right group-hover:translate-x-0.5 transition-transform"></i>
           </div>
-
-          <!-- Interactive Links Section -->
-          <div *ngIf="news.links && news.links.length > 0" class="pt-3 border-t border-slate-800/80 space-y-2">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-link text-blue-400"></i>
-              <span>{{ translationService.isGeorgian() ? 'ბმულები' : 'Links' }}</span>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <a 
-                *ngFor="let link of news.links" 
-                [href]="link.url" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                class="btn btn-secondary text-xs py-1.5 px-3 bg-blue-950/40 border-blue-500/30 text-blue-300 hover:bg-blue-900/60 hover:text-white flex items-center gap-1.5 transition-colors">
-                <i class="fa-solid fa-up-right-from-square text-[10px]"></i>
-                <span>{{ link.label }}</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Downloadable File Attachments Section -->
-          <div *ngIf="news.attachments && news.attachments.length > 0" class="pt-3 border-t border-slate-800/80 space-y-2">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-paperclip text-emerald-400"></i>
-              <span>{{ translationService.isGeorgian() ? 'მიმაგრებული ფაილები' : 'Attachments' }}</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              <div 
-                *ngFor="let att of news.attachments" 
-                class="p-3 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl flex items-center justify-between transition-all gap-2 group/att">
-                <div class="flex items-center gap-2.5 overflow-hidden">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm shrink-0">
-                    <i class="fa-solid" [ngClass]="getFileIcon(att.fileName)"></i>
-                  </div>
-                  <div class="truncate">
-                    <div class="text-xs font-semibold text-slate-200 truncate group-hover/att:text-white transition-colors" [title]="att.fileName">{{ att.fileName }}</div>
-                    <div class="text-[10px] text-slate-400">{{ att.fileSize | fileSize }}</div>
-                  </div>
-                </div>
-
-                <a 
-                  [href]="newsService.getAttachmentDownloadUrl(att.id)" 
-                  target="_blank"
-                  [download]="att.fileName"
-                  class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0 bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors">
-                  <i class="fa-solid fa-download text-[10px]"></i>
-                  <span>{{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        </a>
       </div>
 
     </div>
@@ -164,22 +113,6 @@ export class NewsComponent implements OnInit {
       return news.titleEn;
     }
     return news.title;
-  }
-
-  getText(news: NewsDto): string {
-    if (this.isEnglish() && news.textEn) {
-      return news.textEn;
-    }
-    return news.text;
-  }
-
-  getFileIcon(filename: string): string {
-    const ext = filename.toLowerCase().split('.').pop();
-    if (ext === 'pdf') return 'fa-file-pdf text-rose-400';
-    if (ext === 'docx' || ext === 'doc') return 'fa-file-word text-blue-400';
-    if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext || '')) return 'fa-file-image text-purple-400';
-    if (['zip', 'rar', '7z'].includes(ext || '')) return 'fa-file-zipper text-amber-400';
-    return 'fa-file-lines text-emerald-400';
   }
 
   loadNews() {
