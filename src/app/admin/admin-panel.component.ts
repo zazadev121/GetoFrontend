@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../core/services/admin.service';
 import { NewsService } from '../core/services/news.service';
+import { VacancyService } from '../core/services/vacancy.service';
 import { NotificationService } from '../core/services/notification.service';
 import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
 import { NewsDto, NewsLinkDto, NewsAttachmentDto } from '../core/models/news.model';
+import { VacancyDto, VacancyLinkDto } from '../core/models/vacancy.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
 import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
@@ -73,6 +75,12 @@ interface ManagedTemplateItem {
               class="btn btn-secondary text-xs">
               <i class="fa-solid fa-newspaper text-blue-400"></i>
               {{ 'news.adminTitle' | translate }}
+            </button>
+            <button 
+              (click)="openVacancyModal()" 
+              class="btn btn-secondary text-xs">
+              <i class="fa-solid fa-briefcase text-emerald-400"></i>
+              {{ 'admin.vacancies' | translate }}
             </button>
             <button 
               (click)="openTemplateManagerModal()" 
@@ -856,6 +864,248 @@ interface ManagedTemplateItem {
         </div>
       </div>
 
+      <!-- ─── Vacancies manager ─────────────────────────────────────────── -->
+      <div *ngIf="showVacancyModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+        <div class="paper-card max-w-3xl w-full p-6 space-y-6 max-h-[85vh] overflow-y-auto">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3 relative z-10">
+            <div class="flex items-center gap-2 text-emerald-400 font-bold">
+              <i class="fa-solid fa-briefcase text-lg"></i>
+              <h3 class="text-lg text-white font-heading">{{ 'admin.vacancies' | translate }}</h3>
+            </div>
+            <button (click)="showVacancyModal = false" class="icon-btn icon-btn-sm">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Create / edit form -->
+          <div class="relative z-10 p-4 bg-slate-950/50 rounded-2xl border border-emerald-500/20 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
+                <i class="fa-solid" [ngClass]="editingVacancy ? 'fa-pen text-amber-400' : 'fa-pen-to-square text-emerald-400'"></i>
+                {{ editingVacancy ? ('admin.editVacancy' | translate) : ('admin.addVacancy' | translate) }}
+              </h4>
+              <button *ngIf="editingVacancy" (click)="cancelEditVacancy()" class="btn btn-secondary btn-sm text-xs">
+                <i class="fa-solid fa-xmark"></i> {{ 'news.cancelEdit' | translate }}
+              </button>
+            </div>
+
+            <!-- Language tabs -->
+            <div class="flex gap-1 p-1 bg-slate-950/60 rounded-lg border border-slate-700/50 w-fit">
+              <button (click)="vacancyFormLang = 'ka'"
+                [ngClass]="vacancyFormLang === 'ka' ? 'bg-emerald-600/80 text-white' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-1 rounded-md text-xs font-bold transition-all">
+                🇬🇪 {{ 'news.langTabGeo' | translate }}
+              </button>
+              <button (click)="vacancyFormLang = 'en'"
+                [ngClass]="vacancyFormLang === 'en' ? 'bg-indigo-600/80 text-white' : 'text-slate-400 hover:text-white'"
+                class="px-3 py-1 rounded-md text-xs font-bold transition-all">
+                🇬🇧 {{ 'news.langTabEng' | translate }}
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <ng-container *ngIf="vacancyFormLang === 'ka'">
+                <div>
+                  <label class="form-label" for="vac-title-ka">{{ 'news.inputTitle' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
+                  <input id="vac-title-ka" type="text" [(ngModel)]="newVacancyTitle" class="form-control text-xs">
+                </div>
+                <div>
+                  <label class="form-label" for="vac-text-ka">{{ 'news.inputText' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
+                  <textarea id="vac-text-ka" rows="5" [(ngModel)]="newVacancyText" class="form-control text-xs resize-none"></textarea>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="vacancyFormLang === 'en'">
+                <div>
+                  <label class="form-label" for="vac-title-en">
+                    {{ 'news.inputTitle' | translate }} (English)
+                    <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional — Georgian shown as fallback)</span>
+                  </label>
+                  <input id="vac-title-en" type="text" [(ngModel)]="newVacancyTitleEn"
+                    class="form-control text-xs border-indigo-500/30 focus:border-indigo-500/60">
+                </div>
+                <div>
+                  <label class="form-label" for="vac-text-en">
+                    {{ 'news.inputText' | translate }} (English)
+                    <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional)</span>
+                  </label>
+                  <textarea id="vac-text-en" rows="5" [(ngModel)]="newVacancyTextEn"
+                    class="form-control text-xs resize-none border-indigo-500/30 focus:border-indigo-500/60"></textarea>
+                </div>
+              </ng-container>
+
+              <!-- Salary applies to both languages -->
+              <div>
+                <label class="form-label" for="vac-salary">
+                  {{ 'vacancy.salary' | translate }}
+                  <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional)</span>
+                </label>
+                <input id="vac-salary" type="text" [(ngModel)]="newVacancySalary"
+                  placeholder="2400 - 2800 EUR / month"
+                  class="form-control text-xs border-emerald-500/30 focus:border-emerald-500/60">
+              </div>
+
+              <!-- Links -->
+              <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-700/50 space-y-3">
+                <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-link text-blue-400"></i><span>Links / External URLs</span>
+                </div>
+
+                <div *ngIf="vacancyLinks.length > 0" class="space-y-1.5">
+                  <div *ngFor="let link of vacancyLinks; let i = index"
+                    class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded-lg border border-slate-700/50">
+                    <div class="truncate mr-2">
+                      <span class="font-semibold text-white">{{ link.label }}</span>
+                      <span class="text-slate-400 text-[11px] ml-2 font-mono">({{ link.url }})</span>
+                    </div>
+                    <button type="button" (click)="removeVacancyLink(i)" class="text-rose-400 hover:text-rose-300 px-1">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                  <input type="text" [(ngModel)]="newVacancyLinkLabel" placeholder="Link Label" class="form-control text-xs sm:col-span-2">
+                  <input type="url" [(ngModel)]="newVacancyLinkUrl" placeholder="https://example.com" class="form-control text-xs sm:col-span-2">
+                  <button type="button" (click)="addVacancyLink()"
+                    [disabled]="!newVacancyLinkLabel.trim() || !newVacancyLinkUrl.trim()"
+                    class="btn btn-secondary btn-sm text-xs sm:col-span-1">
+                    <i class="fa-solid fa-plus"></i> Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Attachments -->
+              <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-700/50 space-y-3">
+                <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-paperclip text-emerald-400"></i><span>File Attachments</span>
+                </div>
+
+                <div *ngIf="editingVacancy && editingVacancy.attachments && editingVacancy.attachments.length > 0" class="space-y-1.5">
+                  <div *ngFor="let att of editingVacancy.attachments"
+                    class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded-lg border border-slate-700/50">
+                    <div class="flex items-center gap-2 truncate">
+                      <i class="fa-solid fa-file text-blue-400"></i>
+                      <span class="font-semibold text-white truncate">{{ att.fileName }}</span>
+                      <span class="text-[10px] text-slate-400">({{ att.fileSize | fileSize }})</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <a [href]="vacancyService.getAttachmentDownloadUrl(att.id)" target="_blank" download
+                        class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
+                        <i class="fa-solid fa-download"></i>
+                      </a>
+                      <button type="button" (click)="deleteVacancyAttachment(att.id)" class="btn btn-danger btn-sm text-[10px] px-2 py-0.5">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="selectedVacancyFiles.length > 0" class="space-y-1 text-xs">
+                  <div *ngFor="let f of selectedVacancyFiles; let i = index"
+                    class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-lg border border-emerald-500/30">
+                    <span class="truncate text-emerald-300"><i class="fa-solid fa-file-arrow-up mr-1"></i>{{ f.name }}</span>
+                    <button type="button" (click)="removeSelectedVacancyFile(i)" class="text-rose-400 hover:text-rose-300 px-1">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <input type="file" multiple (change)="onVacancyFileSelected($event)" class="form-control text-xs">
+              </div>
+
+              <div class="flex items-center gap-3 text-[10px] font-semibold">
+                <span class="flex items-center gap-1" [ngClass]="newVacancyTitle.trim() ? 'text-emerald-400' : 'text-slate-500'">
+                  <i class="fa-solid" [ngClass]="newVacancyTitle.trim() ? 'fa-circle-check' : 'fa-circle'"></i> 🇬🇪 GEO
+                </span>
+                <span class="flex items-center gap-1" [ngClass]="newVacancyTitleEn.trim() ? 'text-emerald-400' : 'text-amber-500'">
+                  <i class="fa-solid" [ngClass]="newVacancyTitleEn.trim() ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+                  🇬🇧 ENG {{ newVacancyTitleEn.trim() ? '' : '(fallback)' }}
+                </span>
+              </div>
+
+              <div class="flex justify-end gap-2">
+                <button *ngIf="editingVacancy" (click)="cancelEditVacancy()" class="btn btn-secondary btn-sm text-xs">
+                  {{ 'news.cancelEdit' | translate }}
+                </button>
+
+                <button *ngIf="!editingVacancy" (click)="submitCreateVacancy()"
+                  [disabled]="!newVacancyTitle.trim() || !newVacancyText.trim() || isPostingVacancy"
+                  class="btn btn-primary btn-sm text-xs">
+                  <span *ngIf="!isPostingVacancy"><i class="fa-solid fa-paper-plane mr-1"></i> {{ 'admin.addVacancy' | translate }}</span>
+                  <span *ngIf="isPostingVacancy"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Posting...</span>
+                </button>
+
+                <button *ngIf="editingVacancy" (click)="submitUpdateVacancy()"
+                  [disabled]="!newVacancyTitle.trim() || !newVacancyText.trim() || isUpdatingVacancy"
+                  class="btn btn-primary btn-sm text-xs">
+                  <span *ngIf="!isUpdatingVacancy"><i class="fa-solid fa-floppy-disk mr-1"></i> {{ 'news.saveChanges' | translate }}</span>
+                  <span *ngIf="isUpdatingVacancy"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Saving...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Posted vacancies -->
+          <div class="relative z-10 space-y-3">
+            <h4 class="text-sm font-bold text-white font-heading">Posted Vacancies ({{ vacancyList.length }})</h4>
+
+            <div *ngIf="isLoadingVacancies" class="py-6 text-center text-xs text-slate-400">
+              <i class="fa-solid fa-spinner fa-spin text-lg text-emerald-500 mb-1"></i>
+              <div>Loading vacancies...</div>
+            </div>
+
+            <div *ngIf="!isLoadingVacancies && vacancyList.length === 0"
+              class="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-700/50 rounded-xl">
+              No vacancies posted yet.
+            </div>
+
+            <div *ngIf="!isLoadingVacancies && vacancyList.length > 0" class="space-y-2">
+              <div *ngFor="let vacancy of vacancyList"
+                class="p-4 bg-slate-950/50 border border-slate-700/50 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="overflow-hidden flex-1 space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-bold text-sm text-white truncate">{{ vacancy.title }}</span>
+                    <span class="text-[10px] text-slate-400 font-mono">({{ vacancy.dateCreated | date:'short' }})</span>
+                    <span *ngIf="vacancy.salary"
+                      class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      {{ vacancy.salary }}
+                    </span>
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase"
+                      [ngClass]="vacancy.titleEn ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'">
+                      🇬🇧 {{ vacancy.titleEn ? 'EN ✓' : 'EN missing' }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-400 line-clamp-1 italic">🇬🇪 {{ vacancy.text }}</p>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                  <button (click)="startEditVacancy(vacancy)" class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
+                    <i class="fa-solid fa-pen text-amber-400"></i> {{ 'news.editBtn' | translate }}
+                  </button>
+                  <button (click)="promptDeleteVacancy(vacancy)" class="btn btn-danger btn-sm text-xs px-2.5 py-1">
+                    <i class="fa-solid fa-trash"></i> {{ 'admin.delete' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative z-10 pt-3 border-t border-white/10 flex justify-end">
+            <button (click)="showVacancyModal = false" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
+          </div>
+        </div>
+      </div>
+
+      <app-confirm-dialog
+        [isOpen]="showDeleteVacancyModal"
+        title="Delete Vacancy"
+        [message]="getDeleteVacancyMessage()"
+        confirmText="Delete Vacancy"
+        (confirmed)="confirmDeleteVacancy()"
+        (cancelled)="showDeleteVacancyModal = false">
+      </app-confirm-dialog>
+
       <app-confirm-dialog
         [isOpen]="showDeleteNewsModal"
         title="Delete News Item"
@@ -871,6 +1121,7 @@ interface ManagedTemplateItem {
 export class AdminPanelComponent implements OnInit {
   adminService = inject(AdminService);
   newsService = inject(NewsService);
+  vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
 
@@ -895,6 +1146,26 @@ export class AdminPanelComponent implements OnInit {
   isUpdatingNews = false;
   selectedNewsForDelete: NewsDto | null = null;
   showDeleteNewsModal = false;
+
+  // ── Vacancies (same shape as news, plus salary) ──
+  vacancyList: VacancyDto[] = [];
+  isLoadingVacancies = false;
+  showVacancyModal = false;
+  newVacancyTitle = '';
+  newVacancyText = '';
+  newVacancyTitleEn = '';
+  newVacancyTextEn = '';
+  newVacancySalary = '';
+  vacancyFormLang: 'ka' | 'en' = 'ka';
+  vacancyLinks: VacancyLinkDto[] = [];
+  newVacancyLinkLabel = '';
+  newVacancyLinkUrl = '';
+  selectedVacancyFiles: File[] = [];
+  isPostingVacancy = false;
+  editingVacancy: VacancyDto | null = null;
+  isUpdatingVacancy = false;
+  selectedVacancyForDelete: VacancyDto | null = null;
+  showDeleteVacancyModal = false;
 
   selectedUserForInspect: UserWithDocumentsDto | null = null;
   selectedUserForDelete: UserWithDocumentsDto | null = null;
@@ -1569,6 +1840,226 @@ export class AdminPanelComponent implements OnInit {
     this.notificationService.success('News item updated successfully.', 'News Updated');
     this.resetNewsForm();
     this.loadNewsForAdmin();
+  }
+
+
+  // ─── Vacancies ────────────────────────────────────────────────────────────
+  // Same flow as news: create, then upload any selected files against the new id.
+
+  openVacancyModal() {
+    this.showVacancyModal = true;
+    this.loadVacanciesForAdmin();
+  }
+
+  loadVacanciesForAdmin() {
+    this.isLoadingVacancies = true;
+    this.vacancyService.getAllVacancies().subscribe({
+      next: (res) => {
+        this.isLoadingVacancies = false;
+        if (res.statusCode === 200 && Array.isArray(res.data)) {
+          this.vacancyList = res.data;
+        }
+      },
+      error: () => {
+        this.isLoadingVacancies = false;
+      }
+    });
+  }
+
+  addVacancyLink() {
+    if (!this.newVacancyLinkLabel.trim() || !this.newVacancyLinkUrl.trim()) return;
+    let url = this.newVacancyLinkUrl.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    this.vacancyLinks.push({ label: this.newVacancyLinkLabel.trim(), url });
+    this.newVacancyLinkLabel = '';
+    this.newVacancyLinkUrl = '';
+  }
+
+  removeVacancyLink(index: number) {
+    this.vacancyLinks.splice(index, 1);
+  }
+
+  onVacancyFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      for (let i = 0; i < event.target.files.length; i++) {
+        this.selectedVacancyFiles.push(event.target.files[i]);
+      }
+    }
+  }
+
+  removeSelectedVacancyFile(index: number) {
+    this.selectedVacancyFiles.splice(index, 1);
+  }
+
+  deleteVacancyAttachment(attachmentId: number) {
+    this.vacancyService.deleteAttachment(attachmentId).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          this.notificationService.success('Attachment deleted', 'Deleted');
+          if (this.editingVacancy && this.editingVacancy.attachments) {
+            this.editingVacancy.attachments = this.editingVacancy.attachments.filter(a => a.id !== attachmentId);
+          }
+          this.loadVacanciesForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to delete attachment', 'Error');
+        }
+      }
+    });
+  }
+
+  private buildVacancyPayload() {
+    return {
+      title: this.newVacancyTitle.trim(),
+      text: this.newVacancyText.trim(),
+      titleEn: this.newVacancyTitleEn.trim() || undefined,
+      textEn: this.newVacancyTextEn.trim() || undefined,
+      salary: this.newVacancySalary.trim() || undefined,
+      links: this.vacancyLinks.length > 0 ? this.vacancyLinks : undefined
+    };
+  }
+
+  /** Uploads every pending file, then runs `done` once — success or not. */
+  private uploadVacancyFiles(vacancyId: number, done: () => void) {
+    if (this.selectedVacancyFiles.length === 0) {
+      done();
+      return;
+    }
+
+    const files = [...this.selectedVacancyFiles];
+    let settled = 0;
+    const tick = () => {
+      settled++;
+      if (settled === files.length) done();
+    };
+
+    files.forEach(file => {
+      this.vacancyService.uploadAttachment(vacancyId, file).subscribe({
+        next: tick,
+        error: tick
+      });
+    });
+  }
+
+  submitCreateVacancy() {
+    if (!this.newVacancyTitle.trim() || !this.newVacancyText.trim()) return;
+
+    this.isPostingVacancy = true;
+    this.vacancyService.createVacancy(this.buildVacancyPayload()).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200 && res.data) {
+          this.uploadVacancyFiles(res.data.id, () => this.finishCreateVacancy());
+        } else {
+          this.isPostingVacancy = false;
+          this.notificationService.error(res.message || 'Failed to post vacancy', 'Error');
+        }
+      },
+      error: (err) => {
+        this.isPostingVacancy = false;
+        const msg = err?.error?.message || err?.message || 'Failed to post vacancy';
+        this.notificationService.error(msg, 'Error');
+      }
+    });
+  }
+
+  private finishCreateVacancy() {
+    this.isPostingVacancy = false;
+    this.notificationService.success('Vacancy posted successfully.', 'Vacancy Posted');
+    this.resetVacancyForm();
+    this.loadVacanciesForAdmin();
+  }
+
+  private resetVacancyForm() {
+    this.newVacancyTitle = '';
+    this.newVacancyText = '';
+    this.newVacancyTitleEn = '';
+    this.newVacancyTextEn = '';
+    this.newVacancySalary = '';
+    this.vacancyFormLang = 'ka';
+    this.vacancyLinks = [];
+    this.newVacancyLinkLabel = '';
+    this.newVacancyLinkUrl = '';
+    this.selectedVacancyFiles = [];
+    this.editingVacancy = null;
+  }
+
+  startEditVacancy(vacancy: VacancyDto) {
+    this.editingVacancy = vacancy;
+    this.newVacancyTitle = vacancy.title;
+    this.newVacancyText = vacancy.text;
+    this.newVacancyTitleEn = vacancy.titleEn || '';
+    this.newVacancyTextEn = vacancy.textEn || '';
+    this.newVacancySalary = vacancy.salary || '';
+    this.vacancyFormLang = 'ka';
+    this.vacancyLinks = vacancy.links ? [...vacancy.links] : [];
+    this.selectedVacancyFiles = [];
+  }
+
+  cancelEditVacancy() {
+    this.resetVacancyForm();
+  }
+
+  submitUpdateVacancy() {
+    if (!this.editingVacancy || !this.newVacancyTitle.trim() || !this.newVacancyText.trim()) return;
+
+    this.isUpdatingVacancy = true;
+    const vacancyId = this.editingVacancy.id;
+
+    this.vacancyService.updateVacancy(vacancyId, this.buildVacancyPayload()).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          this.uploadVacancyFiles(vacancyId, () => this.finishUpdateVacancy());
+        } else {
+          this.isUpdatingVacancy = false;
+          this.notificationService.error(res.message || 'Failed to update vacancy', 'Error');
+        }
+      },
+      error: (err) => {
+        this.isUpdatingVacancy = false;
+        const msg = err?.error?.message || err?.message || 'Failed to update vacancy';
+        this.notificationService.error(msg, 'Error');
+      }
+    });
+  }
+
+  private finishUpdateVacancy() {
+    this.isUpdatingVacancy = false;
+    this.notificationService.success('Vacancy updated successfully.', 'Vacancy Updated');
+    this.resetVacancyForm();
+    this.loadVacanciesForAdmin();
+  }
+
+  promptDeleteVacancy(vacancy: VacancyDto) {
+    this.selectedVacancyForDelete = vacancy;
+    this.showDeleteVacancyModal = true;
+  }
+
+  getDeleteVacancyMessage(): string {
+    const title = this.selectedVacancyForDelete?.title ?? '';
+    return `Delete the vacancy "${title}"? Its attachments will be removed too. This cannot be undone.`;
+  }
+
+  confirmDeleteVacancy() {
+    if (!this.selectedVacancyForDelete) return;
+    const id = this.selectedVacancyForDelete.id;
+
+    this.vacancyService.deleteVacancy(id).subscribe({
+      next: (res) => {
+        this.showDeleteVacancyModal = false;
+        this.selectedVacancyForDelete = null;
+        if (res.statusCode === 200) {
+          this.notificationService.success('Vacancy deleted.', 'Deleted');
+          this.loadVacanciesForAdmin();
+        } else {
+          this.notificationService.error(res.message || 'Failed to delete vacancy', 'Error');
+        }
+      },
+      error: () => {
+        this.showDeleteVacancyModal = false;
+        this.notificationService.error('Failed to delete vacancy', 'Error');
+      }
+    });
   }
 
   promptDeleteNews(news: NewsDto) {

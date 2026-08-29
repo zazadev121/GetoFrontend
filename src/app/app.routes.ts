@@ -21,6 +21,15 @@ export const routes: Routes = [
   },
 
   {
+    path: 'vacancies',
+    loadComponent: () => import('./pages/vacancies/vacancies.component').then(m => m.VacanciesComponent)
+  },
+  {
+    path: 'vacancies/:id',
+    loadComponent: () => import('./pages/vacancies/vacancy-detail.component').then(m => m.VacancyDetailComponent)
+  },
+
+  {
     path: 'german-course',
     loadComponent: () => import('./pages/deutsch-course/deutsch-course.component').then(m => m.DeutschCourseComponent)
   },

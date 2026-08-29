@@ -227,6 +227,7 @@ export class NavbarComponent {
   navLinks = [
     { path: '/about', icon: 'fa-circle-info', labelEn: 'About', labelKa: 'ჩვენ შესახებ' },
     { path: '/news', icon: 'fa-newspaper', labelEn: 'News', labelKa: 'სიახლეები' },
+    { path: '/vacancies', icon: 'fa-briefcase', labelEn: 'Vacancies', labelKa: 'ვაკანსიები' },
     { path: '/german-course', icon: 'fa-language', labelEn: 'German Course', labelKa: 'გერმანული ენის კურსი' },
     { path: '/steuer', icon: 'fa-receipt', labelEn: 'Steuer', labelKa: 'შტოიერი' }
   ];

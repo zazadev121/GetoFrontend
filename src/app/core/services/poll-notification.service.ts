@@ -3,6 +3,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { NewsService } from './news.service';
+import { VacancyService } from './vacancy.service';
 import { WebPushService } from './web-push.service';
 import { NotificationFeedService } from './notification-feed.service';
 import { TranslationService } from './translation.service';
@@ -16,6 +17,7 @@ interface Snapshot {
   status: number;
   phase: number;
   latestNewsId: number;
+  latestVacancyId: number;
 }
 
 /**
@@ -35,6 +37,7 @@ interface Snapshot {
 export class PollNotificationService {
   private authService = inject(AuthService);
   private newsService = inject(NewsService);
+  private vacancyService = inject(VacancyService);
   private webPush = inject(WebPushService);
   private feed = inject(NotificationFeedService);
   private translation = inject(TranslationService);
@@ -163,8 +166,8 @@ export class PollNotificationService {
   private rebaseline(): void {
     if (!this.authService.isLoggedIn()) return;
     this.fetchState().pipe(take(1)).subscribe({
-      next: ({ profile, news }) => {
-        const snap = this.toSnapshot(profile, news);
+      next: ({ profile, news, vacancies }) => {
+        const snap = this.toSnapshot(profile, news, vacancies);
         if (snap) this.saveSnapshot(snap);
       },
       error: () => { /* the next poll will sort it out */ }
@@ -177,8 +180,8 @@ export class PollNotificationService {
 
     return new Promise<void>(resolve => {
       this.fetchState().pipe(take(1)).subscribe({
-        next: ({ profile, news }) => {
-          const snap = this.toSnapshot(profile, news);
+        next: ({ profile, news, vacancies }) => {
+          const snap = this.toSnapshot(profile, news, vacancies);
           if (snap) this.saveSnapshot(snap);
           resolve();
         },
@@ -190,26 +193,28 @@ export class PollNotificationService {
   private fetchState() {
     return forkJoin({
       profile: this.authService.getProfile().pipe(take(1), catchError(() => of(null))),
-      news: this.newsService.getAllNews().pipe(take(1), catchError(() => of(null)))
+      news: this.newsService.getAllNews().pipe(take(1), catchError(() => of(null))),
+      vacancies: this.vacancyService.getAllVacancies().pipe(take(1), catchError(() => of(null)))
     }).pipe(take(1));
   }
 
   /** null when the profile call failed — we never baseline off a partial read. */
-  private toSnapshot(profile: any, news: any): Snapshot | null {
+  private toSnapshot(profile: any, news: any, vacancies: any): Snapshot | null {
     if (!profile || profile.statusCode !== 200 || !profile.data) return null;
     return {
       status: Number(profile.data.status),
       phase: Number(profile.data.userPhase),
-      latestNewsId: this.latestNewsId(news)
+      latestNewsId: this.latestId(news),
+      latestVacancyId: this.latestId(vacancies)
     };
   }
 
-  private newsItems(news: any): any[] {
-    return news?.statusCode === 200 && Array.isArray(news.data) ? news.data : [];
+  private items(response: any): any[] {
+    return response?.statusCode === 200 && Array.isArray(response.data) ? response.data : [];
   }
 
-  private latestNewsId(news: any): number {
-    const list = this.newsItems(news);
+  private latestId(response: any): number {
+    const list = this.items(response);
     return list.length ? Math.max(...list.map(n => Number(n.id) || 0)) : 0;
   }
 
@@ -231,10 +236,10 @@ export class PollNotificationService {
 
     this.fetchState()
       .subscribe({
-        next: ({ profile, news }) => {
+        next: ({ profile, news, vacancies }) => {
           this.inFlight = false;
 
-          const current = this.toSnapshot(profile, news);
+          const current = this.toSnapshot(profile, news, vacancies);
           if (!current) {
             this.failures = Math.min(this.failures + 1, 6);
             this.schedule(this.nextDelay());
@@ -242,7 +247,8 @@ export class PollNotificationService {
           }
           this.failures = 0;
 
-          const newsList = this.newsItems(news);
+          const newsList = this.items(news);
+          const vacancyList = this.items(vacancies);
           const snap = this.loadSnapshot();
           if (!snap) {
             // First successful read for this account — baseline only, stay quiet.
@@ -277,6 +283,16 @@ export class PollNotificationService {
               newest?.title ?? (this.translation.isGeorgian() ? 'ახალი სიახლე გამოქვეყნდა' : 'A new post was published'),
               `/news/${current.latestNewsId}`,
               `news-${current.latestNewsId}`
+            );
+          }
+
+          if (current.latestVacancyId > snap.latestVacancyId) {
+            const newest = vacancyList.find(v => Number(v.id) === current.latestVacancyId);
+            this.notify(
+              this.translation.isGeorgian() ? '💼 ახალი ვაკანსია — GETO Project' : '💼 New vacancy — GETO Project',
+              newest?.title ?? (this.translation.isGeorgian() ? 'ახალი ვაკანსია გამოქვეყნდა' : 'A new vacancy was published'),
+              `/vacancies/${current.latestVacancyId}`,
+              `vacancy-${current.latestVacancyId}`
             );
           }
 
