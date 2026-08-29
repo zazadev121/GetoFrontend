@@ -64,7 +64,7 @@ export class TranslationService {
       // News & Announcements Page
       'news.badge': 'სიახლეები & განცხადებები',
       'news.title': 'სიახლეები და განცხადებები',
-      'news.subtitle': 'ახალი ვაკანსიები, მნიშვნელოვანი ინფორმაცია და სიახლეები გერმანიაში დასაქმების შესახებ.',
+      'news.subtitle': 'მნიშვნელოვანი ინფორმაცია და სიახლეები',
       'news.loading': 'სიახლეები იტვირთება...',
       'news.noNewsTitle': 'სიახლეები ჯერ არ არის',
       'news.noNewsDesc': 'ახალი განცხადებები და ვაკანსიები გამოქვეყნდება უახლოეს მომავალში.',
@@ -304,7 +304,7 @@ export class TranslationService {
       // News & Announcements Page
       'news.badge': 'News & Announcements',
       'news.title': 'News & Announcements',
-      'news.subtitle': 'New job openings, important announcements, and news about employment in Germany.',
+      'news.subtitle': 'Important information and news',
       'news.loading': 'Loading news...',
       'news.noNewsTitle': 'No News Available Yet',
       'news.noNewsDesc': 'New updates and announcements will be published here shortly.',
