@@ -45,17 +45,18 @@ interface StaticTemplateItem {
         <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
-          <div class="flex items-center gap-3 sm:gap-4 w-full md:w-auto">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-xl sm:text-2xl font-bold font-heading shadow-xl shadow-blue-500/20 shrink-0">
+          <div class="flex items-center gap-3 sm:gap-5 w-full md:w-auto relative z-10">
+            <div class="w-14 h-14 sm:w-[4.5rem] sm:h-[4.5rem] blob blob-morph grid place-items-center
+                        text-xl sm:text-2xl font-bold font-heading shrink-0 text-blue-300 border border-blue-500/30"
+              style="background: rgb(var(--c-clay-500) / .2)">
               {{ getUserInitials() }}
             </div>
             <div class="overflow-hidden">
-              <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-white font-heading truncate">
-                  {{ currentUser?.name || 'User' }}'s {{ 'dash.cabinet' | translate }}
-                </h1>
-              </div>
-              <p class="text-xs sm:text-sm text-slate-400 mt-0.5 truncate">
+              <p class="eyebrow mb-1">{{ 'dash.cabinet' | translate }}</p>
+              <h1 class="font-heading font-extrabold text-white text-2xl sm:text-3xl leading-tight truncate">
+                {{ currentUser?.name || 'User' }}
+              </h1>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1 truncate">
                 <i class="fa-solid fa-envelope mr-1 text-slate-500"></i> {{ currentUser?.email }}
               </p>
             </div>
@@ -352,14 +353,14 @@ interface StaticTemplateItem {
                         </div>
                       </div>
                     </td>
-                    <td class="text-slate-400 text-xs whitespace-nowrap">
+                    <td data-label="Uploaded" class="text-slate-400 text-xs whitespace-nowrap">
                       {{ doc.uploadedAt | date:'mediumDate' }}
                     </td>
-                    <td class="text-slate-400 text-xs whitespace-nowrap">
+                    <td data-label="Size" class="text-slate-400 text-xs whitespace-nowrap">
                       {{ doc.fileSize | fileSize }}
                     </td>
                     <td class="text-right whitespace-nowrap">
-                      <div class="flex items-center justify-end gap-2">
+                      <div class="flex items-center justify-end gap-2 max-md:justify-start">
                         <button 
                           (click)="downloadDoc(doc)" 
                           class="btn btn-secondary btn-sm"

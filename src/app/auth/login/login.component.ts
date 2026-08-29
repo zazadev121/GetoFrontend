@@ -6,33 +6,54 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { SealBadgeComponent } from '../../shared/components/seal-badge/seal-badge.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe, SealBadgeComponent],
   template: `
-    <div class="min-h-[85vh] flex items-center justify-center p-4 sm:p-6">
-      <div class="glass-card max-w-md w-full p-8 border-slate-700/50 relative overflow-hidden shadow-2xl">
-        <!-- Ambient background glows -->
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+      <div class="grid lg:grid-cols-[1fr_minmax(0,26rem)] gap-10 lg:gap-16 items-center">
 
-        <!-- Embedded Language Selector Switcher -->
+        <!-- Editorial side: the welcome, set large -->
+        <div class="hidden lg:block space-y-6 relative">
+          <div class="wash w-[24rem] h-[24rem] -top-32 -left-20" style="background: rgb(var(--c-clay-500) / .22)"></div>
+
+          <div class="relative z-10 space-y-6">
+            <p class="eyebrow">GETO Portal</p>
+            <h1 class="display-xl text-white">{{ 'auth.welcome' | translate }}</h1>
+            <p class="display-lead text-slate-300 max-w-md">{{ 'auth.loginSub' | translate }}</p>
+
+            <div class="pill-stack pt-2">
+              <span class="pill-tag pill-tag--clay">{{ translationService.isGeorgian() ? 'დოკუმენტაცია' : 'Documents' }}</span>
+              <span class="pill-tag pill-tag--sage">{{ translationService.isGeorgian() ? 'სტატუსი რეალურ დროში' : 'Live status' }}</span>
+              <span class="pill-tag">{{ translationService.isGeorgian() ? 'შეტყობინებები' : 'Notifications' }}</span>
+            </div>
+
+            <div class="pt-4">
+              <app-seal-badge class="inline-block" text="GETO PROJECT · SIGN IN · SHESVLA · " icon="fa-key"></app-seal-badge>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form card -->
+        <div class="paper-card w-full p-6 sm:p-8 relative overflow-hidden">
+        <!-- Language switch -->
         <div class="absolute top-4 right-4 z-20">
-          <button (click)="translationService.toggleLanguage()" 
-            class="px-2.5 py-1 rounded-lg border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-xs font-bold text-slate-300 transition-colors flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-globe text-blue-400 text-xs"></i>
+          <button type="button" (click)="translationService.toggleLanguage()"
+            class="icon-btn icon-btn-sm text-[11px] font-bold">
             {{ translationService.isGeorgian() ? 'GE' : 'EN' }}
           </button>
         </div>
 
-        <div class="text-center mb-8 relative z-10">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 mx-auto flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-500/30 mb-4 transform hover:scale-105 transition-transform">
+        <div class="mb-7 relative z-10 space-y-2">
+          <span class="w-14 h-14 blob blob-morph grid place-items-center text-xl text-blue-400"
+            style="background: rgb(var(--c-clay-500) / .18)">
             <i class="fa-solid fa-lock"></i>
-          </div>
-          <h2 class="text-2xl font-extrabold text-white font-heading tracking-tight">{{ 'auth.welcome' | translate }}</h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">{{ 'auth.loginSub' | translate }}</p>
+          </span>
+          <h2 class="font-heading text-2xl font-extrabold text-white pt-2">{{ 'auth.welcome' | translate }}</h2>
+          <p class="text-sm text-slate-400">{{ 'auth.loginSub' | translate }}</p>
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5 relative z-10">
@@ -107,10 +128,11 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
         </form>
 
         <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-slate-400 relative z-10">
-          {{ 'auth.dontHaveAccount' | translate }} 
+          {{ 'auth.dontHaveAccount' | translate }}
           <a routerLink="/auth/register" class="text-blue-400 font-bold hover:text-blue-300 transition-colors ml-1">
             {{ 'auth.createAccount' | translate }}
           </a>
+        </div>
         </div>
       </div>
     </div>

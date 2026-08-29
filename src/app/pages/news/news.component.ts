@@ -3,35 +3,25 @@ import { CommonModule } from '@angular/common';
 import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.component';
 import { NewsDto } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, PageHeroComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 animate-fade-in">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14">
 
-      <!-- Hero Header Section -->
-      <div class="glass-card p-8 sm:p-12 border-slate-700/50 relative overflow-hidden text-center space-y-4">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-900 border border-blue-500/30 mx-auto flex items-center justify-center shadow-xl shadow-blue-500/20 transform hover:scale-105 transition-transform p-1">
-          <img src="/recommendations/Geto Logo.jpg" alt="GETO Logo" class="w-full h-full object-cover rounded-xl">
-        </div>
-
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider">
-          <i class="fa-solid fa-newspaper"></i> {{ 'news.badge' | translate }}
-        </div>
-
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight">
-          {{ 'news.title' | translate }}
-        </h1>
-
-        <p class="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed font-medium">
-          {{ 'news.subtitle' | translate }}
-        </p>
-      </div>
+      <app-page-hero
+        [eyebrow]="'news.badge' | translate"
+        [title]="'news.title' | translate"
+        [lead]="'news.subtitle' | translate"
+        icon="fa-newspaper"
+        accent="teal"
+        sealText="GETO PROJECT · NEWS · SIAKHLEEBI · "
+        sealIcon="fa-bullhorn">
+      </app-page-hero>
 
       <!-- Loading State -->
       <div *ngIf="isLoading" class="py-16 text-center text-slate-400 space-y-3">

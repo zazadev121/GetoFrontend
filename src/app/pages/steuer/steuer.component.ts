@@ -1,35 +1,30 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslationService } from '../../core/services/translation.service';
+import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.component';
 
 @Component({
   selector: 'app-steuer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PageHeroComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 sm:space-y-12 animate-fade-in w-full overflow-hidden">
-      
-      <!-- Hero Section -->
-      <div class="glass-card p-6 sm:p-12 border-slate-700/50 relative overflow-hidden text-center space-y-4 w-full">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full overflow-hidden">
 
-        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-emerald-500 mx-auto flex items-center justify-center text-white text-2xl sm:text-3xl shadow-xl shadow-teal-500/30 transform hover:scale-105 transition-transform shrink-0">
-          <i class="fa-solid fa-receipt"></i>
-        </div>
+      <app-page-hero
+        [eyebrow]="translationService.isGeorgian() ? 'შტოიერი' : 'Tax refund'"
+        [title]="translationService.isGeorgian() ? '„შტოიერის“ დაბრუნება' : 'German Tax Refund'"
+        [lead]="translationService.isGeorgian()
+          ? 'გერმანიაში დასაქმებისას გადახდილი გადასახადის ნაწილის დაბრუნება, ე.წ. „შტოიერის“ დაბრუნება, შესაძლებელია შესაბამისი პირობების დაკმაყოფილების შემთხვევაში.'
+          : 'Tax refund for taxes paid while working in Germany (the so-called Steuer refund) is possible upon satisfying eligibility requirements.'"
+        icon="fa-receipt"
+        accent="sage"
+        sealText="GETO PROJECT · STEUER · TAX REFUND · "
+        sealIcon="fa-coins">
+      </app-page-hero>
 
-        <h1 class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white font-heading tracking-tight break-words px-2">
-          {{ translationService.isGeorgian() ? '„შტოიერის“ დაბრუნება (Tax Refund)' : 'German Tax Refund (Steuer)' }}
-        </h1>
-
-        <p class="text-sm sm:text-base md:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed break-words px-2">
-          {{ translationService.isGeorgian() 
-            ? 'გერმანიაში დასაქმებისას გადახდილი გადასახადის ნაწილის დაბრუნება, ე.წ. „შტოიერის“ დაბრუნება, შესაძლებელია შესაბამისი პირობების დაკმაყოფილების შემთხვევაში.' 
-            : 'Tax refund for taxes paid while working in Germany (the so-called "Steuer" refund) is possible upon satisfying eligibility requirements.' 
-          }}
-        </p>
-
+      <div class="w-full">
         <!-- Main Download Agreement CTA -->
-        <div class="pt-4 flex justify-center w-full">
+        <div class="flex justify-center w-full">
           <a 
             href="/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx (1).pdf" 
             download="STEUER_Service_Agreement.pdf"

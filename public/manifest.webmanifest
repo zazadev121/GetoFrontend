@@ -1,15 +1,25 @@
 {
+  "id": "/",
   "name": "GETO Project",
   "short_name": "GETO",
-  "description": "GETO Project client cabinet and notifications",
-  "start_url": "/",
+  "description": "GETO Project client cabinet, documents and notifications",
+  "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#020617",
-  "theme_color": "#0052ff",
+  "background_color": "#F7F2E9",
+  "theme_color": "#F7F2E9",
   "lang": "ka",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
   "icons": [
+    {
+      "src": "/recommendations/Geto Logo.jpg",
+      "sizes": "740x740",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
     {
       "src": "/recommendations/Geto Logo.jpg",
       "sizes": "192x192",
@@ -21,6 +31,18 @@
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cabinet",
+      "short_name": "Cabinet",
+      "url": "/dashboard"
+    },
+    {
+      "name": "News",
+      "short_name": "News",
+      "url": "/news"
     }
   ]
 }

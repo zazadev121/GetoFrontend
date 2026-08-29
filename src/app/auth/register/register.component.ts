@@ -19,20 +19,23 @@ import { PrivacyPolicyModalComponent } from '../../shared/components/privacy-pol
     PrivacyPolicyModalComponent
   ],
   template: `
-    <div class="min-h-[90vh] flex items-center justify-center p-4 py-8">
-      <div class="glass-card max-w-lg w-full p-8 border-slate-700/50 relative overflow-hidden shadow-2xl">
-        <!-- Ambient background glow -->
-        <div class="absolute -top-24 -left-24 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-lg mx-auto px-4 sm:px-6 py-10 sm:py-16">
+      <div class="paper-card w-full p-6 sm:p-8 relative overflow-hidden">
+        <div class="wash w-64 h-64 -top-32 -right-20" style="background: rgb(var(--c-clay-500) / .22)"></div>
 
-        <div class="text-center mb-6 relative z-10">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 mx-auto flex items-center justify-center text-white text-2xl shadow-xl shadow-blue-500/30 mb-3 transform hover:scale-105 transition-transform">
+        <div class="mb-7 relative z-10 space-y-2">
+          <span class="w-14 h-14 blob blob-morph grid place-items-center text-xl text-blue-400"
+            style="background: rgb(var(--c-clay-500) / .18)">
             <i class="fa-solid fa-user-plus"></i>
-          </div>
-          <h2 class="text-2xl font-extrabold text-white font-heading tracking-tight">
+          </span>
+          <h2 class="font-heading text-2xl font-extrabold text-white pt-2">
             {{ 'auth.registerBtn' | translate }}
           </h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1">Register to start submitting and managing documents</p>
+          <p class="text-sm text-slate-400">
+            {{ translationService.isGeorgian()
+              ? 'შექმენით ანგარიში დოკუმენტების წარსადგენად და სტატუსის სამართავად.'
+              : 'Create an account to submit documents and follow your status.' }}
+          </p>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4 relative z-10">

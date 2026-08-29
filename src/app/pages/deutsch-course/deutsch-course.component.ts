@@ -2,28 +2,27 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.component';
 
 @Component({
   selector: 'app-deutsch-course',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, PageHeroComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 animate-fade-in">
-      
-      <!-- Hero Section -->
-      <div class="glass-card p-8 sm:p-12 border-slate-700/50 relative overflow-hidden text-center space-y-6">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14">
 
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider">
-          <i class="fa-solid fa-language"></i> {{ 'deutsch.badge' | translate }}
-        </div>
+      <app-page-hero
+        [eyebrow]="'deutsch.badge' | translate"
+        [title]="'deutsch.title' | translate"
+        icon="fa-language"
+        accent="honey"
+        sealText="GETO PROJECT · DEUTSCH · A1 A2 B1 · "
+        sealIcon="fa-graduation-cap">
+      </app-page-hero>
 
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight">
-          {{ 'deutsch.title' | translate }}
-        </h1>
-
-        <!-- Translatable Georgian/English Announcement Box -->
-        <div class="max-w-3xl mx-auto p-6 bg-slate-900/80 rounded-2xl border border-amber-500/30 text-slate-200 space-y-3 text-left sm:text-center shadow-lg">
+      <div class="space-y-6 text-center">
+        <!-- Announcement -->
+        <div class="paper-card max-w-3xl mx-auto p-6 sm:p-8 border-amber-500/30 space-y-3 text-left sm:text-center">
           <p class="text-base sm:text-xl font-extrabold text-white leading-snug">
             {{ 'deutsch.announcementTitle' | translate }}
           </p>
@@ -36,7 +35,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
         </div>
 
         <!-- Google Form Registration Single CTA Button -->
-        <div class="flex items-center justify-center pt-2">
+        <div class="flex items-center justify-center">
           <a 
             href="https://docs.google.com/forms/d/e/1FAIpQLSdUdp9H8Vp1qVAF0ke3pF3dEJkW95ns2IN8HjL4E9JhbgxTiA/viewform" 
             target="_blank" 

@@ -43,22 +43,25 @@ interface ManagedTemplateItem {
       <div class="glass-card p-5 sm:p-8 relative overflow-hidden">
         <div class="flex flex-col gap-5 relative z-10">
           <div class="flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-pink-600 to-purple-600 flex items-center justify-center text-white text-lg sm:text-xl font-bold shadow-lg shadow-pink-500/20 shrink-0">
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-12 h-12 sm:w-16 sm:h-16 blob blob-morph grid place-items-center text-lg sm:text-2xl shrink-0
+                          text-pink-300 border border-pink-500/30"
+                style="background: rgb(var(--c-blush-500) / .2)">
                 <i class="fa-solid fa-shield-halved"></i>
               </div>
               <div class="overflow-hidden">
-                <h1 class="text-xl sm:text-2xl font-extrabold text-white font-heading truncate">
+                <p class="eyebrow mb-1">Admin</p>
+                <h1 class="font-heading font-extrabold text-white text-2xl sm:text-3xl leading-tight truncate">
                   {{ 'admin.title' | translate }}
                 </h1>
-                <p class="text-xs text-slate-400 truncate">{{ 'admin.sub' | translate }}</p>
+                <p class="text-xs text-slate-400 truncate mt-1">{{ 'admin.sub' | translate }}</p>
               </div>
             </div>
 
             <!-- Language Switcher in Admin Header -->
             <button 
               (click)="translationService.toggleLanguage()"
-              class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-xs font-bold text-slate-200 transition-colors flex items-center gap-1.5 shadow-sm">
+              class="btn btn-secondary btn-sm">
               <i class="fa-solid fa-globe text-pink-400"></i>
               {{ translationService.isGeorgian() ? 'GE' : 'EN' }}
             </button>

@@ -17,9 +17,19 @@ export class TranslationService {
     return saved === 'en' ? 'en' : 'ka'; // Default Georgian
   }
 
+  constructor() {
+    this.applyDocumentLang(this.currentLang());
+  }
+
   setLanguage(lang: Language) {
     localStorage.setItem(this.LANG_KEY, lang);
     this.currentLang.set(lang);
+    this.applyDocumentLang(lang);
+  }
+
+  /** Keeps <html lang> in sync so script-specific CSS (leading, fonts) applies. */
+  private applyDocumentLang(lang: Language) {
+    if (typeof document !== 'undefined') document.documentElement.lang = lang;
   }
 
   toggleLanguage() {
@@ -224,7 +234,29 @@ export class TranslationService {
       'notify.notSupported': 'შეტყობინებები ამ ბრაუზერში არ არის მხარდაჭერილი.',
       'notify.active': 'Chrome შეტყობინებები აქტიურია ამ მოწყობილობაზე.',
       'notify.turnedOff': 'შეტყობინებები გამორთულია. ნებისმიერ დროს შეგიძლიათ ისევ ჩართოთ ზარის ხატულით.',
-      'notify.testBody': 'შეტყობინებები მუშაობს. ტელეფონის დაბლოკვისასაც მიიღებთ განახლებებს.'
+      'notify.testBody': 'შეტყობინებები მუშაობს. ტელეფონის დაბლოკვისასაც მიიღებთ განახლებებს.',
+      'notify.statusPaused': 'შეტყობინებები დროებით გამორთულია',
+      'notify.statusNeedsInstall': 'საჭიროა აპლიკაციის დამატება მთავარ ეკრანზე',
+      'notify.enable': 'შეტყობინებების ჩართვა',
+      'notify.resume': 'ისევ ჩართვა',
+      'notify.promptHint': 'ბრაუზერი ახლა გკითხავთ ნებართვას — აირჩიეთ „Allow“ / „დაშვება“.',
+      'notify.granted': 'შესანიშნავია! შეტყობინებები ჩართულია.',
+      'notify.dismissed': 'ნებართვა არ დაგიდასტურებიათ. ზარზე დაჭერით ნებისმიერ დროს სცადეთ ხელახლა.',
+      'notify.syncWarning': 'შეტყობინებები ჩართულია, თუმცა სერვერთან დაკავშირება ვერ მოხერხდა. ვცდით ავტომატურად.',
+      'notify.unblockTitle': 'როგორ განვბლოკოთ',
+      'notify.unblockStep1': 'დააჭირეთ საკეტის (🔒) ან ⓘ ხატულას ბრაუზერის მისამართის ზოლში.',
+      'notify.unblockStep2': 'იპოვეთ „Notifications“ და აირჩიეთ „Allow“.',
+      'notify.unblockStep3': 'დაასრულეთ გვერდის განახლებით და ისევ დააჭირეთ ზარს.',
+      'notify.installTitle': 'iPhone-ზე ჩართვა',
+      'notify.installStep1': 'Safari-ში დააჭირეთ „Share“ ღილაკს (⬆️).',
+      'notify.installStep2': 'აირჩიეთ „Add to Home Screen“.',
+      'notify.installStep3': 'გახსენით GETO მთავარი ეკრანიდან და დააჭირეთ ზარს.',
+      'notify.recent': 'ბოლო შეტყობინებები',
+      'notify.noRecent': 'ჯერ არაფერია. სტატუსის ცვლილებები და სიახლეები აქ გამოჩნდება.',
+      'notify.clearAll': 'გასუფთავება',
+      'notify.nudgeTitle': 'ჩართეთ შეტყობინებები',
+      'notify.nudgeBody': 'მიიღეთ სტატუსის განახლებები და სიახლეები მაშინვე — ბრაუზერის დახურვის შემდეგაც.',
+      'notify.nudgeLater': 'მოგვიანებით'
     },
     en: {
       // Navbar & General
@@ -423,7 +455,29 @@ export class TranslationService {
       'notify.notSupported': 'Notifications are not supported in this browser.',
       'notify.active': 'Chrome notifications are active on this device.',
       'notify.turnedOff': 'Notifications are off. Tap the bell anytime to turn them back on.',
-      'notify.testBody': 'Notifications are working. You will still get updates when your phone is locked.'
+      'notify.testBody': 'Notifications are working. You will still get updates when your phone is locked.',
+      'notify.statusPaused': 'Notifications are paused',
+      'notify.statusNeedsInstall': 'Add GETO to your Home Screen first',
+      'notify.enable': 'Enable notifications',
+      'notify.resume': 'Turn back on',
+      'notify.promptHint': 'Your browser will ask for permission — choose Allow.',
+      'notify.granted': 'All set — notifications are on.',
+      'notify.dismissed': 'Permission was not granted. Tap the bell to try again anytime.',
+      'notify.syncWarning': 'Notifications are on, but we could not reach the server yet. We will retry automatically.',
+      'notify.unblockTitle': 'How to unblock',
+      'notify.unblockStep1': 'Tap the lock (🔒) or ⓘ icon next to the address bar.',
+      'notify.unblockStep2': 'Find Notifications and set it to Allow.',
+      'notify.unblockStep3': 'Reload the page, then tap the bell again.',
+      'notify.installTitle': 'Enable on iPhone',
+      'notify.installStep1': 'In Safari, tap the Share button (⬆️).',
+      'notify.installStep2': 'Choose Add to Home Screen.',
+      'notify.installStep3': 'Open GETO from the Home Screen, then tap the bell.',
+      'notify.recent': 'Recent updates',
+      'notify.noRecent': 'Nothing yet. Status changes and news will show up here.',
+      'notify.clearAll': 'Clear',
+      'notify.nudgeTitle': 'Turn on notifications',
+      'notify.nudgeBody': 'Get status changes and news the moment they happen — even after you close the browser.',
+      'notify.nudgeLater': 'Not now'
     }
   };
 

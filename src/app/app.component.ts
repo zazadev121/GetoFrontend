@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
+import { NotificationPromptComponent } from './shared/components/notification-prompt/notification-prompt.component';
 import { AuthService } from './core/services/auth.service';
 import { WebPushService } from './core/services/web-push.service';
 import { PollNotificationService } from './core/services/poll-notification.service';
@@ -10,18 +11,25 @@ import { PollNotificationService } from './core/services/poll-notification.servi
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, ToastContainerComponent],
+  imports: [
+    RouterOutlet,
+    NavbarComponent,
+    FooterComponent,
+    ToastContainerComponent,
+    NotificationPromptComponent
+  ],
   template: `
-    <div class="min-h-screen flex flex-col bg-slate-950 text-slate-100 font-sans">
+    <div class="min-h-screen flex flex-col font-sans">
       <app-navbar></app-navbar>
-      
-      <main class="flex-1">
+
+      <main class="flex-1 relative">
         <router-outlet></router-outlet>
       </main>
 
       <app-footer></app-footer>
 
       <app-toast-container></app-toast-container>
+      <app-notification-prompt></app-notification-prompt>
     </div>
   `
 })
@@ -42,7 +50,9 @@ export class AppComponent {
           this.webPushService.init();
           this.pollNotificationService.init();
         } else {
-          this.pollNotificationService.destroy();
+          // reset() also clears the stored baseline, so the next account signing
+          // in on this browser doesn't inherit the previous user's state.
+          this.pollNotificationService.reset();
         }
       });
     });

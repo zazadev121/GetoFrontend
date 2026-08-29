@@ -1,46 +1,107 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="ka" class="dark">
 <head>
   <meta charset="utf-8">
   <title>GETO Project - Client Cabinet & Admin Portal</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <link rel="icon" type="image/jpeg" href="/recommendations/Geto Logo.jpg">
   <link rel="shortcut icon" type="image/jpeg" href="/recommendations/Geto Logo.jpg">
   <link rel="apple-touch-icon" href="/recommendations/Geto Logo.jpg">
   <link rel="manifest" href="/manifest.webmanifest">
-  <meta name="theme-color" content="#0052ff">
+  <meta name="theme-color" content="#F7F2E9">
+
+  <!-- Apply the saved (or system) theme before first paint so there is no flash -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('geto_theme');
+        var dark = saved ? saved === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var root = document.documentElement;
+        root.classList.remove('dark', 'light');
+        root.classList.add(dark ? 'dark' : 'light');
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', dark ? '#15110E' : '#F7F2E9');
+      } catch (e) { /* private mode — the ThemeService sorts it out after boot */ }
+    })();
+  </script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="GETO">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
-  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Type: Fraunces (organic display serif) + Inter (body) + Noto Georgian faces -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700&family=Noto+Serif+Georgian:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <!-- FontAwesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <!-- Tailwind CSS Engine -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    // Every palette below resolves through CSS custom properties declared in
+    // styles.css, so a single `html.light` / `html.dark` switch re-tints the
+    // whole app without touching a single component template.
+    const ramp = (slug) => ({
+      50:  'rgb(var(--c-' + slug + '-50) / <alpha-value>)',
+      100: 'rgb(var(--c-' + slug + '-100) / <alpha-value>)',
+      200: 'rgb(var(--c-' + slug + '-200) / <alpha-value>)',
+      300: 'rgb(var(--c-' + slug + '-300) / <alpha-value>)',
+      400: 'rgb(var(--c-' + slug + '-400) / <alpha-value>)',
+      500: 'rgb(var(--c-' + slug + '-500) / <alpha-value>)',
+      600: 'rgb(var(--c-' + slug + '-600) / <alpha-value>)',
+      700: 'rgb(var(--c-' + slug + '-700) / <alpha-value>)',
+      800: 'rgb(var(--c-' + slug + '-800) / <alpha-value>)',
+      900: 'rgb(var(--c-' + slug + '-900) / <alpha-value>)',
+      950: 'rgb(var(--c-' + slug + '-950) / <alpha-value>)'
+    });
+
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            heading: ['Plus Jakarta Sans', 'sans-serif']
+            sans: ['Inter', 'Noto Sans Georgian', 'system-ui', 'sans-serif'],
+            heading: ['Fraunces', 'Noto Serif Georgian', 'Georgia', 'serif'],
+            display: ['Fraunces', 'Noto Serif Georgian', 'Georgia', 'serif']
           },
           colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#0052ff',
-              600: '#003ec7',
-              700: '#1d4ed8'
-            }
+            slate:   ramp('n'),      // warm stone neutrals
+            gray:    ramp('n'),
+            zinc:    ramp('n'),
+            neutral: ramp('n'),
+            stone:   ramp('n'),
+            blue:    ramp('clay'),   // primary — terracotta
+            brand:   ramp('clay'),
+            indigo:  ramp('ink'),    // deep midnight-plum
+            violet:  ramp('plum'),
+            purple:  ramp('plum'),
+            pink:    ramp('blush'),
+            rose:    ramp('berry'),
+            red:     ramp('berry'),
+            emerald: ramp('sage'),
+            green:   ramp('sage'),
+            lime:    ramp('sage'),
+            teal:    ramp('teal'),
+            cyan:    ramp('teal'),
+            sky:     ramp('teal'),
+            amber:   ramp('honey'),
+            yellow:  ramp('honey'),
+            orange:  ramp('clay')
+          },
+          borderRadius: {
+            '4xl': '2rem',
+            '5xl': '2.75rem',
+            blob: '62% 38% 46% 54% / 54% 48% 52% 46%'
+          },
+          boxShadow: {
+            soft: '0 1px 2px rgb(var(--c-shadow) / .10), 0 8px 24px -12px rgb(var(--c-shadow) / .28)',
+            lifted: '0 2px 4px rgb(var(--c-shadow) / .10), 0 18px 40px -18px rgb(var(--c-shadow) / .40)',
+            press: 'inset 0 2px 6px rgb(var(--c-shadow) / .30)'
           }
         }
       }

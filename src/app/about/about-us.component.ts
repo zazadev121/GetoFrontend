@@ -4,140 +4,134 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 import { TranslationService } from '../core/services/translation.service';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
+import { PageHeroComponent } from '../shared/components/page-hero/page-hero.component';
+import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.component';
 
 @Component({
   selector: 'app-about-us',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, PageHeroComponent, SealBadgeComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12 animate-fade-in">
-      
-      <!-- Hero Banner -->
-      <div class="glass-card p-8 sm:p-12 border-slate-700/50 relative overflow-hidden text-center">
-        <!-- Background Ambient Glow -->
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-16 sm:space-y-24">
 
-        <div class="relative z-10 max-w-3xl mx-auto space-y-4">
-          <div class="w-20 h-20 rounded-2xl overflow-hidden bg-slate-900 border border-blue-500/30 mx-auto flex items-center justify-center shadow-xl shadow-blue-500/20 transform hover:scale-105 transition-transform p-1">
-            <img src="/recommendations/Geto Logo.jpg" alt="GETO Logo" class="w-full h-full object-cover rounded-xl">
-          </div>
-
-          <h1 class="text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight">
-            {{ 'about.title' | translate }}
-          </h1>
-
-          <p class="text-base sm:text-lg text-blue-400 font-semibold max-w-2xl mx-auto">
-            {{ 'about.subtitle' | translate }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Main Text Card Section -->
-      <div class="glass-card p-8 border-slate-700/50 relative overflow-hidden">
-        <div class="flex flex-col md:flex-row items-start gap-6">
-          <div class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex-shrink-0 flex items-center justify-center text-2xl border border-blue-500/20">
-            <i class="fa-solid fa-handshake"></i>
-          </div>
-
-          <div class="space-y-4 flex-1">
-            <h2 class="text-xl font-bold text-white font-heading">
-              {{ 'about.title' | translate }} — Geto Project
-            </h2>
-
-            <p class="text-slate-200 text-base sm:text-lg leading-relaxed font-normal bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
-              {{ 'about.body' | translate }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Feature Grid Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-blue-500/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-handshake-angle"></i>
-          </div>
-          <h3 class="text-lg font-bold text-white font-heading">
-            {{ 'about.stat1.title' | translate }}
-          </h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            {{ 'about.stat1.sub' | translate }}
-          </p>
-        </div>
-
-        <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-emerald-500/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-comments"></i>
-          </div>
-          <h3 class="text-lg font-bold text-white font-heading">
-            {{ 'about.stat2.title' | translate }}
-          </h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            {{ 'about.stat2.sub' | translate }}
-          </p>
-        </div>
-
-        <div class="glass-card p-6 border-slate-700/50 space-y-3 hover:border-purple-500/40 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl">
-            <i class="fa-solid fa-file-signature"></i>
-          </div>
-          <h3 class="text-lg font-bold text-white font-heading">
-            {{ 'about.stat3.title' | translate }}
-          </h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            {{ 'about.stat3.sub' | translate }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Action Callout Card -->
-      <div class="glass-card p-8 border-slate-700/50 text-center space-y-4">
-        <h3 class="text-xl font-bold text-white font-heading">
-          {{ authService.isLoggedIn() ? 'Welcome to your portal' : 'Ready to start your process?' }}
-        </h3>
-        <div class="flex items-center justify-center gap-4 flex-wrap">
-          <!-- Shown ONLY when NOT logged in -->
+      <app-page-hero
+        [eyebrow]="translationService.isGeorgian() ? 'Geto Project · 2020 წლიდან' : 'Geto Project · since 2020'"
+        [title]="'about.title' | translate"
+        [lead]="'about.subtitle' | translate"
+        icon="fa-handshake"
+        accent="clay"
+        [tags]="heroTags()">
+        <div hero-actions class="flex flex-wrap gap-3 pt-4">
           <ng-container *ngIf="!authService.isLoggedIn()">
-            <a routerLink="/auth/register" class="btn btn-primary px-6 py-3 font-bold text-sm">
+            <a routerLink="/auth/register" class="btn btn-primary">
               <i class="fa-solid fa-user-plus"></i> {{ 'nav.register' | translate }}
             </a>
-            <a routerLink="/auth/login" class="btn btn-secondary px-6 py-3 font-bold text-sm">
+            <a routerLink="/auth/login" class="btn btn-secondary">
               <i class="fa-solid fa-right-to-bracket"></i> {{ 'nav.login' | translate }}
             </a>
           </ng-container>
+          <a *ngIf="authService.isLoggedIn()" routerLink="/dashboard" class="btn btn-primary">
+            <i class="fa-solid fa-user-gear"></i> {{ 'nav.cabinet' | translate }}
+          </a>
+        </div>
+      </app-page-hero>
 
-          <!-- Shown when user IS logged in -->
-          <ng-container *ngIf="authService.isLoggedIn()">
-            <a routerLink="/dashboard" class="btn btn-primary px-6 py-3 font-bold text-sm">
+      <!-- The story, set as an editorial pull-quote block -->
+      <section class="reveal relative grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 blob blob-morph grid place-items-center text-2xl sm:text-3xl shrink-0
+                    text-blue-300 border border-blue-500/30"
+          style="background: rgb(var(--c-clay-500) / .18)">
+          <i class="fa-solid fa-quote-left"></i>
+        </div>
+
+        <div class="space-y-5">
+          <h2 class="font-heading text-white">
+            {{ 'about.title' | translate }} <span class="text-blue-400">— Geto Project</span>
+          </h2>
+          <p class="text-base sm:text-lg leading-relaxed text-slate-300">
+            {{ 'about.body' | translate }}
+          </p>
+        </div>
+      </section>
+
+      <!-- Three pillars -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+        <article *ngFor="let pillar of pillars; let i = index"
+          class="paper-card glass-card-interactive reveal p-6 sm:p-7 space-y-4 overflow-hidden"
+          [ngClass]="'delay-' + (i + 1)">
+          <div class="relative z-10 flex items-center justify-between">
+            <span class="w-14 h-14 squircle grid place-items-center text-xl"
+              [style.background]="'rgb(var(--c-' + pillar.accent + '-500) / .16)'"
+              [style.color]="'rgb(var(--c-' + pillar.accent + '-400))'">
+              <i class="fa-solid" [ngClass]="pillar.icon"></i>
+            </span>
+            <span class="font-heading text-4xl font-extrabold leading-none opacity-25"
+              [style.color]="'rgb(var(--c-' + pillar.accent + '-400))'">
+              {{ '0' + (i + 1) }}
+            </span>
+          </div>
+
+          <h3 class="relative z-10 font-heading text-white">{{ pillar.titleKey | translate }}</h3>
+          <p class="relative z-10 text-sm leading-relaxed text-slate-400">{{ pillar.subKey | translate }}</p>
+        </article>
+      </section>
+
+      <!-- Call to action, built as a raised slab -->
+      <section class="raised reveal relative overflow-hidden p-8 sm:p-12 text-center">
+        <div class="wash w-96 h-96 -top-40 left-1/2 -translate-x-1/2"
+          style="background: rgb(var(--c-clay-500) / .25)"></div>
+
+        <div class="relative z-10 space-y-5 max-w-2xl mx-auto">
+          <app-seal-badge class="inline-block"
+            [text]="'GETO PROJECT · GERMANY · KARTULI · '"
+            icon="fa-passport"></app-seal-badge>
+
+          <h2 class="font-heading text-white">
+            {{ authService.isLoggedIn()
+              ? (translationService.isGeorgian() ? 'კეთილი იყოს თქვენი დაბრუნება' : 'Welcome back to your portal')
+              : (translationService.isGeorgian() ? 'მზად ხართ დასაწყებად?' : 'Ready to start your process?') }}
+          </h2>
+
+          <div class="flex items-center justify-center gap-3 flex-wrap pt-1">
+            <ng-container *ngIf="!authService.isLoggedIn()">
+              <a routerLink="/auth/register" class="btn btn-primary">
+                <i class="fa-solid fa-user-plus"></i> {{ 'nav.register' | translate }}
+              </a>
+              <a routerLink="/auth/login" class="btn btn-secondary">
+                <i class="fa-solid fa-right-to-bracket"></i> {{ 'nav.login' | translate }}
+              </a>
+            </ng-container>
+            <a *ngIf="authService.isLoggedIn()" routerLink="/dashboard" class="btn btn-primary">
               <i class="fa-solid fa-user-gear"></i> {{ 'nav.cabinet' | translate }}
             </a>
-          </ng-container>
-        </div>
-      </div>
-
-      <!-- LAST SECTION BEFORE FOOTER: Full-Width Responsive Business Partners Showcase -->
-      <div class="space-y-4 pt-4 border-t border-white/10">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-lg border border-indigo-500/20">
-            <i class="fa-solid fa-building-columns font-bold"></i>
           </div>
+        </div>
+      </section>
+
+      <!-- Partners -->
+      <section class="reveal space-y-5">
+        <div class="flex items-center gap-4">
+          <span class="w-12 h-12 blob grid place-items-center text-lg shrink-0"
+            style="background: rgb(var(--c-teal-500) / .16); color: rgb(var(--c-teal-400))">
+            <i class="fa-solid fa-building-columns"></i>
+          </span>
           <div>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white font-heading">
+            <p class="eyebrow">{{ translationService.isGeorgian() ? 'ქსელი' : 'Network' }}</p>
+            <h2 class="font-heading text-white">
               {{ translationService.isGeorgian() ? 'ჩვენი პარტნიორები' : 'Our Business Partners' }}
             </h2>
-            <p class="text-xs text-slate-400">German employers & educational partner network</p>
           </div>
         </div>
 
-        <!-- Full-Size Responsive Image Display (no horizontal scrollbar, max-w bounded) -->
-        <div class="w-full overflow-hidden rounded-2xl border border-slate-700/60 shadow-2xl bg-slate-900">
-          <img 
-            src="/recommendations/Partners.png" 
+        <div class="paper-card overflow-hidden p-2 sm:p-3">
+          <img
+            src="/recommendations/Partners.png"
             alt="GETO Business Partners"
-            class="w-full h-auto object-cover block rounded-2xl hover:scale-[1.01] transition-transform duration-300"
+            loading="lazy"
+            class="w-full h-auto object-cover block rounded-2xl hover:scale-[1.01] transition-transform duration-500"
             (error)="onPartnerImgError($event)">
         </div>
-      </div>
+      </section>
 
     </div>
   `
@@ -146,7 +140,19 @@ export class AboutUsComponent {
   authService = inject(AuthService);
   translationService = inject(TranslationService);
 
+  pillars = [
+    { icon: 'fa-handshake-angle', accent: 'clay', titleKey: 'about.stat1.title', subKey: 'about.stat1.sub' },
+    { icon: 'fa-comments', accent: 'sage', titleKey: 'about.stat2.title', subKey: 'about.stat2.sub' },
+    { icon: 'fa-file-signature', accent: 'plum', titleKey: 'about.stat3.title', subKey: 'about.stat3.sub' }
+  ];
+
+  heroTags(): string[] {
+    return this.translationService.isGeorgian()
+      ? ['სრული თანხლება', 'გერმანული ენა', 'დოკუმენტაცია', 'სამუშაო ნებართვა']
+      : ['End-to-end support', 'German language', 'Documentation', 'Work permit'];
+  }
+
   onPartnerImgError(event: any) {
-    event.target.src = 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1200&q=80';
+    event.target.style.display = 'none';
   }
 }

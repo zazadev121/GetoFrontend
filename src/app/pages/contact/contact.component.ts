@@ -2,33 +2,26 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslationService } from '../../core/services/translation.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.component';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PageHeroComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 sm:space-y-12 animate-fade-in w-full overflow-hidden">
-      
-      <!-- Hero Header -->
-      <div class="glass-card p-6 sm:p-12 border-slate-700/50 relative overflow-hidden text-center space-y-4">
-        <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full overflow-hidden">
 
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 mx-auto flex items-center justify-center text-white text-3xl shadow-xl shadow-blue-500/30 transform hover:scale-105 transition-transform shrink-0">
-          <i class="fa-solid fa-headset"></i>
-        </div>
-
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-white font-heading tracking-tight">
-          {{ translationService.isGeorgian() ? 'დაგვიკავშირდით' : 'Contact Us' }}
-        </h1>
-
-        <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          {{ translationService.isGeorgian() 
-            ? 'კითხვების, კონსულტაციისა და დოკუმენტაციის საკითხებზე დაგვიკავშირდით თქვენთვის სასურველი საკომუნიკაციო არხით.' 
-            : 'For questions, consultation, and documentation matters, contact us through your preferred communication channel.' 
-          }}
-        </p>
-      </div>
+      <app-page-hero
+        [eyebrow]="translationService.isGeorgian() ? 'კონტაქტი' : 'Get in touch'"
+        [title]="translationService.isGeorgian() ? 'დაგვიკავშირდით' : 'Contact Us'"
+        [lead]="translationService.isGeorgian()
+          ? 'კითხვების, კონსულტაციისა და დოკუმენტაციის საკითხებზე დაგვიკავშირდით თქვენთვის სასურველი საკომუნიკაციო არხით.'
+          : 'For questions, consultation, and documentation matters, contact us through your preferred communication channel.'"
+        icon="fa-headset"
+        accent="plum"
+        sealText="GETO PROJECT · SUPPORT · KONTAKTI · "
+        sealIcon="fa-comments">
+      </app-page-hero>
 
       <!-- Main Contact Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
