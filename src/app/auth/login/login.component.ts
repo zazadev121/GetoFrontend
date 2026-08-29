@@ -47,6 +47,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
                 id="login-email"
                 type="email" 
                 formControlName="email"
+                autocomplete="username"
                 placeholder="name@example.com"
                 class="form-control !pl-10 text-sm"
                 [ngClass]="{'!border-rose-500/60': isFieldInvalid('email')}">
@@ -74,6 +75,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
                 id="login-password"
                 [type]="showPassword ? 'text' : 'password'" 
                 formControlName="password"
+                autocomplete="current-password"
                 placeholder="••••••••"
                 class="form-control !pl-10 !pr-10 text-sm"
                 [ngClass]="{'!border-rose-500/60': isFieldInvalid('password')}">
