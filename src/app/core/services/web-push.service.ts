@@ -43,10 +43,22 @@ export class WebPushService {
       }
 
       // Get VAPID public key from backend
-      const keyRes: any = await firstValueFrom(
-        this.http.get(`${BASE_URL}/vapid-public-key`)
-      );
-      const vapidPublicKey = keyRes.publicKey;
+      let vapidPublicKey = '';
+      try {
+        const keyRes: any = await firstValueFrom(
+          this.http.get(`${BASE_URL}/vapid-public-key`)
+        );
+        vapidPublicKey = keyRes?.publicKey;
+      } catch (err: any) {
+        if (err?.status === 404) {
+          console.info('[WebPush] Backend WebPush service is deploying or warming up on Render.');
+        } else {
+          console.warn('[WebPush] Could not fetch VAPID key from server:', err?.message || err);
+        }
+        return;
+      }
+
+      if (!vapidPublicKey) return;
       const applicationServerKey = this.urlBase64ToUint8Array(vapidPublicKey);
 
       // Subscribe to push
