@@ -11,7 +11,7 @@ import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { PrivacyPolicyModalComponent } from '../shared/components/privacy-policy-modal/privacy-policy-modal.component';
-import { PollNotificationService } from '../core/services/poll-notification.service';
+import { WebPushService } from '../core/services/web-push.service';
 
 interface StaticTemplateItem {
   id: string;
@@ -585,7 +585,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   documentService = inject(DocumentService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
-  pollNotificationService = inject(PollNotificationService);
+  webPushService = inject(WebPushService);
 
   currentUser = this.authService.currentUserSignal();
   
@@ -680,12 +680,12 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     this.loadUserProfile();
     this.loadUserDocuments();
     this.loadAdminPhaseDocuments();
-    // Start browser notification polling (status, phase, news changes)
-    this.pollNotificationService.init();
+    // Register push notifications (works even with tab closed)
+    this.webPushService.init();
   }
 
   ngOnDestroy() {
-    this.pollNotificationService.destroy();
+    // nothing to clean — push is handled by service worker
   }
 
   getDisabledTemplateIds(): string[] {
