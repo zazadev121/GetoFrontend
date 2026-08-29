@@ -22,7 +22,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         sealIcon="fa-coins">
       </app-page-hero>
 
-      <div class="w-full">
+      <div class="reveal reveal-scale w-full">
         <!-- Main Download Agreement CTA -->
         <div class="flex justify-center w-full">
           <a 

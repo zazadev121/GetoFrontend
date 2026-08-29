@@ -3,7 +3,7 @@
 // even when the tab is closed and the phone is locked.
 
 const SW_VERSION = 'geto-sw-3';
-const FALLBACK_ICON = '/recommendations/Geto Logo.jpg';
+const FALLBACK_ICON = '/icons/icon-192.png';
 
 self.addEventListener('install', function () {
   self.skipWaiting();

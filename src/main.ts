@@ -6,49 +6,76 @@ bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
 
 /**
- * Scroll reveal.
- * Any element carrying `.reveal` fades up once it enters the viewport. A single
- * observer watches the whole document and re-scans on route changes, so pages
- * only have to add the class — no directive, no per-component wiring.
+ * Scroll behaviour that the whole app shares.
+ *
+ *  1. Reveal — anything with `.reveal` or `.stagger` animates in once it enters
+ *     the viewport. A single observer watches the document and re-scans when
+ *     Angular swaps a routed view in, so pages only have to add the class.
+ *  2. Scroll-linked custom properties — `--scroll-progress` (0..1) and
+ *     `--scroll-y` (px) drive the progress bar and the hero parallax from CSS,
+ *     which keeps the work off the main thread's layout path.
  */
-if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
-  // No observer support: reveal everything immediately rather than leaving
-  // sections stuck at opacity 0.
-  document.documentElement.classList.add('no-reveal');
-}
+if (typeof window !== 'undefined') {
+  const root = document.documentElement;
 
-if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
-  const seen = new WeakSet<Element>();
+  // ── 1. Reveal ─────────────────────────────────────────────────────────────
+  if ('IntersectionObserver' in window) {
+    const seen = new WeakSet<Element>();
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
           entry.target.classList.add('is-visible');
           observer.unobserve(entry.target);
         }
-      }
-    },
-    { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
-  );
+      },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+    );
 
-  const scan = () => {
-    document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
-      if (seen.has(el)) return;
-      seen.add(el);
-      observer.observe(el);
-    });
-  };
+    const scan = () => {
+      document
+        .querySelectorAll('.reveal:not(.is-visible), .stagger:not(.is-visible), .sheen:not(.is-visible)')
+        .forEach((el) => {
+          if (seen.has(el)) return;
+          seen.add(el);
+          observer.observe(el);
+        });
+    };
 
-  // Re-scan whenever Angular swaps a routed view in.
-  const start = () => {
-    scan();
-    new MutationObserver(() => scan()).observe(document.body, { childList: true, subtree: true });
-  };
+    const start = () => {
+      scan();
+      new MutationObserver(() => scan()).observe(document.body, { childList: true, subtree: true });
+    };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+    } else {
+      start();
+    }
   } else {
-    start();
+    // No observer support: show everything rather than leaving it at opacity 0.
+    root.classList.add('no-reveal');
   }
+
+  // ── 2. Scroll-linked custom properties ────────────────────────────────────
+  let ticking = false;
+
+  const publishScroll = () => {
+    ticking = false;
+    const y = window.scrollY || 0;
+    const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    root.style.setProperty('--scroll-y', `${y}px`);
+    root.style.setProperty('--scroll-progress', String(Math.min(1, y / max)));
+  };
+
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(publishScroll);
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  publishScroll();
 }

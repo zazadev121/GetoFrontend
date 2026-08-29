@@ -37,7 +37,7 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
       </app-page-hero>
 
       <!-- The story, set as an editorial pull-quote block -->
-      <section class="reveal relative grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
+      <section class="reveal reveal-blur relative grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
         <div class="w-16 h-16 sm:w-20 sm:h-20 blob blob-morph grid place-items-center text-2xl sm:text-3xl shrink-0
                     text-blue-300 border border-blue-500/30"
           style="background: rgb(var(--c-clay-500) / .18)">
@@ -55,10 +55,9 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
       </section>
 
       <!-- Three pillars -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+      <section class="stagger grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         <article *ngFor="let pillar of pillars; let i = index"
-          class="paper-card glass-card-interactive reveal p-6 sm:p-7 space-y-4 overflow-hidden"
-          [ngClass]="'delay-' + (i + 1)">
+          class="paper-card glass-card-interactive p-6 sm:p-7 space-y-4 overflow-hidden">
           <div class="relative z-10 flex items-center justify-between">
             <span class="w-14 h-14 squircle grid place-items-center text-xl"
               [style.background]="'rgb(var(--c-' + pillar.accent + '-500) / .16)'"
@@ -77,7 +76,7 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
       </section>
 
       <!-- Call to action, built as a raised slab -->
-      <section class="raised reveal relative overflow-hidden p-8 sm:p-12 text-center">
+      <section class="raised reveal reveal-scale sheen relative overflow-hidden p-8 sm:p-12 text-center">
         <div class="wash w-96 h-96 -top-40 left-1/2 -translate-x-1/2"
           style="background: rgb(var(--c-clay-500) / .25)"></div>
 
@@ -109,7 +108,7 @@ import { SealBadgeComponent } from '../shared/components/seal-badge/seal-badge.c
       </section>
 
       <!-- Partners -->
-      <section class="reveal space-y-5">
+      <section class="reveal reveal-left space-y-5">
         <div class="flex items-center gap-4">
           <span class="w-12 h-12 blob grid place-items-center text-lg shrink-0"
             style="background: rgb(var(--c-teal-500) / .16); color: rgb(var(--c-teal-400))">

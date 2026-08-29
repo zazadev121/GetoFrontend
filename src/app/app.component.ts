@@ -20,6 +20,9 @@ import { PollNotificationService } from './core/services/poll-notification.servi
   ],
   template: `
     <div class="min-h-screen flex flex-col font-sans">
+      <!-- scroll-linked, driven by --scroll-progress from main.ts -->
+      <div class="scroll-progress" aria-hidden="true"></div>
+
       <app-navbar></app-navbar>
 
       <main class="flex-1 relative">

@@ -14,16 +14,16 @@ html.dark {
   color-scheme: dark;
 
   /* neutrals — warm stone */
-  --c-n-50: 250 246 239;   --c-n-100: 243 236 224; --c-n-200: 230 218 202;
-  --c-n-300: 207 192 171;  --c-n-400: 169 152 131; --c-n-500: 135 118 99;
-  --c-n-600: 106 90 73;    --c-n-700: 75 63 52;    --c-n-800: 51 43 35;
-  --c-n-900: 34 28 23;     --c-n-950: 21 17 14;
+  --c-n-50: 250 247 241;   --c-n-100: 243 239 231; --c-n-200: 230 224 214;
+  --c-n-300: 208 200 189;  --c-n-400: 168 158 146; --c-n-500: 128 119 108;
+  --c-n-600: 92 85 77;     --c-n-700: 58 54 49;    --c-n-800: 38 35 32;
+  --c-n-900: 26 24 22;     --c-n-950: 17 16 15;
 
   /* clay — primary terracotta */
-  --c-clay-50: 253 241 235;  --c-clay-100: 250 223 209; --c-clay-200: 245 191 164;
-  --c-clay-300: 239 163 127; --c-clay-400: 232 132 90;  --c-clay-500: 220 101 56;
-  --c-clay-600: 194 79 39;   --c-clay-700: 156 62 31;   --c-clay-800: 116 47 24;
-  --c-clay-900: 74 31 17;    --c-clay-950: 43 18 10;
+  --c-clay-50: 253 242 237;  --c-clay-100: 250 226 214; --c-clay-200: 242 196 174;
+  --c-clay-300: 232 164 136; --c-clay-400: 219 133 100; --c-clay-500: 201 104 68;
+  --c-clay-600: 174 82 48;   --c-clay-700: 141 65 37;   --c-clay-800: 105 48 28;
+  --c-clay-900: 68 31 18;    --c-clay-950: 40 18 11;
 
   /* sage — success */
   --c-sage-50: 240 245 236;  --c-sage-100: 221 233 213; --c-sage-200: 190 212 177;
@@ -32,10 +32,10 @@ html.dark {
   --c-sage-900: 29 43 25;    --c-sage-950: 17 26 15;
 
   /* honey — warning */
-  --c-honey-50: 253 244 227;  --c-honey-100: 250 231 193; --c-honey-200: 243 206 134;
-  --c-honey-300: 235 183 88;  --c-honey-400: 223 160 51;  --c-honey-500: 200 134 35;
-  --c-honey-600: 166 108 27;  --c-honey-700: 131 84 23;   --c-honey-800: 94 61 18;
-  --c-honey-900: 59 39 12;    --c-honey-950: 35 23 6;
+  --c-honey-50: 252 246 230;  --c-honey-100: 247 234 200; --c-honey-200: 236 212 150;
+  --c-honey-300: 223 189 108; --c-honey-400: 206 168 79;  --c-honey-500: 181 143 57;
+  --c-honey-600: 150 117 44;  --c-honey-700: 119 92 36;   --c-honey-800: 87 67 27;
+  --c-honey-900: 55 42 17;    --c-honey-950: 33 25 10;
 
   /* berry — danger */
   --c-berry-50: 253 238 240;  --c-berry-100: 250 215 220; --c-berry-200: 242 175 184;
@@ -79,25 +79,25 @@ html.dark {
 html.light {
   color-scheme: light;
 
-  --c-n-50: 28 23 18;      --c-n-100: 34 28 23;    --c-n-200: 45 37 30;
-  --c-n-300: 62 52 43;     --c-n-400: 106 90 73;   --c-n-500: 135 118 99;
-  --c-n-600: 160 144 124;  --c-n-700: 222 210 193; --c-n-800: 236 228 214;
-  --c-n-900: 255 255 255;  --c-n-950: 247 242 233;
+  --c-n-50: 24 22 19;      --c-n-100: 32 29 25;    --c-n-200: 43 39 34;
+  --c-n-300: 60 54 47;     --c-n-400: 100 92 82;   --c-n-500: 128 119 108;
+  --c-n-600: 156 145 130;  --c-n-700: 224 216 202; --c-n-800: 237 231 220;
+  --c-n-900: 255 255 255;  --c-n-950: 246 243 236;
 
-  --c-clay-50: 74 31 17;     --c-clay-100: 116 47 24;  --c-clay-200: 156 62 31;
-  --c-clay-300: 194 79 39;   --c-clay-400: 176 69 31;  --c-clay-500: 156 62 31;
-  --c-clay-600: 138 53 23;   --c-clay-700: 116 47 24;  --c-clay-800: 245 191 164;
-  --c-clay-900: 250 223 209; --c-clay-950: 253 241 235;
+  --c-clay-50: 68 31 18;     --c-clay-100: 105 48 28;  --c-clay-200: 141 65 37;
+  --c-clay-300: 174 82 48;   --c-clay-400: 160 74 42;  --c-clay-500: 141 65 37;
+  --c-clay-600: 124 56 31;   --c-clay-700: 105 48 28;  --c-clay-800: 242 196 174;
+  --c-clay-900: 250 226 214; --c-clay-950: 253 242 237;
 
   --c-sage-50: 29 43 25;     --c-sage-100: 44 65 38;  --c-sage-200: 61 90 51;
   --c-sage-300: 78 115 64;   --c-sage-400: 63 97 52;  --c-sage-500: 61 90 51;
   --c-sage-600: 51 80 43;    --c-sage-700: 44 65 38;  --c-sage-800: 190 212 177;
   --c-sage-900: 221 233 213; --c-sage-950: 240 245 236;
 
-  --c-honey-50: 59 39 12;      --c-honey-100: 94 61 18;  --c-honey-200: 131 84 23;
-  --c-honey-300: 166 108 27;   --c-honey-400: 140 90 22; --c-honey-500: 131 84 23;
-  --c-honey-600: 110 69 19;    --c-honey-700: 94 61 18;  --c-honey-800: 243 206 134;
-  --c-honey-900: 250 231 193;  --c-honey-950: 253 244 227;
+  --c-honey-50: 55 42 17;      --c-honey-100: 87 67 27;  --c-honey-200: 119 92 36;
+  --c-honey-300: 150 117 44;   --c-honey-400: 128 99 38; --c-honey-500: 119 92 36;
+  --c-honey-600: 101 78 31;    --c-honey-700: 87 67 27;  --c-honey-800: 236 212 150;
+  --c-honey-900: 247 234 200;  --c-honey-950: 252 246 230;
 
   --c-berry-50: 61 20 24;     --c-berry-100: 95 31 38;  --c-berry-200: 134 42 51;
   --c-berry-300: 168 53 64;   --c-berry-400: 149 48 58; --c-berry-500: 134 42 51;
@@ -205,9 +205,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image:
-    radial-gradient(120% 80% at 12% -10%, rgb(var(--c-clay-500) / .13) 0%, transparent 55%),
-    radial-gradient(90% 70% at 92% 4%, rgb(var(--c-teal-500) / .10) 0%, transparent 55%),
-    radial-gradient(100% 60% at 50% 108%, rgb(var(--c-honey-500) / .08) 0%, transparent 60%);
+    radial-gradient(100% 60% at 10% -8%, rgb(var(--c-clay-500) / .07) 0%, transparent 55%),
+    radial-gradient(80% 55% at 95% 2%, rgb(var(--c-teal-500) / .05) 0%, transparent 55%);
   background-attachment: fixed;
   padding-bottom: env(safe-area-inset-bottom);
 }
@@ -689,10 +688,95 @@ html.light .border-white\/5  { border-color: rgb(var(--c-n-50) / .08) !important
 .delay-3 { animation-delay: .24s; } .delay-4 { animation-delay: .32s; }
 .delay-5 { animation-delay: .4s; }
 
-/* Scroll-reveal, wired up by the IntersectionObserver in main.ts */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease-organic), transform .8s var(--ease-organic); }
-.reveal.is-visible { opacity: 1; transform: none; }
-html.no-reveal .reveal { opacity: 1; transform: none; }
+/* ── Scroll reveal ────────────────────────────────────────────────────────
+   Wired up by the IntersectionObserver in main.ts. Variants let a section
+   choose how it arrives; the stagger utility walks its own children in. */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .9s var(--ease-organic), transform .9s var(--ease-organic), filter .9s var(--ease-organic);
+  will-change: opacity, transform;
+}
+.reveal-left  { transform: translateX(-34px); }
+.reveal-right { transform: translateX(34px); }
+.reveal-scale { transform: scale(.94); }
+.reveal-blur  { filter: blur(10px); transform: translateY(22px); }
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  /* the property is only needed during the transition */
+  will-change: auto;
+}
+
+/* Children arrive one after another, no per-element delay classes needed. */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .75s var(--ease-organic), transform .75s var(--ease-organic);
+}
+.stagger.is-visible > * { opacity: 1; transform: none; }
+.stagger.is-visible > *:nth-child(1) { transition-delay: .05s; }
+.stagger.is-visible > *:nth-child(2) { transition-delay: .14s; }
+.stagger.is-visible > *:nth-child(3) { transition-delay: .23s; }
+.stagger.is-visible > *:nth-child(4) { transition-delay: .32s; }
+.stagger.is-visible > *:nth-child(5) { transition-delay: .41s; }
+.stagger.is-visible > *:nth-child(6) { transition-delay: .50s; }
+
+html.no-reveal .reveal,
+html.no-reveal .stagger > * { opacity: 1; transform: none; filter: none; }
+
+/* ── Scroll-linked chrome ─────────────────────────────────────────────────
+   --scroll-progress (0..1) and --scroll-y (px) are published by main.ts. */
+.scroll-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  z-index: 60;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--scroll-progress, 0));
+  background: linear-gradient(90deg, rgb(var(--c-clay-500)), rgb(var(--c-honey-400)));
+  pointer-events: none;
+}
+
+/* Hero washes drift slower than the page — depth without a parallax library. */
+.hero-wash { transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.16), 0); }
+
+/* ── "Quiet luxury" details ───────────────────────────────────────────────*/
+
+/* Hairline gold rule used to separate major sections */
+.rule-gold {
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgb(var(--c-honey-400) / .55),
+    rgb(var(--c-honey-400) / .12) 45%,
+    transparent);
+}
+
+/* A slow sheen that crosses a surface once it scrolls into view */
+.sheen { position: relative; overflow: hidden; }
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(var(--c-n-50) / .09) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+.sheen.is-visible::after { animation: sheenSweep 1.5s var(--ease-organic) .35s 1; }
+@keyframes sheenSweep { to { transform: translateX(120%); } }
+
+/* Underline that draws itself on hover — used on text links */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size .4s var(--ease-organic), color .2s;
+  text-decoration: none;
+}
+.link-draw:hover { background-size: 100% 1px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -701,7 +785,9 @@ html.no-reveal .reveal { opacity: 1; transform: none; }
     transition-duration: .001ms !important;
     scroll-behavior: auto !important;
   }
-  .reveal { opacity: 1; transform: none; }
+  .reveal, .stagger > * { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .hero-wash { transform: none !important; }
+  .sheen::after { display: none; }
 }
 
 /* --------------------------------------------------------------------------

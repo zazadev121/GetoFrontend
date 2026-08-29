@@ -303,8 +303,8 @@ export class PollNotificationService {
 
     const options: NotificationOptions = {
       body,
-      icon: '/recommendations/Geto Logo.jpg',
-      badge: '/recommendations/Geto Logo.jpg',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
       tag: `geto-${tag}`,
       data: { url },
       requireInteraction: false

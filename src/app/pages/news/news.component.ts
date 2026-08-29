@@ -39,7 +39,7 @@ import { NewsDto } from '../../core/models/news.model';
       </div>
 
       <!-- News Feed — Title Cards Only, each is a full clickable <a> -->
-      <div *ngIf="!isLoading && newsList.length > 0" class="space-y-4">
+      <div *ngIf="!isLoading && newsList.length > 0" class="stagger space-y-4">
         <a
           *ngFor="let news of newsList"
           [href]="'/news/' + news.id"

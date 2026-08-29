@@ -174,6 +174,30 @@ export class WebPushService {
     return firstValueFrom(this.http.post(`${BASE_URL}/test-push`, {}));
   }
 
+  /** What the server knows: is push configured, and how many devices are registered. */
+  async fetchDiagnostics(): Promise<{ serverConfigured: boolean; deviceCount: number } | null> {
+    if (!this.authService.isLoggedIn()) return null;
+    try {
+      return await firstValueFrom(
+        this.http.get<{ serverConfigured: boolean; deviceCount: number }>(`${BASE_URL}/diagnostics`)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  /** Is this browser currently holding a push subscription? */
+  async hasLocalSubscription(): Promise<boolean> {
+    try {
+      if (!('serviceWorker' in navigator)) return false;
+      const registration = await navigator.serviceWorker.getRegistration('/');
+      if (!registration) return false;
+      return !!(await registration.pushManager.getSubscription());
+    } catch {
+      return false;
+    }
+  }
+
   /** Shows a notification from the page itself (no server round-trip). */
   async showLocalNotification(title: string, body: string, url = '/dashboard'): Promise<boolean> {
     this.feed.add(title, body, url);
@@ -183,8 +207,8 @@ export class WebPushService {
     const registration = await this.registerWorker();
     const options: NotificationOptions = {
       body,
-      icon: '/recommendations/Geto Logo.jpg',
-      badge: '/recommendations/Geto Logo.jpg',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
       data: { url },
       tag: 'geto-local',
       requireInteraction: false,

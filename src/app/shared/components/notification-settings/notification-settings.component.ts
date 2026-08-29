@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, computed, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslationService } from '../../../core/services/translation.service';
@@ -6,6 +6,7 @@ import { WebPushService } from '../../../core/services/web-push.service';
 import { PollNotificationService } from '../../../core/services/poll-notification.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NotificationFeedService } from '../../../core/services/notification-feed.service';
+import { PwaInstallService } from '../../../core/services/pwa-install.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
@@ -109,6 +110,49 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
           {{ 'notify.promptHint' | translate }}
         </p>
 
+        <!-- Installing is the single biggest win for lock-screen delivery -->
+        <div *ngIf="pwa.canInstall() && !pwa.isInstalled()"
+          class="relative z-10 rounded-2xl border border-blue-500/35 bg-blue-500/10 p-4 space-y-3">
+          <p class="text-xs leading-relaxed text-slate-200">
+            <i class="fa-solid fa-mobile-screen-button mr-1.5 text-blue-400"></i>
+            {{ 'notify.installWhy' | translate }}
+          </p>
+          <button type="button" (click)="installApp()" class="btn btn-secondary btn-sm w-full">
+            <i class="fa-solid fa-download"></i>{{ 'notify.installApp' | translate }}
+          </button>
+        </div>
+
+        <!-- Where the chain stands, in plain terms -->
+        <div class="relative z-10 rounded-2xl border border-slate-700/50 bg-slate-950/40 p-3.5 space-y-2">
+          <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            {{ 'notify.diagTitle' | translate }}
+          </p>
+
+          <div class="flex items-center justify-between gap-3 text-xs">
+            <span class="text-slate-400">{{ 'notify.diagDevice' | translate }}</span>
+            <span class="font-semibold inline-flex items-center gap-1.5"
+              [ngClass]="localSubscribed ? 'text-emerald-400' : 'text-slate-500'">
+              <i class="fa-solid text-[10px]" [ngClass]="localSubscribed ? 'fa-circle-check' : 'fa-circle-minus'"></i>
+              {{ (localSubscribed ? 'notify.diagRegistered' : 'notify.diagNotRegistered') | translate }}
+            </span>
+          </div>
+
+          <div *ngIf="serverDeviceCount !== null" class="flex items-center justify-between gap-3 text-xs">
+            <span class="text-slate-400">{{ 'notify.diagServer' | translate }}</span>
+            <span class="font-semibold" [ngClass]="serverDeviceCount ? 'text-emerald-400' : 'text-slate-500'">
+              {{ serverDeviceCount }}
+            </span>
+          </div>
+
+          <p *ngIf="serverConfigured === false" class="text-[11px] text-rose-400 leading-relaxed">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ 'notify.diagServerOff' | translate }}
+          </p>
+
+          <p *ngIf="pwa.isInstalled()" class="text-[11px] text-emerald-400">
+            <i class="fa-solid fa-circle-check mr-1"></i>{{ 'notify.installed' | translate }}
+          </p>
+        </div>
+
         <!-- In-app history: keeps the bell useful even when the OS layer is off -->
         <div class="relative z-10 pt-4 border-t border-slate-700/50 space-y-3">
           <div class="flex items-center justify-between gap-2">
@@ -147,7 +191,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
     </div>
   `
 })
-export class NotificationSettingsComponent {
+export class NotificationSettingsComponent implements OnChanges {
   @Input() isOpen = false;
   @Output() closed = new EventEmitter<void>();
 
@@ -157,11 +201,30 @@ export class NotificationSettingsComponent {
   pollNotificationService = inject(PollNotificationService);
   notificationService = inject(NotificationService);
   feed = inject(NotificationFeedService);
+  pwa = inject(PwaInstallService);
 
   busy = false;
+  localSubscribed: boolean | null = null;
+  serverDeviceCount: number | null = null;
+  serverConfigured: boolean | null = null;
 
   status = computed(() => this.webPushService.status());
   isOn = computed(() => this.status() === 'on');
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isOpen']?.currentValue) void this.refreshDiagnostics();
+  }
+
+  async refreshDiagnostics() {
+    this.localSubscribed = await this.webPushService.hasLocalSubscription();
+    const diag = await this.webPushService.fetchDiagnostics();
+    this.serverDeviceCount = diag?.deviceCount ?? null;
+    this.serverConfigured = diag?.serverConfigured ?? null;
+  }
+
+  async installApp() {
+    await this.pwa.promptInstall();
+  }
 
   statusLabelKey(): string {
     switch (this.status()) {
@@ -249,13 +312,16 @@ export class NotificationSettingsComponent {
           res?.message || this.translationService.t('notify.active'),
           this.translationService.t('notify.title')
         );
-      } catch {
-        // The local notification already fired; the server leg is best-effort.
-        this.notificationService.success(
-          this.translationService.t('notify.active'),
+      } catch (err: any) {
+        // A failed server push is the interesting case — it means notifications
+        // will not arrive with the app closed, so say so instead of "success".
+        const detail = err?.error?.failures?.[0] || err?.error?.message;
+        this.notificationService.error(
+          detail || this.translationService.t('notify.testFailed'),
           this.translationService.t('notify.title')
         );
       }
+      await this.refreshDiagnostics();
     } finally {
       this.busy = false;
     }

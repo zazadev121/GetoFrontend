@@ -256,7 +256,17 @@ export class TranslationService {
       'notify.clearAll': 'გასუფთავება',
       'notify.nudgeTitle': 'ჩართეთ შეტყობინებები',
       'notify.nudgeBody': 'მიიღეთ სტატუსის განახლებები და სიახლეები მაშინვე — ბრაუზერის დახურვის შემდეგაც.',
-      'notify.nudgeLater': 'მოგვიანებით'
+      'notify.nudgeLater': 'მოგვიანებით',
+      'notify.installApp': 'აპლიკაციის დაყენება',
+      'notify.installWhy': 'დააყენეთ GETO როგორც აპლიკაცია — ჩაკეტილ ტელეფონზეც საიმედოდ მიიღებთ შეტყობინებებს.',
+      'notify.installed': 'აპლიკაცია დაყენებულია',
+      'notify.diagTitle': 'დიაგნოსტიკა',
+      'notify.diagDevice': 'ეს მოწყობილობა',
+      'notify.diagRegistered': 'რეგისტრირებულია',
+      'notify.diagNotRegistered': 'არ არის რეგისტრირებული',
+      'notify.diagServer': 'სერვერზე დარეგისტრირებული მოწყობილობები',
+      'notify.diagServerOff': 'სერვერზე Push გამორთულია',
+      'notify.testFailed': 'შეტყობინება ვერ მიწოდდა. სცადეთ ზარით ხელახლა ჩართვა.'
     },
     en: {
       // Navbar & General
@@ -477,7 +487,17 @@ export class TranslationService {
       'notify.clearAll': 'Clear',
       'notify.nudgeTitle': 'Turn on notifications',
       'notify.nudgeBody': 'Get status changes and news the moment they happen — even after you close the browser.',
-      'notify.nudgeLater': 'Not now'
+      'notify.nudgeLater': 'Not now',
+      'notify.installApp': 'Install the app',
+      'notify.installWhy': 'Install GETO as an app so notifications reach you reliably, even with the phone locked.',
+      'notify.installed': 'App is installed',
+      'notify.diagTitle': 'Diagnostics',
+      'notify.diagDevice': 'This device',
+      'notify.diagRegistered': 'registered',
+      'notify.diagNotRegistered': 'not registered',
+      'notify.diagServer': 'devices registered on the server',
+      'notify.diagServerOff': 'Push is not configured on the server',
+      'notify.testFailed': 'The notification could not be delivered. Try turning it off and on again from the bell.'
     }
   };
 

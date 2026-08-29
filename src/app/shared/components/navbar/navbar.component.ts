@@ -24,7 +24,7 @@ import { NotificationSettingsComponent } from '../notification-settings/notifica
           <a routerLink="/" (click)="closeMobileMenu()" class="flex items-center gap-2.5 shrink-0 group no-underline">
             <span class="w-10 h-10 sm:w-12 sm:h-12 squircle bg-slate-900 border border-blue-500/30 grid place-items-center p-0.5
                          shadow-[0_6px_18px_-8px_rgba(0,0,0,.6)] transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
-              <img src="/recommendations/Geto Logo.jpg" alt="GETO" class="w-full h-full object-cover squircle">
+              <img src="/icons/icon-192.png" alt="GETO" class="w-full h-full object-cover squircle">
             </span>
             <span class="leading-none">
               <span class="block font-heading font-extrabold text-base sm:text-xl tracking-tight text-white">GETO</span>

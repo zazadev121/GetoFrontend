@@ -24,7 +24,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
       </app-page-hero>
 
       <!-- Main Contact Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         <!-- WhatsApp Direct Contact Card -->
         <div class="glass-card p-6 border-slate-700/50 space-y-4 hover:border-emerald-500/50 transition-all flex flex-col justify-between text-center group">
@@ -119,7 +119,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
       </div>
 
       <!-- Quick Summary Card -->
-      <div class="glass-card p-8 border-slate-700/50 bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/40 space-y-4 text-center">
+      <div class="glass-card reveal reveal-scale sheen p-8 border-slate-700/50 space-y-4 text-center">
         <h3 class="text-xl font-bold text-white font-heading">
           {{ translationService.isGeorgian() ? 'შპს გეთო ფროჯექთი (GETO Project LLC)' : 'GETO Project LLC Official Support' }}
         </h3>

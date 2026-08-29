@@ -20,7 +20,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         sealIcon="fa-graduation-cap">
       </app-page-hero>
 
-      <div class="space-y-6 text-center">
+      <div class="reveal space-y-6 text-center">
         <!-- Announcement -->
         <div class="paper-card max-w-3xl mx-auto p-6 sm:p-8 border-amber-500/30 space-y-3 text-left sm:text-center">
           <p class="text-base sm:text-xl font-extrabold text-white leading-snug">
