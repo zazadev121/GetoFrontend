@@ -30,17 +30,17 @@ interface ManagedTemplateItem {
   selector: 'app-admin-panel',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    StatusLabelPipe, 
-    PhaseLabelPipe, 
+    CommonModule,
+    FormsModule,
+    StatusLabelPipe,
+    PhaseLabelPipe,
     FileSizePipe,
     TranslatePipe,
     ConfirmDialogComponent
   ],
   template: `
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fade-in w-full overflow-hidden">
-      
+
       <!-- Admin Header -->
       <div class="glass-card p-5 sm:p-8 relative overflow-hidden">
         <div class="flex flex-col gap-5 relative z-10">
@@ -61,7 +61,7 @@ interface ManagedTemplateItem {
             </div>
 
             <!-- Language Switcher in Admin Header -->
-            <button 
+            <button
               (click)="translationService.toggleLanguage()"
               class="btn btn-secondary btn-sm">
               <i class="fa-solid fa-globe text-pink-400"></i>
@@ -70,26 +70,34 @@ interface ManagedTemplateItem {
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <button 
-              (click)="openNewsModal()" 
+            <button
+              type="button"
+              (click)="openAdminMusic()"
+              class="btn btn-secondary btn-sm admin-sax-button"
+              title="Play music"
+              aria-label="Play music">
+              <i class="fa-solid fa-saxophone"></i>
+            </button>
+            <button
+              (click)="openNewsModal()"
               class="btn btn-secondary text-xs">
               <i class="fa-solid fa-newspaper text-blue-400"></i>
               {{ 'news.adminTitle' | translate }}
             </button>
-            <button 
-              (click)="openVacancyModal()" 
+            <button
+              (click)="openVacancyModal()"
               class="btn btn-secondary text-xs">
               <i class="fa-solid fa-briefcase text-emerald-400"></i>
               {{ 'admin.vacancies' | translate }}
             </button>
-            <button 
-              (click)="openTemplateManagerModal()" 
+            <button
+              (click)="openTemplateManagerModal()"
               class="btn btn-secondary text-xs">
               <i class="fa-solid fa-folder-tree"></i>
               {{ 'admin.templates' | translate }}
             </button>
-            <button 
-              (click)="openBulkUploadModal()" 
+            <button
+              (click)="openBulkUploadModal()"
               class="btn btn-primary bg-gradient-to-r from-pink-600 to-purple-600 text-xs">
               <i class="fa-solid fa-file-circle-plus"></i>
               {{ 'admin.distribute' | translate }}
@@ -104,20 +112,20 @@ interface ManagedTemplateItem {
 
       <!-- Main Users Card -->
       <div class="glass-card p-4 sm:p-6 space-y-5 w-full">
-        
+
         <!-- Toolbar -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div class="relative flex-1 max-w-md w-full">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input 
-              type="text" 
-              [(ngModel)]="searchQuery" 
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
               (input)="onSearchInput()"
-              [placeholder]="'admin.searchPlaceholder' | translate" 
+              [placeholder]="'admin.searchPlaceholder' | translate"
               class="form-control pl-9 text-xs py-2 w-full">
-            <button 
-              *ngIf="searchQuery" 
-              (click)="clearSearch()" 
+            <button
+              *ngIf="searchQuery"
+              (click)="clearSearch()"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
               <i class="fa-solid fa-xmark"></i>
             </button>
@@ -155,8 +163,8 @@ interface ManagedTemplateItem {
                   </div>
                 </td>
                 <td>
-                  <select 
-                    [ngModel]="u.status" 
+                  <select
+                    [ngModel]="u.status"
                     (ngModelChange)="onUpdateStatus(u, $event)"
                     class="form-control form-select form-select-compact py-1 px-2 text-xs w-full min-w-[12rem] font-semibold"
                     [ngClass]="getStatusSelectClass(u.status)">
@@ -167,8 +175,8 @@ interface ManagedTemplateItem {
                   </select>
                 </td>
                 <td>
-                  <select 
-                    [ngModel]="u.userPhase" 
+                  <select
+                    [ngModel]="u.userPhase"
                     (ngModelChange)="onUpdatePhase(u, $event)"
                     class="form-control form-select form-select-compact py-1 px-2 text-xs w-full min-w-[9.5rem] font-semibold">
                     <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
@@ -219,7 +227,7 @@ interface ManagedTemplateItem {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.status' | translate }}</label>
-                <select 
+                <select
                   [ngModel]="u.status" (ngModelChange)="onUpdateStatus(u, $event)"
                   class="form-control form-select form-select-compact py-1.5 px-2 text-xs w-full font-semibold"
                   [ngClass]="getStatusSelectClass(u.status)">
@@ -231,7 +239,7 @@ interface ManagedTemplateItem {
               </div>
               <div>
                 <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</label>
-                <select 
+                <select
                   [ngModel]="u.userPhase" (ngModelChange)="onUpdatePhase(u, $event)"
                   class="form-control form-select form-select-compact py-1.5 px-2 text-xs w-full font-semibold">
                   <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
@@ -277,7 +285,7 @@ interface ManagedTemplateItem {
       <!-- Single User Detail Inspector Drawer -->
       <div *ngIf="selectedUserForInspect" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
         <div class="glass-card max-w-3xl w-full p-6 border-slate-700/60 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
-          
+
           <div class="flex items-center justify-between border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold font-heading">
@@ -325,9 +333,9 @@ interface ManagedTemplateItem {
                 <i class="fa-solid fa-folder-tree text-blue-400"></i>
                 {{ 'admin.uploadedFiles' | translate }}
               </h4>
-              <button 
+              <button
                 *ngIf="selectedUserForInspect.documents.length > 0"
-                (click)="promptDeleteUserDocs(selectedUserForInspect)" 
+                (click)="promptDeleteUserDocs(selectedUserForInspect)"
                 class="btn btn-danger btn-sm text-xs px-2.5 py-1">
                 <i class="fa-solid fa-trash"></i> {{ 'admin.clearDocs' | translate }}
               </button>
@@ -338,10 +346,10 @@ interface ManagedTemplateItem {
             </div>
 
             <div *ngIf="selectedUserForInspect.documents.length > 0" class="space-y-2">
-              <div 
-                *ngFor="let doc of selectedUserForInspect.documents" 
+              <div
+                *ngFor="let doc of selectedUserForInspect.documents"
                 class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between">
-                
+
                 <div class="flex items-center gap-3 overflow-hidden">
                   <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
                     <i class="fa-solid" [ngClass]="getFileIcon(doc.fileName)"></i>
@@ -353,14 +361,14 @@ interface ManagedTemplateItem {
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <button 
-                    (click)="downloadUserDoc(selectedUserForInspect.id, doc)" 
+                  <button
+                    (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
                     <i class="fa-solid fa-download"></i> {{ 'admin.download' | translate }}
                   </button>
 
-                  <button 
-                    (click)="promptDeleteSingleBackendDoc(selectedUserForInspect.id, doc)" 
+                  <button
+                    (click)="promptDeleteSingleBackendDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-danger btn-sm text-xs px-2.5 py-1"
                     [title]="'admin.delete' | translate">
                     <i class="fa-solid fa-trash"></i>
@@ -395,11 +403,11 @@ interface ManagedTemplateItem {
 
           <!-- Search or Filter -->
           <div class="space-y-3">
-            <div 
-              *ngFor="let tpl of managedTemplates" 
+            <div
+              *ngFor="let tpl of managedTemplates"
               class="p-4 bg-slate-900/80 border rounded-xl flex items-center justify-between transition-all"
               [ngClass]="tpl.isDisabled ? 'border-rose-900/40 opacity-60' : 'border-slate-800 hover:border-purple-500/30'">
-              
+
               <div class="flex items-center gap-3 overflow-hidden">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg shrink-0">
                   <i class="fa-solid" [ngClass]="tpl.isBackendFile ? 'fa-database text-pink-400' : 'fa-file-pdf'"></i>
@@ -419,17 +427,17 @@ interface ManagedTemplateItem {
               </div>
 
               <div class="flex items-center gap-2 shrink-0">
-                <a 
+                <a
                   *ngIf="!tpl.isBackendFile"
-                  [href]="tpl.fileUrl" 
+                  [href]="tpl.fileUrl"
                   target="_blank"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1"
                   [title]="'admin.view' | translate">
                   <i class="fa-solid fa-eye text-blue-400"></i>
                 </a>
 
-                <button 
-                  (click)="promptDeleteTemplate(tpl)" 
+                <button
+                  (click)="promptDeleteTemplate(tpl)"
                   class="btn btn-danger btn-sm text-xs px-2.5 py-1">
                   <i class="fa-solid" [ngClass]="tpl.isDisabled ? 'fa-rotate-left' : 'fa-trash'"></i>
                   <span>{{ tpl.isDisabled ? ('admin.restore' | translate) : ('admin.delete' | translate) }}</span>
@@ -475,10 +483,10 @@ interface ManagedTemplateItem {
           <!-- File Input -->
           <div>
             <label class="form-label" for="bulk-file">{{ 'admin.selectFile' | translate }}</label>
-            <input 
+            <input
               id="bulk-file"
-              type="file" 
-              (change)="onBulkFileSelected($event)" 
+              type="file"
+              (change)="onBulkFileSelected($event)"
               class="form-control text-xs">
           </div>
 
@@ -489,9 +497,9 @@ interface ManagedTemplateItem {
 
           <div class="flex items-center justify-end gap-3 pt-2">
             <button (click)="showBulkModal = false" class="btn btn-secondary btn-sm">Cancel</button>
-            <button 
-              (click)="submitBulkUpload()" 
-              [disabled]="!bulkFile || isUploadingBulk" 
+            <button
+              (click)="submitBulkUpload()"
+              [disabled]="!bulkFile || isUploadingBulk"
               class="btn btn-primary btn-sm bg-gradient-to-r from-pink-600 to-purple-600">
               <span *ngIf="!isUploadingBulk"><i class="fa-solid fa-paper-plane"></i> {{ 'admin.distributeBtn' | translate }}</span>
               <span *ngIf="isUploadingBulk"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
@@ -528,9 +536,9 @@ interface ManagedTemplateItem {
             <label class="form-label text-xs block mb-1 font-semibold text-slate-300">
               კომენტარი / მიზეზი (Comment / Reason — Optional):
             </label>
-            <textarea 
-              rows="3" 
-              [(ngModel)]="changeComment" 
+            <textarea
+              rows="3"
+              [(ngModel)]="changeComment"
               placeholder="e.g. გაუქმების მიზეზი, დამატებითი ინსტრუქცია სტუდენტისთვის..."
               class="form-control text-xs resize-none"></textarea>
             <p class="text-[10px] text-slate-500 mt-1">This comment will be included at the end of the email notification sent to the student.</p>
@@ -540,8 +548,8 @@ interface ManagedTemplateItem {
             <button (click)="cancelChangeModal()" class="btn btn-secondary btn-sm text-xs">
               Cancel
             </button>
-            <button 
-              (click)="confirmChangeModal()" 
+            <button
+              (click)="confirmChangeModal()"
               [disabled]="isSubmittingChange"
               class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
               <span *ngIf="!isSubmittingChange"><i class="fa-solid fa-paper-plane mr-1"></i> Confirm & Send Email</span>
@@ -608,9 +616,9 @@ interface ManagedTemplateItem {
                 <i class="fa-solid" [ngClass]="editingNews ? 'fa-pen text-amber-400' : 'fa-pen-to-square text-blue-400'"></i>
                 {{ editingNews ? ('news.editTitle' | translate) : ('news.addBtn' | translate) }}
               </h4>
-              <button 
-                *ngIf="editingNews" 
-                (click)="cancelEditNews()" 
+              <button
+                *ngIf="editingNews"
+                (click)="cancelEditNews()"
                 class="btn btn-secondary btn-sm text-xs px-2 py-0.5">
                 <i class="fa-solid fa-xmark"></i> {{ 'news.cancelEdit' | translate }}
               </button>
@@ -637,20 +645,20 @@ interface ManagedTemplateItem {
               <ng-container *ngIf="newsFormLang === 'ka'">
                 <div>
                   <label class="form-label" for="news-title-ka">{{ 'news.inputTitle' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
-                  <input 
+                  <input
                     id="news-title-ka"
-                    type="text" 
-                    [(ngModel)]="newNewsTitle" 
-                    [placeholder]="'news.titlePlaceholder' | translate" 
+                    type="text"
+                    [(ngModel)]="newNewsTitle"
+                    [placeholder]="'news.titlePlaceholder' | translate"
                     class="form-control text-xs">
                 </div>
                 <div>
                   <label class="form-label" for="news-text-ka">{{ 'news.inputText' | translate }} (ქართული) <span class="text-rose-400">*</span></label>
-                  <textarea 
+                  <textarea
                     id="news-text-ka"
-                    rows="4" 
-                    [(ngModel)]="newNewsText" 
-                    [placeholder]="'news.textPlaceholder' | translate" 
+                    rows="4"
+                    [(ngModel)]="newNewsText"
+                    [placeholder]="'news.textPlaceholder' | translate"
                     class="form-control text-xs resize-none"></textarea>
                 </div>
               </ng-container>
@@ -662,11 +670,11 @@ interface ManagedTemplateItem {
                     {{ 'news.inputTitle' | translate }} (English)
                     <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional — Georgian shown as fallback)</span>
                   </label>
-                  <input 
+                  <input
                     id="news-title-en"
-                    type="text" 
-                    [(ngModel)]="newNewsTitleEn" 
-                    [placeholder]="'news.titleEnPlaceholder' | translate" 
+                    type="text"
+                    [(ngModel)]="newNewsTitleEn"
+                    [placeholder]="'news.titleEnPlaceholder' | translate"
                     class="form-control text-xs border-indigo-500/30 focus:border-indigo-500/60">
                 </div>
                 <div>
@@ -674,11 +682,11 @@ interface ManagedTemplateItem {
                     {{ 'news.inputText' | translate }} (English)
                     <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional)</span>
                   </label>
-                  <textarea 
+                  <textarea
                     id="news-text-en"
-                    rows="4" 
-                    [(ngModel)]="newNewsTextEn" 
-                    [placeholder]="'news.textEnPlaceholder' | translate" 
+                    rows="4"
+                    [(ngModel)]="newNewsTextEn"
+                    [placeholder]="'news.textEnPlaceholder' | translate"
                     class="form-control text-xs resize-none border-indigo-500/30 focus:border-indigo-500/60"></textarea>
                 </div>
               </ng-container>
@@ -704,20 +712,20 @@ interface ManagedTemplateItem {
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                  <input 
-                    type="text" 
-                    [(ngModel)]="newLinkLabel" 
-                    placeholder="Link Label (e.g. Website)" 
+                  <input
+                    type="text"
+                    [(ngModel)]="newLinkLabel"
+                    placeholder="Link Label (e.g. Website)"
                     class="form-control text-xs sm:col-span-2">
-                  <input 
-                    type="url" 
-                    [(ngModel)]="newLinkUrl" 
-                    placeholder="https://example.com" 
+                  <input
+                    type="url"
+                    [(ngModel)]="newLinkUrl"
+                    placeholder="https://example.com"
                     class="form-control text-xs sm:col-span-2">
-                  <button 
-                    type="button" 
-                    (click)="addNewsLink()" 
-                    [disabled]="!newLinkLabel.trim() || !newLinkUrl.trim()" 
+                  <button
+                    type="button"
+                    (click)="addNewsLink()"
+                    [disabled]="!newLinkLabel.trim() || !newLinkUrl.trim()"
                     class="btn btn-secondary btn-sm text-xs sm:col-span-1">
                     <i class="fa-solid fa-plus"></i> Add Link
                   </button>
@@ -762,10 +770,10 @@ interface ManagedTemplateItem {
 
                 <!-- File input -->
                 <div>
-                  <input 
-                    type="file" 
-                    multiple 
-                    (change)="onNewsFileSelected($event)" 
+                  <input
+                    type="file"
+                    multiple
+                    (change)="onNewsFileSelected($event)"
                     class="form-control text-xs">
                   <p class="text-[10px] text-slate-500 mt-1">Select files to attach to this news post (PDF, DOCX, Images, etc.)</p>
                 </div>
@@ -782,25 +790,25 @@ interface ManagedTemplateItem {
               </div>
 
               <div class="flex justify-end gap-2">
-                <button 
+                <button
                   *ngIf="editingNews"
                   (click)="cancelEditNews()"
                   class="btn btn-secondary btn-sm text-xs">
                   {{ 'news.cancelEdit' | translate }}
                 </button>
 
-                <button 
+                <button
                   *ngIf="!editingNews"
-                  (click)="submitCreateNews()" 
+                  (click)="submitCreateNews()"
                   [disabled]="!newNewsTitle.trim() || !newNewsText.trim() || isPostingNews"
                   class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
                   <span *ngIf="!isPostingNews"><i class="fa-solid fa-paper-plane mr-1"></i> {{ 'news.addBtn' | translate }}</span>
                   <span *ngIf="isPostingNews"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Posting...</span>
                 </button>
 
-                <button 
+                <button
                   *ngIf="editingNews"
-                  (click)="submitUpdateNews()" 
+                  (click)="submitUpdateNews()"
                   [disabled]="!newNewsTitle.trim() || !newNewsText.trim() || isUpdatingNews"
                   class="btn btn-primary btn-sm bg-gradient-to-r from-amber-500 to-amber-600 text-xs text-slate-950 font-bold">
                   <span *ngIf="!isUpdatingNews"><i class="fa-solid fa-floppy-disk mr-1"></i> {{ 'news.saveChanges' | translate }}</span>
@@ -824,8 +832,8 @@ interface ManagedTemplateItem {
             </div>
 
             <div *ngIf="!isLoadingNews && newsList.length > 0" class="space-y-2">
-              <div 
-                *ngFor="let news of newsList" 
+              <div
+                *ngFor="let news of newsList"
                 class="p-4 bg-slate-900/80 border border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div class="overflow-hidden flex-1 space-y-1">
                   <div class="flex items-center gap-2 flex-wrap">
@@ -842,14 +850,14 @@ interface ManagedTemplateItem {
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                  <button 
-                    (click)="startEditNews(news)" 
+                  <button
+                    (click)="startEditNews(news)"
                     class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
                     <i class="fa-solid fa-pen text-amber-400"></i> {{ 'news.editBtn' | translate }}
                   </button>
 
-                  <button 
-                    (click)="promptDeleteNews(news)" 
+                  <button
+                    (click)="promptDeleteNews(news)"
                     class="btn btn-danger btn-sm text-xs px-2.5 py-1">
                     <i class="fa-solid fa-trash"></i> {{ 'admin.delete' | translate }}
                   </button>
@@ -1124,6 +1132,7 @@ export class AdminPanelComponent implements OnInit {
   vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
+  readonly musicUrl = 'https://www.youtube.com/watch?v=r2DZzyeni6I&list=PL0k9rpB-oTRXQ3Sw-KpbqjWPeEqhgp9BO&index=3';
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;
@@ -1171,7 +1180,7 @@ export class AdminPanelComponent implements OnInit {
   selectedUserForDelete: UserWithDocumentsDto | null = null;
   selectedUserForDeleteDocs: UserWithDocumentsDto | null = null;
   selectedTemplateForDelete: ManagedTemplateItem | null = null;
-  
+
   selectedDocUserIdForDelete: number | null = null;
   selectedDocToDeleteSingle: DocumentDto | null = null;
 
@@ -1228,6 +1237,12 @@ export class AdminPanelComponent implements OnInit {
     }
   ];
 
+  openAdminMusic(): void {
+    if (typeof window !== 'undefined') {
+      window.open(this.musicUrl, '_blank', 'noopener,noreferrer');
+    }
+  }
+
   ngOnInit() {
     this.loadUsers();
     this.loadDisabledTemplatesState();
@@ -1252,7 +1267,7 @@ export class AdminPanelComponent implements OnInit {
   collectBackendBulkFiles() {
     // Collect unique files from backend database users
     const backendFileMap = new Map<string, ManagedTemplateItem>();
-    
+
     this.users.forEach(u => {
       u.documents.forEach(d => {
         if (!backendFileMap.has(d.fileName)) {
@@ -1303,7 +1318,7 @@ export class AdminPanelComponent implements OnInit {
   confirmDeleteTemplate() {
     if (!this.selectedTemplateForDelete) return;
     const tpl = this.selectedTemplateForDelete;
-    
+
     if (tpl.isBackendFile) {
       // Delete from backend database across users
       this.adminService.deleteBulkDocumentsByFileName(tpl.fileName).subscribe({
@@ -1323,7 +1338,7 @@ export class AdminPanelComponent implements OnInit {
       try {
         const disabledRaw = localStorage.getItem('geto_disabled_templates');
         let disabledIds: string[] = disabledRaw ? JSON.parse(disabledRaw) : [];
-        
+
         if (tpl.isDisabled) {
           disabledIds = disabledIds.filter(id => id !== tpl.id);
           tpl.isDisabled = false;
@@ -1335,7 +1350,7 @@ export class AdminPanelComponent implements OnInit {
           tpl.isDisabled = true;
           this.notificationService.success(`Template ${tpl.fileName} removed from student cabinets.`, 'Template Deleted');
         }
-        
+
         localStorage.setItem('geto_disabled_templates', JSON.stringify(disabledIds));
       } catch {
         this.notificationService.error('Failed to update template state', 'Error');

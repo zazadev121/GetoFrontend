@@ -401,6 +401,21 @@ html.light .seal { background: rgb(var(--c-n-100)); color: rgb(var(--c-n-950)); 
 }
 .seal__mark { font-size: 1.4rem; line-height: 1; }
 
+.admin-sax-button {
+  min-width: 2.75rem;
+  width: 2.75rem;
+  padding-inline: 0;
+}
+
+.admin-sax-button .fa-saxophone {
+  animation: adminSaxSpin 1.2s linear infinite;
+}
+
+@keyframes adminSaxSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* --------------------------------------------------------------------------
    9. BUTTONS — tactile, with real press travel
    -------------------------------------------------------------------------- */
