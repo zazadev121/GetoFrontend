@@ -5,7 +5,7 @@ export class BackgroundMusicService {
   readonly isPlaying = signal(false);
 
   private readonly audio = new Audio();
-  private readonly source = '/assets/audio/erika-marcha-alemana.mp3';
+  private readonly source = '/partners/erika-marcha-alemana.mp3';
 
   constructor() {
     this.audio.preload = 'auto';
