@@ -15,6 +15,7 @@ import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
+import { BackgroundMusicService } from '../core/services/background-music.service';
 
 interface ManagedTemplateItem {
   id: string;
@@ -1136,9 +1137,12 @@ export class AdminPanelComponent implements OnInit {
   vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
-  readonly musicSrc = '/partners/Erika%20-%20Marcha%20Alemana%20%5BLetra%20en%20Espa%C3%B1ol%5D.mp3';
-  private readonly musicAudio = new Audio();
+  backgroundMusic = inject(BackgroundMusicService);
   isMusicPlaying = false;
+
+  constructor() {
+    this.isMusicPlaying = this.backgroundMusic.isPlaying();
+  }
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;
@@ -1244,22 +1248,8 @@ export class AdminPanelComponent implements OnInit {
   ];
 
   toggleAdminMusic(): void {
-    if (this.isMusicPlaying) {
-      this.musicAudio.pause();
-      this.musicAudio.currentTime = 0;
-      this.isMusicPlaying = false;
-      return;
-    }
-
-    this.musicAudio.src = this.musicSrc;
-    this.musicAudio.load();
-    this.musicAudio.volume = 0.7;
-    this.musicAudio.loop = true;
-    this.musicAudio.play().then(() => {
-      this.isMusicPlaying = true;
-    }).catch(() => {
-      this.isMusicPlaying = false;
-    });
+    void this.backgroundMusic.toggle();
+    this.isMusicPlaying = this.backgroundMusic.isPlaying();
   }
 
   ngOnInit() {

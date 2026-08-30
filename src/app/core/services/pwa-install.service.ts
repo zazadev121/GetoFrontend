@@ -1,5 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
+
 /**
  * Captures the browser's install prompt.
  *
@@ -15,35 +20,44 @@ export class PwaInstallService {
   /** True when we are already running as an installed app. */
   isInstalled = signal(this.detectStandalone());
 
-  private deferredPrompt: any = null;
+  private deferredPrompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
     if (typeof window === 'undefined') return;
 
     window.addEventListener('beforeinstallprompt', (event: Event) => {
-      event.preventDefault();
-      this.deferredPrompt = event;
+      const installEvent = event as BeforeInstallPromptEvent;
+
+      // Do not suppress the browser's native banner before the user interacts.
+      // The banner will only appear when we later call prompt() from a click.
+      this.deferredPrompt = installEvent;
       this.canInstall.set(true);
+      console.log('[PWA] install prompt available');
     });
 
     window.addEventListener('appinstalled', () => {
       this.deferredPrompt = null;
       this.canInstall.set(false);
       this.isInstalled.set(true);
+      console.log('[PWA] app installed');
     });
   }
 
   /** Must be called from a user gesture. Returns true if the user accepted. */
   async promptInstall(): Promise<boolean> {
-    if (!this.deferredPrompt) return false;
+    if (!this.deferredPrompt) {
+      console.warn('[PWA] no deferred install prompt available');
+      return false;
+    }
+
     try {
-      this.deferredPrompt.prompt();
+      await this.deferredPrompt.prompt();
       const choice = await this.deferredPrompt.userChoice;
-      // The event can only be used once, whatever the answer.
       this.deferredPrompt = null;
       this.canInstall.set(false);
       return choice?.outcome === 'accepted';
-    } catch {
+    } catch (error) {
+      console.error('[PWA] prompt failed', error);
       this.deferredPrompt = null;
       this.canInstall.set(false);
       return false;
