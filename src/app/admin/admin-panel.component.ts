@@ -74,10 +74,10 @@ interface ManagedTemplateItem {
               type="button"
               (click)="toggleAdminMusic()"
               class="btn btn-secondary btn-sm admin-sax-button"
-              [attr.aria-pressed]="showMusicPlayer"
+              [attr.aria-pressed]="isMusicPlaying"
               title="Play music"
               aria-label="Play music">
-              <i class="fa-solid fa-saxophone"></i>
+              <i class="fa-solid" [ngClass]="isMusicPlaying ? 'fa-pause' : 'fa-saxophone'"></i>
             </button>
             <button
               (click)="openNewsModal()"
@@ -108,28 +108,6 @@ interface ManagedTemplateItem {
               {{ 'admin.refresh' | translate }}
             </button>
           </div>
-        </div>
-      </div>
-
-      <div *ngIf="showMusicPlayer" class="glass-card p-3 sm:p-4 relative overflow-hidden border border-pink-500/30">
-        <div class="flex items-center justify-between gap-3 mb-3">
-          <div class="flex items-center gap-2 text-pink-300 font-semibold text-xs uppercase tracking-[0.18em]">
-            <i class="fa-solid fa-saxophone"></i>
-            <span>Now Playing</span>
-          </div>
-          <button type="button" (click)="toggleAdminMusic()" class="btn btn-secondary btn-sm px-2.5 py-1 text-[10px]">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/80">
-          <iframe
-            class="w-full aspect-video"
-            [src]="musicEmbedUrl"
-            title="Admin music player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen>
-          </iframe>
         </div>
       </div>
 
@@ -1155,8 +1133,9 @@ export class AdminPanelComponent implements OnInit {
   vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
-  readonly musicEmbedUrl = 'https://www.youtube.com/embed/r2DZzyeni6I?autoplay=1&list=PL0k9rpB-oTRXQ3Sw-KpbqjWPeEqhgp9BO&index=3';
-  showMusicPlayer = false;
+  readonly musicSrc = '/partners/Erika - Marcha Alemana [Letra en Español].mp3';
+  private readonly musicAudio = new Audio(this.musicSrc);
+  isMusicPlaying = false;
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;
@@ -1262,7 +1241,19 @@ export class AdminPanelComponent implements OnInit {
   ];
 
   toggleAdminMusic(): void {
-    this.showMusicPlayer = !this.showMusicPlayer;
+    if (this.isMusicPlaying) {
+      this.musicAudio.pause();
+      this.musicAudio.currentTime = 0;
+      this.isMusicPlaying = false;
+      return;
+    }
+
+    this.musicAudio.volume = 0.7;
+    this.musicAudio.play().then(() => {
+      this.isMusicPlaying = true;
+    }).catch(() => {
+      this.isMusicPlaying = false;
+    });
   }
 
   ngOnInit() {
