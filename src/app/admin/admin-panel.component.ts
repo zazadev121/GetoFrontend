@@ -74,10 +74,13 @@ interface ManagedTemplateItem {
               type="button"
               (click)="toggleAdminMusic()"
               class="btn btn-secondary btn-sm admin-sax-button"
+              [class.is-playing]="isMusicPlaying"
               [attr.aria-pressed]="isMusicPlaying"
               title="Play music"
               aria-label="Play music">
-              <i class="fa-solid" [ngClass]="isMusicPlaying ? 'fa-pause' : 'fa-saxophone'"></i>
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="admin-sax-icon">
+                <path d="M12.8 2.5c-.9 0-1.7.7-1.7 1.6v4.6l-1.6-.4c-.7-.2-1.5 0-2.1.5l-2.2 2.1c-.9.9-1.1 2.3-.5 3.4l.9 1.6c.4.8 1.2 1.3 2.1 1.3h.9l1.4 4.7c.2.7.8 1.2 1.5 1.2h.8c.7 0 1.3-.5 1.5-1.2l1.3-4.3h2.1c1.1 0 2-.9 2-2v-3.1c0-1.3-.9-2.4-2.2-2.6l-2.6-.5V4.1c0-.9-.8-1.6-1.7-1.6Zm-1.9 9.8 1.4-.5.9-.1v2.6h-3.2l.9-2Zm6.6 1.3h-1.6v-1.4h1.6v1.4Z"/>
+              </svg>
             </button>
             <button
               (click)="openNewsModal()"
@@ -1133,8 +1136,8 @@ export class AdminPanelComponent implements OnInit {
   vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
-  readonly musicSrc = '/partners/Erika - Marcha Alemana [Letra en Español].mp3';
-  private readonly musicAudio = new Audio(this.musicSrc);
+  readonly musicSrc = '/partners/Erika%20-%20Marcha%20Alemana%20%5BLetra%20en%20Espa%C3%B1ol%5D.mp3';
+  private readonly musicAudio = new Audio();
   isMusicPlaying = false;
 
   users: UserWithDocumentsDto[] = [];
@@ -1248,7 +1251,10 @@ export class AdminPanelComponent implements OnInit {
       return;
     }
 
+    this.musicAudio.src = this.musicSrc;
+    this.musicAudio.load();
     this.musicAudio.volume = 0.7;
+    this.musicAudio.loop = true;
     this.musicAudio.play().then(() => {
       this.isMusicPlaying = true;
     }).catch(() => {

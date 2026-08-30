@@ -407,7 +407,15 @@ html.light .seal { background: rgb(var(--c-n-100)); color: rgb(var(--c-n-950)); 
   padding-inline: 0;
 }
 
-.admin-sax-button .fa-saxophone {
+.admin-sax-button .admin-sax-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
+  display: block;
+  transition: transform .2s ease;
+}
+
+.admin-sax-button.is-playing .admin-sax-icon {
   animation: adminSaxSpin 1.2s linear infinite;
 }
 
