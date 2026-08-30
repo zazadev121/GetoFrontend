@@ -72,8 +72,9 @@ interface ManagedTemplateItem {
           <div class="flex items-center gap-2 flex-wrap">
             <button
               type="button"
-              (click)="openAdminMusic()"
+              (click)="toggleAdminMusic()"
               class="btn btn-secondary btn-sm admin-sax-button"
+              [attr.aria-pressed]="showMusicPlayer"
               title="Play music"
               aria-label="Play music">
               <i class="fa-solid fa-saxophone"></i>
@@ -107,6 +108,28 @@ interface ManagedTemplateItem {
               {{ 'admin.refresh' | translate }}
             </button>
           </div>
+        </div>
+      </div>
+
+      <div *ngIf="showMusicPlayer" class="glass-card p-3 sm:p-4 relative overflow-hidden border border-pink-500/30">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <div class="flex items-center gap-2 text-pink-300 font-semibold text-xs uppercase tracking-[0.18em]">
+            <i class="fa-solid fa-saxophone"></i>
+            <span>Now Playing</span>
+          </div>
+          <button type="button" (click)="toggleAdminMusic()" class="btn btn-secondary btn-sm px-2.5 py-1 text-[10px]">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/80">
+          <iframe
+            class="w-full aspect-video"
+            [src]="musicEmbedUrl"
+            title="Admin music player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
         </div>
       </div>
 
@@ -1132,7 +1155,8 @@ export class AdminPanelComponent implements OnInit {
   vacancyService = inject(VacancyService);
   notificationService = inject(NotificationService);
   translationService = inject(TranslationService);
-  readonly musicUrl = 'https://www.youtube.com/watch?v=r2DZzyeni6I&list=PL0k9rpB-oTRXQ3Sw-KpbqjWPeEqhgp9BO&index=3';
+  readonly musicEmbedUrl = 'https://www.youtube.com/embed/r2DZzyeni6I?autoplay=1&list=PL0k9rpB-oTRXQ3Sw-KpbqjWPeEqhgp9BO&index=3';
+  showMusicPlayer = false;
 
   users: UserWithDocumentsDto[] = [];
   isLoadingUsers = false;
@@ -1237,10 +1261,8 @@ export class AdminPanelComponent implements OnInit {
     }
   ];
 
-  openAdminMusic(): void {
-    if (typeof window !== 'undefined') {
-      window.open(this.musicUrl, '_blank', 'noopener,noreferrer');
-    }
+  toggleAdminMusic(): void {
+    this.showMusicPlayer = !this.showMusicPlayer;
   }
 
   ngOnInit() {
