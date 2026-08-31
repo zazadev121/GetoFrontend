@@ -64,8 +64,8 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         </div>
 
         <a 
-          href="/templates/Deutch course/ურთიერთშეთანხმების აქტი მომსახურებაზე „გერმანული ენის კურსი".docx.pdf" 
-          download="ურთიერთშეთანხმების აქტი მომსახურებაზე „გერმანული ენის კურსი".docx.pdf"
+          href="/templates/Deutch course/ურთიერთშეთანხმების აქტი მომსახურებაზე „გერმანული ენის კურსი&quot;.docx.pdf" 
+          download="ურთიერთშეთანხმების აქტი მომსახურებაზე „გერმანული ენის კურსი&quot;.docx.pdf"
           class="btn btn-secondary px-5 py-2.5 text-xs font-semibold flex items-center gap-2 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 shrink-0">
           <i class="fa-solid fa-download"></i>
           <span>{{ 'deutsch.downloadDocBtn' | translate }}</span>
