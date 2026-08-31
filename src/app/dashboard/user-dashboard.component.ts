@@ -657,6 +657,15 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       fileSize: 1444484,
       descriptionKa: 'შპს გეთო ფროჯექთის ოფიციალური საბანკო რეკვიზიტები',
       descriptionEn: 'Official Bank Account Details of GETO Project LLC'
+    },
+    {
+      id: 'gen_extract',
+      phase: -1,
+      fileName: 'შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
+      fileUrl: '/templates/general/შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
+      fileSize: 118613,
+      descriptionKa: 'შპს გეთო ფროჯექთის ამონაწერი საჯარო რეესტრიდან',
+      descriptionEn: 'Public Register Extract of GETO Project LLC'
     }
   ];
 
