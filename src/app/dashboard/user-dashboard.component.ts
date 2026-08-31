@@ -613,7 +613,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'p1_resume',
       phase: 0,
       fileName: 'Resume--.docx',
-      fileUrl: '/templates/phase1/Resume--.docx',
+      fileUrl: '/templates/phase1/resume_template.docx',
       fileSize: 11940,
       descriptionKa: 'პირველი ეტაპის რეზიუმეს (CV) შაბლონის ჩამოტვირთვა',
       descriptionEn: 'Phase 1 Resume (CV) Template Form Download'
@@ -622,7 +622,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'p2_contract',
       phase: 1,
       fileName: 'ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
-      fileUrl: '/templates/phase2/ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
+      fileUrl: '/templates/phase2/phase2_contract.pdf',
       fileSize: 180301,
       descriptionKa: 'მეორე ეტაპის ხელშეკრულების ფორმის ჩამოტვირთვა (PDF)',
       descriptionEn: 'Phase 2 Contract Agreement Form Download (PDF)'
@@ -641,7 +641,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'p3_work_permit',
       phase: 2,
       fileName: '3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
-      fileUrl: '/templates/phase3/3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
+      fileUrl: '/templates/phase3/phase3_contract.pdf',
       fileSize: 201381,
       descriptionKa: 'მესამე ეტაპის საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება (PDF)',
       descriptionEn: 'Phase 3 Consulting & Administrative Intermediary Service Agreement (PDF)'
@@ -653,7 +653,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'gen_bank',
       phase: -1,
       fileName: 'შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
-      fileUrl: '/templates/general/შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
+      fileUrl: '/templates/general/bank_details.pdf',
       fileSize: 1444484,
       descriptionKa: 'შპს გეთო ფროჯექთის ოფიციალური საბანკო რეკვიზიტები',
       descriptionEn: 'Official Bank Account Details of GETO Project LLC'
@@ -662,7 +662,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       id: 'gen_extract',
       phase: -1,
       fileName: 'შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
-      fileUrl: '/templates/general/შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
+      fileUrl: '/templates/general/public_register_extract.pdf',
       fileSize: 118613,
       descriptionKa: 'შპს გეთო ფროჯექთის ამონაწერი საჯარო რეესტრიდან',
       descriptionEn: 'Public Register Extract of GETO Project LLC'
