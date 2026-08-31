@@ -1224,25 +1224,25 @@ export class AdminPanelComponent implements OnInit {
     {
       id: 'p2_contract',
       phaseName: 'Phase 2',
-      fileName: 'II ეტაპი.pdf',
-      fileUrl: '/templates/phase2/II ეტაპი.pdf',
-      fileSize: 201883,
+      fileName: 'ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
+      fileUrl: '/templates/phase2/ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
+      fileSize: 180301,
       isDisabled: false
     },
     {
       id: 'p3_work_permit',
       phaseName: 'Phase 3',
-      fileName: 'III ეტაპი.pdf',
-      fileUrl: '/templates/phase3/III ეტაპი.pdf',
-      fileSize: 223400,
+      fileName: '3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
+      fileUrl: '/templates/phase3/3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
+      fileSize: 201381,
       isDisabled: false
     },
     {
       id: 'gen_steuer',
       phaseName: 'Steuer (All Phases)',
-      fileName: 'STEUER_Service_Agreement.pdf',
-      fileUrl: '/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx (1).pdf',
-      fileSize: 188085,
+      fileName: 'STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf',
+      fileUrl: '/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf',
+      fileSize: 175631,
       isDisabled: false
     }
   ];

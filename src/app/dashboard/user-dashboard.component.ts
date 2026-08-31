@@ -621,9 +621,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     {
       id: 'p2_contract',
       phase: 1,
-      fileName: 'II ეტაპი.pdf',
-      fileUrl: '/templates/phase2/II ეტაპი.pdf',
-      fileSize: 201883,
+      fileName: 'ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
+      fileUrl: '/templates/phase2/ხელშეკრულება რეგისტრაცია_2026.docx.pdf',
+      fileSize: 180301,
       descriptionKa: 'მეორე ეტაპის ხელშეკრულების ფორმის ჩამოტვირთვა (PDF)',
       descriptionEn: 'Phase 2 Contract Agreement Form Download (PDF)'
     },
@@ -640,11 +640,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     {
       id: 'p3_work_permit',
       phase: 2,
-      fileName: 'III ეტაპი.pdf',
-      fileUrl: '/templates/phase3/III ეტაპი.pdf',
-      fileSize: 223400,
-      descriptionKa: 'მესამე ეტაპის სამუშაო ნებართვისა და გამგზავრების დოკუმენტი (PDF)',
-      descriptionEn: 'Phase 3 Work Permit & Departure Document (PDF)'
+      fileName: '3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
+      fileUrl: '/templates/phase3/3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
+      fileSize: 201381,
+      descriptionKa: 'მესამე ეტაპის საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება (PDF)',
+      descriptionEn: 'Phase 3 Consulting & Administrative Intermediary Service Agreement (PDF)'
     }
   ];
 
@@ -652,29 +652,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
     {
       id: 'gen_bank',
       phase: -1,
-      fileName: 'კომპანიის საბანკო რეკვიზიტი.pdf',
-      fileUrl: '/templates/general/კომპანიის საბანკო რეკვიზიტი.pdf',
-      fileSize: 1439650,
+      fileName: 'შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
+      fileUrl: '/templates/general/შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
+      fileSize: 1444484,
       descriptionKa: 'შპს გეთო ფროჯექთის ოფიციალური საბანკო რეკვიზიტები',
       descriptionEn: 'Official Bank Account Details of GETO Project LLC'
-    },
-    {
-      id: 'gen_small_biz',
-      phase: -1,
-      fileName: 'მცირე ბიზნესის სტატუსის მინიჭების სერტიფიკატი.pdf',
-      fileUrl: '/templates/general/მცირე ბიზნესის სტატუსის მინიჭების სერტიფიკატი.pdf',
-      fileSize: 66291,
-      descriptionKa: 'მცირე ბიზნესის სტატუსის მინიჭების ოფიციალური სერტიფიკატი',
-      descriptionEn: 'Official Small Business Status Certificate'
-    },
-    {
-      id: 'gen_extract',
-      phase: -1,
-      fileName: 'შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
-      fileUrl: '/templates/general/შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
-      fileSize: 118613,
-      descriptionKa: 'შპს გეთო ფროჯექთის ამონაწერი საჯარო რეესტრიდან',
-      descriptionEn: 'Public Register Extract of GETO Project LLC'
     }
   ];
 

@@ -25,8 +25,8 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         <!-- Main Download Agreement CTA -->
         <div class="flex justify-center w-full">
           <a 
-            href="/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx (1).pdf" 
-            download="STEUER_Service_Agreement.pdf"
+            href="/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf" 
+            download="STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf"
             class="btn btn-primary px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-base font-bold shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 max-w-full text-center">
             <i class="fa-solid fa-file-pdf text-base sm:text-lg shrink-0"></i>
             <span class="break-words">{{ translationService.isGeorgian() ? 'შტოიერის ხელშეკრულების გადმოწერა (PDF)' : 'Download Steuer Service Agreement (PDF)' }}</span>
