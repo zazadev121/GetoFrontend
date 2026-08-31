@@ -8,7 +8,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
   standalone: true,
   imports: [CommonModule, PageHeroComponent],
   template: `
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 space-y-14 w-full">
 
       <app-page-hero
         [title]="translationService.isGeorgian() ? '„შტოიერის“ დაბრუნება' : 'German Tax Refund'"
