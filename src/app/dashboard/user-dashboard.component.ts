@@ -29,17 +29,17 @@ interface StaticTemplateItem {
   selector: 'app-user-dashboard',
   standalone: true,
   imports: [
-    CommonModule, 
-    StatusLabelPipe, 
-    PhaseLabelPipe, 
-    FileSizePipe, 
+    CommonModule,
+    StatusLabelPipe,
+    PhaseLabelPipe,
+    FileSizePipe,
     TranslatePipe,
     ConfirmDialogComponent,
     PrivacyPolicyModalComponent
   ],
   template: `
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fade-in w-full overflow-hidden">
-      
+
       <!-- Personal Cabinet Header -->
       <div class="glass-card p-4 sm:p-6 border-slate-700/50 relative overflow-hidden">
         <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -120,10 +120,10 @@ interface StaticTemplateItem {
 
       <!-- Main Dashboard Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-        
+
         <!-- Left Column: Upload Dropzone & Required Templates -->
         <div class="lg:col-span-1 space-y-6">
-          
+
           <!-- Document Upload Box -->
           <div class="glass-card p-4 sm:p-6 border-slate-700/50 space-y-4">
             <div class="flex items-center justify-between">
@@ -135,18 +135,18 @@ interface StaticTemplateItem {
             </div>
 
             <!-- Drag & Drop Zone -->
-            <div 
+            <div
               class="dropzone group"
               [class.active]="isDragging"
               (dragover)="onDragOver($event)"
               (dragleave)="onDragLeave($event)"
               (drop)="onDrop($event)"
               (click)="fileInput.click()">
-              
-              <input 
+
+              <input
                 #fileInput
-                type="file" 
-                class="hidden" 
+                type="file"
+                class="hidden"
                 accept=".pdf,.docx,.doc"
                 (change)="onFileSelected($event)">
 
@@ -176,14 +176,14 @@ interface StaticTemplateItem {
               </div>
 
               <div class="flex items-center gap-2">
-                <button 
-                  (click)="selectedFile = null" 
+                <button
+                  (click)="selectedFile = null"
                   class="p-1 text-slate-400 hover:text-rose-400 transition-colors"
                   title="Remove file">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
-                <button 
-                  (click)="uploadFile()" 
+                <button
+                  (click)="uploadFile()"
                   [disabled]="isUploading"
                   class="btn btn-primary btn-sm">
                   <span *ngIf="!isUploading"><i class="fa-solid fa-upload"></i> Upload</span>
@@ -209,10 +209,10 @@ interface StaticTemplateItem {
 
             <!-- Combined List: Backend Issued Documents -->
             <div class="space-y-3">
-              
+
               <!-- Frontend Phase Templates & External Links -->
-              <div 
-                *ngFor="let tpl of getActivePhaseTemplates()" 
+              <div
+                *ngFor="let tpl of getActivePhaseTemplates()"
                 class="p-3 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl flex items-center justify-between transition-colors gap-2">
                 <div class="flex items-center gap-3 overflow-hidden">
                   <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base shrink-0">
@@ -224,8 +224,8 @@ interface StaticTemplateItem {
                   </div>
                 </div>
 
-                <a 
-                  [href]="tpl.fileUrl" 
+                <a
+                  [href]="tpl.fileUrl"
                   [target]="tpl.isExternalLink ? '_blank' : '_self'"
                   [download]="tpl.isExternalLink ? null : tpl.fileName"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0">
@@ -235,8 +235,8 @@ interface StaticTemplateItem {
               </div>
 
               <!-- Backend Issued Admin Documents -->
-              <div 
-                *ngFor="let doc of getAdminSentDocuments()" 
+              <div
+                *ngFor="let doc of getAdminSentDocuments()"
                 class="p-3 bg-slate-900/60 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-between transition-colors gap-2">
                 <div class="flex items-center gap-3 overflow-hidden">
                   <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-base shrink-0">
@@ -248,16 +248,16 @@ interface StaticTemplateItem {
                   </div>
                 </div>
 
-                <button 
-                  (click)="downloadAdminDoc(doc)" 
+                <button
+                  (click)="downloadAdminDoc(doc)"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
                   <i class="fa-solid fa-download"></i> Download
                 </button>
               </div>
 
               <!-- Friendly Notice When No Extra Backend Documents Exist -->
-              <div 
-                *ngIf="getActivePhaseTemplates().length === 0 && getAdminSentDocuments().length === 0" 
+              <div
+                *ngIf="getActivePhaseTemplates().length === 0 && getAdminSentDocuments().length === 0"
                 class="p-4 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center space-y-1">
                 <div class="text-xs text-slate-300 font-semibold">
                   {{ translationService.isGeorgian() ? 'ამ ეტაპისთვის დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued for this phase yet' }}
@@ -285,8 +285,8 @@ interface StaticTemplateItem {
             </p>
 
             <div class="space-y-3">
-              <div 
-                *ngFor="let gen of getGeneralTemplates()" 
+              <div
+                *ngFor="let gen of getGeneralTemplates()"
                 class="p-3 bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 rounded-xl flex items-center justify-between transition-colors gap-2">
                 <div class="flex items-center gap-3 overflow-hidden">
                   <div class="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-base shrink-0">
@@ -298,8 +298,8 @@ interface StaticTemplateItem {
                   </div>
                 </div>
 
-                <a 
-                  [href]="gen.fileUrl" 
+                <a
+                  [href]="gen.fileUrl"
                   [download]="gen.fileName"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0">
                   <i class="fa-solid fa-download"></i> Download
@@ -312,7 +312,7 @@ interface StaticTemplateItem {
 
         <!-- Right Column: My Uploaded Documents Table & Phase Instruction Details Card -->
         <div class="lg:col-span-2 space-y-6">
-          
+
           <!-- My Uploaded Documents Table Card -->
           <div class="glass-card p-4 sm:p-6 border-slate-700/50 space-y-6">
             <div class="flex items-center justify-between flex-wrap gap-4">
@@ -363,14 +363,14 @@ interface StaticTemplateItem {
                     </td>
                     <td class="text-right whitespace-nowrap">
                       <div class="flex items-center justify-end gap-2 max-md:justify-start">
-                        <button 
-                          (click)="downloadDoc(doc)" 
+                        <button
+                          (click)="downloadDoc(doc)"
                           class="btn btn-secondary btn-sm"
                           title="Download file">
                           <i class="fa-solid fa-download"></i>
                         </button>
-                        <button 
-                          (click)="promptDeleteDoc(doc)" 
+                        <button
+                          (click)="promptDeleteDoc(doc)"
                           class="btn btn-danger btn-sm"
                           title="Delete file">
                           <i class="fa-solid fa-trash"></i>
@@ -523,9 +523,9 @@ interface StaticTemplateItem {
                   </div>
                 </div>
 
-                <a 
-                  href="https://www.arbeitsagentur.de/datei/b-immatrikulation-en_ba015238.pdf" 
-                  target="_blank" 
+                <a
+                  href="https://www.arbeitsagentur.de/datei/b-immatrikulation-en_ba015238.pdf"
+                  target="_blank"
                   rel="noopener noreferrer"
                   class="btn btn-secondary btn-sm text-xs flex items-center gap-1.5 shrink-0">
                   <span>{{ translationService.isGeorgian() ? 'გახსენი PDF ბმული' : 'Open PDF Link' }}</span>
@@ -585,7 +585,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   pollNotificationService = inject(PollNotificationService);
 
   currentUser = this.authService.currentUserSignal();
-  
+
   userStatus = 0; // Default Pending
   userPhase = 0; // Default Phase One
 
@@ -646,7 +646,13 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   getActivePhaseTemplates(): StaticTemplateItem[] {
     const disabledIds = this.getDisabledTemplateIds();
-    return this.staticTemplates.filter(t => t.phase === this.userPhase && !disabledIds.includes(t.id));
+    const templates = this.staticTemplates.filter(t => t.phase === this.userPhase && !disabledIds.includes(t.id));
+
+    if (this.userPhase === 0) {
+      return templates.filter(t => t.fileName.trim().toLowerCase() === 'resume--.docx');
+    }
+
+    return templates;
   }
 
   getGeneralTemplates(): StaticTemplateItem[] {
