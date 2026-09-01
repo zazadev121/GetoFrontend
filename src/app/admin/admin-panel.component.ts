@@ -191,7 +191,9 @@ interface ManagedTemplateItem {
                   </select>
                 </td>
                 <td>
-                  <span class="text-xs font-semibold text-slate-300">{{ u.documents.length }} files</span>
+                  <span class="text-xs font-semibold text-slate-300">
+                    {{ getUserUploadedDocs(u).length }} Student / {{ getAdminUploadedDocs(u).length }} Admin
+                  </span>
                 </td>
                 <td class="text-right">
                   <div class="flex items-center justify-end gap-1.5">
@@ -332,32 +334,34 @@ interface ManagedTemplateItem {
 
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
               <span class="text-slate-500 block mb-1">{{ 'admin.files' | translate }}</span>
-              <span class="font-bold text-white text-sm">{{ selectedUserForInspect.documents.length }} Files</span>
+              <span class="font-bold text-white text-xs">
+                {{ getUserUploadedDocs(selectedUserForInspect).length }} Student / {{ getAdminUploadedDocs(selectedUserForInspect).length }} Admin
+              </span>
             </div>
           </div>
 
-          <!-- User Uploaded Files Section with Individual Delete Button -->
+          <!-- Section 1: Student Submitted Files -->
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
                 <i class="fa-solid fa-folder-tree text-blue-400"></i>
-                {{ 'admin.uploadedFiles' | translate }}
+                Student Uploaded Files ({{ getUserUploadedDocs(selectedUserForInspect).length }})
               </h4>
               <button
-                *ngIf="selectedUserForInspect.documents.length > 0"
+                *ngIf="getUserUploadedDocs(selectedUserForInspect).length > 0"
                 (click)="promptDeleteUserDocs(selectedUserForInspect)"
                 class="btn btn-danger btn-sm text-xs px-2.5 py-1">
                 <i class="fa-solid fa-trash"></i> {{ 'admin.clearDocs' | translate }}
               </button>
             </div>
 
-            <div *ngIf="selectedUserForInspect.documents.length === 0" class="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
-              User has not uploaded any documents yet.
+            <div *ngIf="getUserUploadedDocs(selectedUserForInspect).length === 0" class="py-4 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              Student has not uploaded any documents yet.
             </div>
 
-            <div *ngIf="selectedUserForInspect.documents.length > 0" class="space-y-2">
+            <div *ngIf="getUserUploadedDocs(selectedUserForInspect).length > 0" class="space-y-2">
               <div
-                *ngFor="let doc of selectedUserForInspect.documents"
+                *ngFor="let doc of getUserUploadedDocs(selectedUserForInspect)"
                 class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between">
 
                 <div class="flex items-center gap-3 overflow-hidden">
@@ -381,6 +385,60 @@ interface ManagedTemplateItem {
                     (click)="promptDeleteSingleBackendDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-danger btn-sm text-xs px-2.5 py-1"
                     [title]="'admin.delete' | translate">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Documents Sent by Administration to User -->
+          <div class="space-y-3 pt-3 border-t border-slate-800">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white font-heading flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane text-emerald-400"></i>
+                Documents Sent by Admin to User ({{ getAdminUploadedDocs(selectedUserForInspect).length }})
+              </h4>
+              <button
+                (click)="openSendDocModal(selectedUserForInspect)"
+                class="btn btn-primary btn-sm text-xs px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600">
+                <i class="fa-solid fa-file-export mr-1"></i> Send Document
+              </button>
+            </div>
+
+            <div *ngIf="getAdminUploadedDocs(selectedUserForInspect).length === 0" class="py-4 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              No custom documents sent to this user by admin yet.
+            </div>
+
+            <div *ngIf="getAdminUploadedDocs(selectedUserForInspect).length > 0" class="space-y-2">
+              <div
+                *ngFor="let doc of getAdminUploadedDocs(selectedUserForInspect)"
+                class="p-3 bg-slate-900/80 border border-emerald-500/30 rounded-xl flex items-center justify-between">
+
+                <div class="flex items-center gap-3 overflow-hidden">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <i class="fa-solid" [ngClass]="getFileIcon(doc.fileName)"></i>
+                  </div>
+                  <div class="truncate">
+                    <div class="text-xs font-semibold text-slate-200 truncate flex items-center gap-2">
+                      <span>{{ doc.fileName }}</span>
+                      <span class="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded font-bold shrink-0">Admin Sent</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500">ID: #{{ doc.id }} &bull; {{ doc.fileSize | fileSize }} &bull; {{ doc.uploadedAt | date:'shortDate' }}</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button
+                    (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
+                    class="btn btn-secondary btn-sm text-xs px-3 py-1">
+                    <i class="fa-solid fa-download"></i> {{ 'admin.download' | translate }}
+                  </button>
+
+                  <button
+                    (click)="promptDeleteSingleBackendDoc(selectedUserForInspect.id, doc)"
+                    class="btn btn-danger btn-sm text-xs px-2.5 py-1"
+                    title="Delete Admin Document">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
@@ -1751,6 +1809,16 @@ export class AdminPanelComponent implements OnInit {
   }
 
   // Helpers
+  getUserUploadedDocs(user: UserWithDocumentsDto | null): DocumentDto[] {
+    if (!user || !user.documents) return [];
+    return user.documents.filter(d => !d.isAdminUploaded);
+  }
+
+  getAdminUploadedDocs(user: UserWithDocumentsDto | null): DocumentDto[] {
+    if (!user || !user.documents) return [];
+    return user.documents.filter(d => d.isAdminUploaded);
+  }
+
   getFileIcon(filename: string): string {
     const ext = filename.toLowerCase().split('.').pop();
     if (ext === 'pdf') return 'fa-file-pdf text-rose-400';
