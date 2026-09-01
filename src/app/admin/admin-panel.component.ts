@@ -376,6 +376,14 @@ interface ManagedTemplateItem {
 
                 <div class="flex items-center gap-2">
                   <button
+                    (click)="toggleAdminUploaded(doc)"
+                    class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 text-emerald-400 hover:text-emerald-300"
+                    title="Move to Admin Sent Documents">
+                    <i class="fa-solid fa-right-left"></i>
+                    <span>Make Admin File</span>
+                  </button>
+
+                  <button
                     (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
                     <i class="fa-solid fa-download"></i> {{ 'admin.download' | translate }}
@@ -429,6 +437,14 @@ interface ManagedTemplateItem {
                 </div>
 
                 <div class="flex items-center gap-2">
+                  <button
+                    (click)="toggleAdminUploaded(doc)"
+                    class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 text-blue-400 hover:text-blue-300"
+                    title="Move to Student Uploaded Documents">
+                    <i class="fa-solid fa-right-left"></i>
+                    <span>Make Student File</span>
+                  </button>
+
                   <button
                     (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
@@ -1528,6 +1544,26 @@ export class AdminPanelComponent implements OnInit {
           }
         } else {
           this.notificationService.error(res.message || 'Failed to delete file', 'Error');
+        }
+      }
+    });
+  }
+
+  toggleAdminUploaded(doc: DocumentDto) {
+    this.adminService.toggleDocumentAdminUploaded(doc.id).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          doc.isAdminUploaded = res.data;
+          this.notificationService.success(
+            doc.isAdminUploaded ? 'Document moved to Admin Sent list.' : 'Document moved to Student Uploaded list.',
+            'Updated'
+          );
+          this.loadUsers();
+          if (this.selectedUserForInspect) {
+            this.inspectUser(this.selectedUserForInspect);
+          }
+        } else {
+          this.notificationService.error(res.message || 'Failed to update document status', 'Error');
         }
       }
     });

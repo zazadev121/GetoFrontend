@@ -111,4 +111,8 @@ export class AdminService {
       params
     });
   }
+
+  toggleDocumentAdminUploaded(documentId: number): Observable<ApiResponse<boolean>> {
+    return this.http.post<ApiResponse<boolean>>(`${this.baseUrl}/document/${documentId}/toggle-admin-uploaded`, {});
+  }
 }
