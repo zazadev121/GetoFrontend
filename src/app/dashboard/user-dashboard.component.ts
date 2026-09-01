@@ -602,7 +602,17 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showDeleteModal = false;
   showTermsModal = false;
 
-  staticTemplates: StaticTemplateItem[] = [];
+  staticTemplates: StaticTemplateItem[] = [
+    {
+      id: 'phase1_resume_document',
+      phase: 0,
+      fileName: 'Resume--.docx',
+      fileUrl: '/partners/Resume--.docx',
+      fileSize: 0,
+      descriptionKa: 'რეზიუმე – ფაზა 1',
+      descriptionEn: 'Resume – Phase 1'
+    }
+  ];
 
   generalStaticTemplates: StaticTemplateItem[] = [];
 
