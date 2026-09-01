@@ -7,4 +7,5 @@ export interface DocumentDto {
   fileSize: number;
   uploadedAt: string;
   phase: UserPhase;
+  isAdminUploaded?: boolean;
 }

@@ -348,7 +348,12 @@ interface StaticTemplateItem {
                           <i class="fa-solid" [ngClass]="getFileIcon(doc.fileName)"></i>
                         </div>
                         <div class="truncate">
-                          <div class="font-semibold text-slate-200 text-sm truncate">{{ doc.fileName }}</div>
+                          <div class="font-semibold text-slate-200 text-sm truncate flex items-center gap-2">
+                            <span>{{ doc.fileName }}</span>
+                            <span *ngIf="doc.isAdminUploaded" class="text-[9px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded font-bold shrink-0 inline-flex items-center gap-1">
+                              <i class="fa-solid fa-shield-halved"></i> {{ translationService.isGeorgian() ? 'ადმინისტრაციისგან' : 'From Admin' }}
+                            </span>
+                          </div>
                           <div class="text-[10px] text-slate-500 truncate">{{ doc.contentType }}</div>
                         </div>
                       </div>
