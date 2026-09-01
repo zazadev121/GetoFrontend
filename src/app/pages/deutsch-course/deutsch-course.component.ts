@@ -47,30 +47,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         </div>
       </div>
 
-      <!-- Single Official German Course Agreement Document Card -->
-      <div class="glass-card p-6 border-slate-700/50 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/30 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-2xl shrink-0">
-            <i class="fa-solid fa-file-contract"></i>
-          </div>
-          <div>
-            <h3 class="text-base sm:text-lg font-bold text-white font-heading">
-              {{ 'deutsch.agreementCardTitle' | translate }}
-            </h3>
-            <p class="text-xs text-slate-400 mt-1">
-              {{ 'deutsch.agreementCardSub' | translate }}
-            </p>
-          </div>
-        </div>
 
-        <a 
-          href="/templates/deutsch-course/german_language_course_agreement.pdf" 
-          download="ურთიერთშეთანხმების აქტი მომსახურებაზე „გერმანული ენის კურსი“.pdf"
-          class="btn btn-secondary px-5 py-2.5 text-xs font-semibold flex items-center gap-2 border-amber-500/30 text-amber-300 hover:bg-amber-500/10 shrink-0">
-          <i class="fa-solid fa-download"></i>
-          <span>{{ 'deutsch.downloadDocBtn' | translate }}</span>
-        </a>
-      </div>
 
       <!-- Feature Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -97,4 +97,18 @@ export class AdminService {
       params: { phase: phase.toString() }
     });
   }
+
+  sendDocumentToUser(userId: number, phase: number, file: File, note?: string): Observable<ApiResponse<any>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    let params: any = { phase: phase.toString() };
+    if (note && note.trim()) {
+      params.note = note.trim();
+    }
+
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/document/send-to-user/${userId}`, formData, {
+      params
+    });
+  }
 }

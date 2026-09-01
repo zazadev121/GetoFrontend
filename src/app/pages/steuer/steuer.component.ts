@@ -21,18 +21,7 @@ import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.c
         sealIcon="fa-coins">
       </app-page-hero>
 
-      <div class="reveal reveal-scale w-full">
-        <!-- Main Download Agreement CTA -->
-        <div class="flex justify-center w-full">
-          <a 
-            href="/templates/steuer/steuer_agreement.pdf" 
-            download="STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.pdf"
-            class="btn btn-primary px-6 sm:px-8 py-3 sm:py-3.5 text-xs sm:text-base font-bold shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2 max-w-full text-center">
-            <i class="fa-solid fa-file-pdf text-base sm:text-lg shrink-0"></i>
-            <span class="break-words">{{ translationService.isGeorgian() ? 'შტოიერის ხელშეკრულების გადმოწერა (PDF)' : 'Download Steuer Service Agreement (PDF)' }}</span>
-          </a>
-        </div>
-      </div>
+
 
       <!-- Email Document Submission Announcement Card -->
       <div class="glass-card p-6 sm:p-8 border-teal-500/40 bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950/40 space-y-3 w-full">

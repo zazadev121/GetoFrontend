@@ -195,6 +195,9 @@ interface ManagedTemplateItem {
                 </td>
                 <td class="text-right">
                   <div class="flex items-center justify-end gap-1.5">
+                    <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm px-2 py-1 text-xs bg-gradient-to-r from-blue-600 to-indigo-600" [title]="'admin.sendDoc' | translate">
+                      <i class="fa-solid fa-file-export"></i>
+                    </button>
                     <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm px-2 py-1 text-xs" [title]="'admin.view' | translate">
                       <i class="fa-solid fa-eye"></i>
                     </button>
@@ -255,10 +258,12 @@ interface ManagedTemplateItem {
               </div>
             </div>
 
-            <!-- Actions row -->
-            <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+              <div class="flex items-center justify-between pt-2 border-t border-slate-800">
               <span class="text-xs text-slate-400">{{ u.documents.length }} files</span>
               <div class="flex items-center gap-1.5">
+                <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm text-xs px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600">
+                  <i class="fa-solid fa-file-export"></i>
+                </button>
                 <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
                   <i class="fa-solid fa-eye"></i> {{ 'admin.view' | translate }}
                 </button>
@@ -508,6 +513,79 @@ interface ManagedTemplateItem {
               class="btn btn-primary btn-sm bg-gradient-to-r from-pink-600 to-purple-600">
               <span *ngIf="!isUploadingBulk"><i class="fa-solid fa-paper-plane"></i> {{ 'admin.distributeBtn' | translate }}</span>
               <span *ngIf="isUploadingBulk"><i class="fa-solid fa-spinner fa-spin"></i> Uploading...</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      </div>
+
+      <!-- Single User Send Document Modal -->
+      <div *ngIf="showSendDocModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+        <div class="glass-card max-w-md w-full p-6 border-blue-500/30 shadow-2xl space-y-5">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div class="flex items-center gap-2 text-blue-400 font-bold">
+              <i class="fa-solid fa-file-export text-lg"></i>
+              <h3 class="text-lg text-white font-heading">Send Document to User</h3>
+            </div>
+            <button (click)="showSendDocModal = false" class="text-slate-400 hover:text-white">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs space-y-1 mb-2">
+            <div class="text-slate-500">Recipient:</div>
+            <div class="font-bold text-white">{{ selectedUserForSendDoc?.name }} {{ selectedUserForSendDoc?.lastName }}</div>
+            <div class="text-slate-400 text-[11px] font-mono">{{ selectedUserForSendDoc?.email }}</div>
+          </div>
+
+          <!-- Phase Dropdown -->
+          <div>
+            <label class="form-label" for="senddoc-phase">{{ 'admin.targetPhase' | translate }}</label>
+            <select id="senddoc-phase" [(ngModel)]="sendDocPhase" class="form-control form-select">
+              <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
+              <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
+              <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
+              <option [value]="3">{{ 'phase.canceled' | translate }}</option>
+            </select>
+          </div>
+
+          <!-- Note Input -->
+          <div>
+            <label class="form-label" for="senddoc-note">
+              Admin Note <span class="ml-1 text-[10px] text-slate-500 font-normal">(optional - shown in email)</span>
+            </label>
+            <textarea
+              id="senddoc-note"
+              rows="2"
+              [(ngModel)]="sendDocNote"
+              placeholder="e.g. Please sign this document and re-upload."
+              class="form-control text-xs resize-none"></textarea>
+          </div>
+
+          <!-- File Input -->
+          <div>
+            <label class="form-label" for="senddoc-file">{{ 'admin.selectFile' | translate }}</label>
+            <input
+              id="senddoc-file"
+              type="file"
+              (change)="onSendDocFileSelected($event)"
+              class="form-control text-xs">
+          </div>
+
+          <div *ngIf="sendDocFile" class="text-xs text-slate-300 bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between">
+            <span class="truncate font-mono">{{ sendDocFile.name }}</span>
+            <span class="text-[10px] text-slate-500">{{ sendDocFile.size | fileSize }}</span>
+          </div>
+
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button (click)="showSendDocModal = false" class="btn btn-secondary btn-sm">Cancel</button>
+            <button
+              (click)="submitSendDoc()"
+              [disabled]="!sendDocFile || isSendingDoc"
+              class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600">
+              <span *ngIf="!isSendingDoc"><i class="fa-solid fa-paper-plane mr-1"></i> Send Document</span>
+              <span *ngIf="isSendingDoc"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Sending...</span>
             </button>
           </div>
         </div>
@@ -1185,7 +1263,17 @@ export class AdminPanelComponent implements OnInit {
   isUpdatingVacancy = false;
   selectedVacancyForDelete: VacancyDto | null = null;
   showDeleteVacancyModal = false;
+  isUploadingBulk = false;
 
+  // Single User Send Document Modal State
+  showSendDocModal = false;
+  selectedUserForSendDoc: UserWithDocumentsDto | null = null;
+  sendDocPhase = 0;
+  sendDocFile: File | null = null;
+  sendDocNote = '';
+  isSendingDoc = false;
+
+  // Inspector State
   selectedUserForInspect: UserWithDocumentsDto | null = null;
   selectedUserForDelete: UserWithDocumentsDto | null = null;
   selectedUserForDeleteDocs: UserWithDocumentsDto | null = null;
@@ -1620,6 +1708,47 @@ export class AdminPanelComponent implements OnInit {
       },
       error: () => {
         this.isUploadingBulk = false;
+      }
+    });
+  }
+
+  // Single User Send Document Modal
+  openSendDocModal(user: UserWithDocumentsDto) {
+    this.selectedUserForSendDoc = user;
+    this.sendDocPhase = user.userPhase;
+    this.sendDocFile = null;
+    this.sendDocNote = '';
+    this.showSendDocModal = true;
+  }
+
+  onSendDocFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.sendDocFile = event.target.files[0];
+    }
+  }
+
+  submitSendDoc() {
+    if (!this.sendDocFile || !this.selectedUserForSendDoc) return;
+
+    this.isSendingDoc = true;
+    this.adminService.sendDocumentToUser(
+      this.selectedUserForSendDoc.id,
+      Number(this.sendDocPhase),
+      this.sendDocFile,
+      this.sendDocNote
+    ).subscribe({
+      next: (res) => {
+        this.isSendingDoc = false;
+        this.showSendDocModal = false;
+        if (res.statusCode === 200) {
+          this.notificationService.success('Document sent to user successfully!', 'Sent');
+          this.loadUsers();
+        } else {
+          this.notificationService.error(res.message || 'Failed to send document', 'Error');
+        }
+      },
+      error: () => {
+        this.isSendingDoc = false;
       }
     });
   }
