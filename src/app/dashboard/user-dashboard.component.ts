@@ -426,41 +426,39 @@ interface StaticTemplateItem {
 
             <!-- Phase 1 Detailed Instructions & Fee Alert -->
             <div *ngIf="userPhase === 0" class="space-y-4 text-xs sm:text-sm text-slate-200">
-              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2">
+              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
                 <div class="font-bold text-white text-sm flex items-center gap-2">
                   <i class="fa-solid fa-file-export text-blue-400"></i>
                   <span>I ეტაპი — რეგისტრაცია</span>
                 </div>
-                <p class="leading-relaxed text-slate-300">
-                  {{ translationService.isGeorgian() 
-                    ? 'რეგისტრაციის პირველ ეტაპზე საჭიროა რეზიუმეს (CV) გამოგზავნა.' 
-                    : 'In Phase 1 registration, submitting your Resume (CV) is required.' 
-                  }}
+                <p class="leading-relaxed text-slate-300 text-xs sm:text-sm">
+                  რეგისტრაციის პირველ ეტაპზე აუცილებელია:
                 </p>
-                <p class="leading-relaxed font-extrabold text-amber-400">
-                  {{ translationService.isGeorgian() 
-                    ? 'რეზიუმეების გადარჩევის შემდეგ, წარმატებული კანდიდატებისთვის რეგისტრაციის საფასური შეადგენს 150 ლარს.' 
-                    : 'Following screening, the registration fee for successful candidates is 150 GEL.' 
-                  }}
+                <ul class="space-y-1.5 text-xs sm:text-sm text-slate-200">
+                  <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
+                    <span>რეზიუმეს (CV) ატვირთვა/გამოგზავნა</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
+                    <span>გადახდის დამადასტურებელი დოკუმენტის ატვირთვა — საბანკო ამონაწერი ან ბანკის მიერ გაცემული გადახდის დამადასტურებელი PDF ფაილი.</span>
+                  </li>
+                </ul>
+                <p class="leading-relaxed text-xs text-slate-300 pt-1">
+                  გთხოვთ, გადახდის შემდეგ 24 საათის განმავლობაში ატვირთოთ გადახდის დამადასტურებელი დოკუმენტი თქვენს პირად გვერდზე.
                 </p>
               </div>
 
               <div class="p-4 bg-amber-950/40 border border-amber-500/30 rounded-xl space-y-2 text-amber-200">
                 <div class="flex items-center gap-2 font-bold text-amber-400 text-sm">
                   <i class="fa-solid fa-circle-exclamation"></i>
-                  <span>{{ translationService.isGeorgian() ? 'მნიშვნელოვანი ინფორმაცია' : 'Important Information' }}</span>
+                  <span>მნიშვნელოვანი</span>
                 </div>
                 <p class="leading-relaxed text-xs text-slate-200">
-                  {{ translationService.isGeorgian()
-                    ? '150 ლარის სარეგისტრაციო საფასური მოიცავს II ეტაპზე, იანვარში, წარმოსადგენი დოკუმენტების მიღებას, დამუშავებას და მათი ფოსტით გერმანიაში გაგზავნას.'
-                    : 'The 150 GEL registration fee covers receiving, processing, and mailing your required documents to Germany for Phase 2 in January.'
-                  }}
+                  თუ აღნიშნული დოკუმენტები 24 საათის განმავლობაში არ იქნება წარმოდგენილი, რეგისტრაციის პროცესი ავტომატურად შეწყდება და შექმნილი ანგარიში გაუქმდება.
                 </p>
                 <p class="leading-relaxed text-xs text-amber-300 font-semibold pt-2 border-t border-amber-500/20">
-                  {{ translationService.isGeorgian()
-                    ? 'გთხოვთ, გაითვალისწინოთ: თუ სტუდენტი საკუთარი მიზეზით არ წარმოადგენს სრულყოფილ და მოთხოვნილ დოკუმენტაციას, ან დროულად არ მოგვაწვდის საჭირო დოკუმენტებს, გადახდილი სარეგისტრაციო საფასური არ ექვემდებარება დაბრუნებას.'
-                    : 'Please note: if a student fails to submit complete documents on time for personal reasons, the paid registration fee is non-refundable.'
-                  }}
+                  გთხოვთ, ყურადღებით გაიაროთ რეგისტრაციის ყველა ეტაპი და დროულად წარმოადგინოთ მოთხოვნილი ინფორმაცია და დოკუმენტები.
                 </p>
               </div>
             </div>
@@ -512,13 +510,7 @@ interface StaticTemplateItem {
                   </li>
                 </ul>
 
-                <p class="text-xs text-amber-300 bg-amber-950/30 p-2.5 rounded-lg border border-amber-500/20 font-medium">
-                  <i class="fa-solid fa-triangle-exclamation mr-1.5"></i>
-                  {{ translationService.isGeorgian() 
-                    ? 'გთხოვთ, ყველა დოკუმენტი წარმოადგინოთ მოთხოვნილი ფორმით და სრულად.' 
-                    : 'Please submit all documents in the required format and in full.' 
-                  }}
-                </p>
+
               </div>
 
               <!-- Official Form External Link Card -->
@@ -610,17 +602,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showDeleteModal = false;
   showTermsModal = false;
 
-  staticTemplates: StaticTemplateItem[] = [
-    {
-      id: 'p1_resume',
-      phase: 0,
-      fileName: 'Resume--.docx',
-      fileUrl: '/templates/phase1/Resume--.docx',
-      fileSize: 11940,
-      descriptionKa: 'პირველი ეტაპის რეზიუმეს (CV) შაბლონის ჩამოტვირთვა',
-      descriptionEn: 'Phase 1 Resume (CV) Template Form Download'
-    }
-  ];
+  staticTemplates: StaticTemplateItem[] = [];
 
   generalStaticTemplates: StaticTemplateItem[] = [];
 

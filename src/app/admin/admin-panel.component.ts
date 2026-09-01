@@ -469,16 +469,15 @@ interface ManagedTemplateItem {
             {{ 'admin.templateManagerSub' | translate }}
           </p>
 
-          <!-- Search or Filter -->
+          <!-- Template File List -->
           <div class="space-y-3">
             <div
               *ngFor="let tpl of managedTemplates"
-              class="p-4 bg-slate-900/80 border rounded-xl flex items-center justify-between transition-all"
-              [ngClass]="tpl.isDisabled ? 'border-rose-900/40 opacity-60' : 'border-slate-800 hover:border-purple-500/30'">
+              class="p-4 bg-slate-900/80 border border-slate-800 hover:border-rose-500/30 rounded-xl flex items-center justify-between transition-all">
 
               <div class="flex items-center gap-3 overflow-hidden">
                 <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg shrink-0">
-                  <i class="fa-solid" [ngClass]="tpl.isBackendFile ? 'fa-database text-pink-400' : 'fa-file-pdf'"></i>
+                  <i class="fa-solid fa-database text-pink-400"></i>
                 </div>
                 <div class="truncate">
                   <div class="flex items-center gap-2">
@@ -486,31 +485,21 @@ interface ManagedTemplateItem {
                     <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
                       {{ tpl.phaseName }}
                     </span>
-                    <span *ngIf="tpl.isBackendFile" class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30">
-                      {{ 'admin.backendFile' | translate }}
-                    </span>
                   </div>
                   <div class="text-[10px] text-slate-400 truncate mt-0.5">{{ tpl.fileUrl }}</div>
                 </div>
               </div>
 
-              <div class="flex items-center gap-2 shrink-0">
-                <a
-                  *ngIf="!tpl.isBackendFile"
-                  [href]="tpl.fileUrl"
-                  target="_blank"
-                  class="btn btn-secondary btn-sm text-xs px-2.5 py-1"
-                  [title]="'admin.view' | translate">
-                  <i class="fa-solid fa-eye text-blue-400"></i>
-                </a>
+              <button
+                (click)="promptDeleteTemplate(tpl)"
+                class="btn btn-danger btn-sm text-xs px-2.5 py-1 shrink-0">
+                <i class="fa-solid fa-trash"></i>
+                <span>{{ 'admin.delete' | translate }}</span>
+              </button>
+            </div>
 
-                <button
-                  (click)="promptDeleteTemplate(tpl)"
-                  class="btn btn-danger btn-sm text-xs px-2.5 py-1">
-                  <i class="fa-solid" [ngClass]="tpl.isDisabled ? 'fa-rotate-left' : 'fa-trash'"></i>
-                  <span>{{ tpl.isDisabled ? ('admin.restore' | translate) : ('admin.delete' | translate) }}</span>
-                </button>
-              </div>
+            <div *ngIf="managedTemplates.length === 0" class="py-6 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              No distributed template files found in the database.
             </div>
           </div>
 
@@ -1355,32 +1344,7 @@ export class AdminPanelComponent implements OnInit {
   bulkPhase: number = 0;
   bulkFile: File | null = null;
 
-  managedTemplates: ManagedTemplateItem[] = [
-    {
-      id: 'p1_resume',
-      phaseName: 'Phase 1',
-      fileName: 'Resume--.docx',
-      fileUrl: '/templates/phase1/Resume--.docx',
-      fileSize: 11940,
-      isDisabled: false
-    },
-    {
-      id: 'p3_work_permit',
-      phaseName: 'Phase 3',
-      fileName: '3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
-      fileUrl: '/templates/phase3/3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
-      fileSize: 201381,
-      isDisabled: false
-    },
-    {
-      id: 'gen_steuer',
-      phaseName: 'Steuer (All Phases)',
-      fileName: 'STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf',
-      fileUrl: '/templates/steuer/STEUER-ის დაბრუნების მომსახურების ხელშეკრულება.docx-2.pdf',
-      fileSize: 175631,
-      isDisabled: false
-    }
-  ];
+  managedTemplates: ManagedTemplateItem[] = [];
 
   toggleAdminMusic(): void {
     void this.backgroundMusic.toggle();
@@ -1450,7 +1414,6 @@ export class AdminPanelComponent implements OnInit {
 
   openTemplateManagerModal() {
     this.loadUsers();
-    this.loadDisabledTemplatesState();
     this.showTemplateManagerModal = true;
   }
 
@@ -1463,46 +1426,26 @@ export class AdminPanelComponent implements OnInit {
     if (!this.selectedTemplateForDelete) return;
     const tpl = this.selectedTemplateForDelete;
 
-    if (tpl.isBackendFile) {
-      // Delete from backend database across users
-      this.adminService.deleteBulkDocumentsByFileName(tpl.fileName).subscribe({
-        next: (res) => {
-          this.showDeleteTemplateModal = false;
-          this.selectedTemplateForDelete = null;
-          if (res.statusCode === 200) {
-            this.notificationService.success(res.data || 'Backend template documents deleted', 'Deleted from Database');
-            this.loadUsers();
-          } else {
-            this.notificationService.error(res.message || 'Failed to delete backend template', 'Error');
-          }
-        }
-      });
-    } else {
-      // Frontend Static Template Toggle
-      try {
-        const disabledRaw = localStorage.getItem('geto_disabled_templates');
-        let disabledIds: string[] = disabledRaw ? JSON.parse(disabledRaw) : [];
-
-        if (tpl.isDisabled) {
-          disabledIds = disabledIds.filter(id => id !== tpl.id);
-          tpl.isDisabled = false;
-          this.notificationService.success(`Template ${tpl.fileName} restored to student cabinets.`, 'Template Restored');
+    // Always permanently delete from the backend database across all users
+    this.adminService.deleteBulkDocumentsByFileName(tpl.fileName).subscribe({
+      next: (res) => {
+        this.showDeleteTemplateModal = false;
+        this.selectedTemplateForDelete = null;
+        if (res.statusCode === 200) {
+          this.notificationService.success(
+            res.data || `Template "${tpl.fileName}" permanently deleted from all user cabinets.`,
+            'Deleted'
+          );
+          this.loadUsers();
         } else {
-          if (!disabledIds.includes(tpl.id)) {
-            disabledIds.push(tpl.id);
-          }
-          tpl.isDisabled = true;
-          this.notificationService.success(`Template ${tpl.fileName} removed from student cabinets.`, 'Template Deleted');
+          this.notificationService.error(res.message || 'Failed to delete template', 'Error');
         }
-
-        localStorage.setItem('geto_disabled_templates', JSON.stringify(disabledIds));
-      } catch {
-        this.notificationService.error('Failed to update template state', 'Error');
+      },
+      error: () => {
+        this.showDeleteTemplateModal = false;
+        this.notificationService.error('Failed to delete template', 'Error');
       }
-
-      this.showDeleteTemplateModal = false;
-      this.selectedTemplateForDelete = null;
-    }
+    });
   }
 
   // Delete single backend document for specific user
