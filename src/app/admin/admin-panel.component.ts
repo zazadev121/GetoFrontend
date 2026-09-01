@@ -376,14 +376,6 @@ interface ManagedTemplateItem {
 
                 <div class="flex items-center gap-2">
                   <button
-                    (click)="toggleAdminUploaded(doc)"
-                    class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 text-emerald-400 hover:text-emerald-300"
-                    title="Move to Admin Sent Documents">
-                    <i class="fa-solid fa-right-left"></i>
-                    <span>Make Admin File</span>
-                  </button>
-
-                  <button
                     (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
                     <i class="fa-solid fa-download"></i> {{ 'admin.download' | translate }}
@@ -437,14 +429,6 @@ interface ManagedTemplateItem {
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <button
-                    (click)="toggleAdminUploaded(doc)"
-                    class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 text-blue-400 hover:text-blue-300"
-                    title="Move to Student Uploaded Documents">
-                    <i class="fa-solid fa-right-left"></i>
-                    <span>Make Student File</span>
-                  </button>
-
                   <button
                     (click)="downloadUserDoc(selectedUserForInspect.id, doc)"
                     class="btn btn-secondary btn-sm text-xs px-3 py-1">
