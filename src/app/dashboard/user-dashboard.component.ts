@@ -464,35 +464,43 @@ interface StaticTemplateItem {
             </div>
 
             <!-- Phase 2 Detailed Instructions & Required Document Checklist -->
-            <div *ngIf="userPhase === 1" class="space-y-4 text-xs sm:text-sm text-slate-200">
-              <div class="p-4 bg-[#f4efe9] rounded-xl border border-[#b98d6a]/60 shadow-inner space-y-3 text-[#2b1d17]">
-                <div class="font-bold text-2xl sm:text-3xl flex items-center gap-2 text-[#2b1d17]">
-                  <i class="fa-solid fa-file-contract text-[#8a4b2a]"></i>
-                  <span>{{ translationService.isGeorgian() ? 'II ეტაპი — ხელშეკრულება და დოკუმენტაცია' : 'Phase 2 — Contract & Documentation' }}</span>
+            <div *ngIf="userPhase === 1" class="space-y-4 text-xs sm:text-sm">
+              <div class="rounded-[28px] border border-[rgb(var(--border-card))] bg-[rgb(var(--paper-tint))] p-4 sm:p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),var(--shadow-soft)] text-[rgb(var(--c-n-900))]">
+                <div class="flex items-center gap-3 pb-3 border-b border-[rgb(var(--border-card))]">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgb(var(--c-clay-500)/0.12)] text-[rgb(var(--c-clay-400))] text-lg border border-[rgb(var(--c-clay-500)/0.25)] shrink-0">
+                    <i class="fa-solid fa-file-contract"></i>
+                  </div>
+                  <div class="font-bold text-2xl sm:text-3xl leading-tight text-[rgb(var(--c-n-50))]">
+                    {{ translationService.isGeorgian() ? 'II ეტაპი — ხელშეკრულება და დოკუმენტაცია' : 'Phase 2 — Contract & Documentation' }}
+                  </div>
                 </div>
 
-                <ul class="space-y-3 text-lg sm:text-xl text-[#2b1d17] font-medium">
-                  <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
-                    <span>{{ translationService.isGeorgian() ? 'ბიომეტრიული პასპორტი — Biometrischer Reisepass' : 'Biometric passport — Biometrischer Reisepass' }}</span>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
-                    <span>{{ translationService.isGeorgian() ? 'სტუდენტების სტატუსის დამადასტურებელი ცნობა' : 'Student status confirmation certificate' }}</span>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
-                    <span>{{ translationService.isGeorgian() ? 'Immatrikulationsbescheinigung — უნივერსიტეტში ჩარიცხვის დამადასტურებელი დოკუმენტი' : 'Immatrikulationsbescheinigung — university enrollment confirmation document' }}</span>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
-                    <span>{{ translationService.isGeorgian() ? 'ფსიქიატრიული ცნობა' : 'Psychiatric certificate' }}</span>
-                  </li>
-                </ul>
+                <div class="mt-4 rounded-2xl border border-[rgb(var(--border-card))] bg-[rgb(var(--paper-tint))] p-3 sm:p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
+                  <ul class="space-y-3 text-lg sm:text-xl text-[rgb(var(--c-n-50))] font-medium">
+                    <li class="flex items-start gap-3">
+                      <i class="fa-solid fa-circle-check text-[rgb(var(--c-sage-400))] mt-1.5 shrink-0"></i>
+                      <span>{{ translationService.isGeorgian() ? 'ბიომეტრიული პასპორტი — Biometrischer Reisepass' : 'Biometric passport — Biometrischer Reisepass' }}</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                      <i class="fa-solid fa-circle-check text-[rgb(var(--c-sage-400))] mt-1.5 shrink-0"></i>
+                      <span>{{ translationService.isGeorgian() ? 'სტუდენტების სტატუსის დამადასტურებელი ცნობა' : 'Student status confirmation certificate' }}</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                      <i class="fa-solid fa-circle-check text-[rgb(var(--c-sage-400))] mt-1.5 shrink-0"></i>
+                      <span>{{ translationService.isGeorgian() ? 'Immatrikulationsbescheinigung — უნივერსიტეტში ჩარიცხვის დამადასტურებელი დოკუმენტი' : 'Immatrikulationsbescheinigung — university enrollment confirmation document' }}</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                      <i class="fa-solid fa-circle-check text-[rgb(var(--c-sage-400))] mt-1.5 shrink-0"></i>
+                      <span>{{ translationService.isGeorgian() ? 'ფსიქიატრიული ცნობა' : 'Psychiatric certificate' }}</span>
+                    </li>
+                  </ul>
+                </div>
 
-                <div class="mt-4 flex items-start gap-3 rounded-xl border border-[#c38d68]/70 bg-[#f7f1eb] px-3 py-3 text-base sm:text-lg text-[#5d2f1d] font-medium">
-                  <i class="fa-solid fa-triangle-exclamation text-[#a9542c] mt-1"></i>
-                  <span>{{ translationService.isGeorgian() ? 'გთხოვთ, გაითვალისწინოთ, რომ ყველა ეს დოკუმენტი უნდა იყოს წარმოდგენილი გარკვეული წესით.' : 'Please note that all of these documents must be submitted in the required format.' }}</span>
+                <div class="mt-4 rounded-2xl border border-[rgb(var(--c-honey-400)/0.55)] bg-[rgb(var(--c-honey-500)/0.12)] p-3 sm:p-4 text-base sm:text-lg font-medium text-[rgb(var(--c-n-50))]">
+                  <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-triangle-exclamation text-[rgb(var(--c-honey-400))] mt-1 shrink-0"></i>
+                    <span>{{ translationService.isGeorgian() ? 'გთხოვთ, გაითვალისწინოთ, რომ ყველა ეს დოკუმენტი უნდა იყოს წარმოდგენილი გარკვეული წესით.' : 'Please note that all of these documents must be submitted in the required format.' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
