@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../core/services/auth.service';
 import { DocumentService } from '../core/services/document.service';
@@ -465,72 +465,35 @@ interface StaticTemplateItem {
 
             <!-- Phase 2 Detailed Instructions & Required Document Checklist -->
             <div *ngIf="userPhase === 1" class="space-y-4 text-xs sm:text-sm text-slate-200">
-              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
-                <div class="font-bold text-white text-sm flex items-center gap-2">
-                  <i class="fa-solid fa-signature text-blue-400"></i>
+              <div class="p-4 bg-[#f4efe9] rounded-xl border border-[#b98d6a]/60 shadow-inner space-y-3 text-[#2b1d17]">
+                <div class="font-bold text-2xl sm:text-3xl flex items-center gap-2 text-[#2b1d17]">
+                  <i class="fa-solid fa-file-contract text-[#8a4b2a]"></i>
                   <span>{{ translationService.isGeorgian() ? 'II ეტაპი — ხელშეკრულება და დოკუმენტაცია' : 'Phase 2 — Contract & Documentation' }}</span>
                 </div>
-                <p class="leading-relaxed text-slate-200">
-                  {{ translationService.isGeorgian()
-                    ? 'გთხოვთ, ხელშეკრულება ჩამოტვირთოთ, სრულად შეავსოთ და ხელი მოაწეროთ. ხელმოწერილი დოკუმენტი გთხოვთ, PDF ფორმატში ატვირთოთ/გამოგვიგზავნოთ შესაბამის ველში.'
-                    : 'Please download the contract below, fill it out completely, and sign it. Please upload your signed document in PDF format using the upload box.'
-                  }}
-                </p>
-                <p class="leading-relaxed font-semibold text-blue-300 bg-blue-950/40 p-3 rounded-lg border border-blue-500/20">
-                  {{ translationService.isGeorgian()
-                    ? 'გთხოვთ, გადაამოწმოთ, რომ ყველა საჭირო ველი სრულად არის შევსებული და ხელმოწერა მკაფიოდ იკითხება.'
-                    : 'Please double check that all required fields are filled out and your signature is clearly legible.'
-                  }}
-                </p>
-              </div>
 
-              <!-- II Phase Required Documents Checklist Box -->
-              <div class="p-4 sm:p-5 bg-gradient-to-br from-slate-900 via-slate-900/90 to-blue-950/40 border border-blue-500/30 rounded-xl space-y-3">
-                <div class="flex items-center gap-2 text-blue-400 font-bold text-sm border-b border-white/10 pb-2">
-                  <i class="fa-solid fa-list-check text-base"></i>
-                  <span>{{ translationService.isGeorgian() ? 'II ეტაპზე წარმოსადგენი დოკუმენტები' : 'Documents Required for Phase II' }}</span>
-                </div>
-
-                <ul class="space-y-2 text-xs sm:text-sm text-slate-200">
-                  <li class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                    <span><strong>ბიომეტრიული პასპორტი</strong> — Biometrischer Reisepass</span>
+                <ul class="space-y-3 text-lg sm:text-xl text-[#2b1d17] font-medium">
+                  <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
+                    <span>{{ translationService.isGeorgian() ? 'ბიომეტრიული პასპორტი — Biometrischer Reisepass' : 'Biometric passport — Biometrischer Reisepass' }}</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                    <span><strong>სტუდენტის სტატუსის დამადასტურებელი ცნობა</strong></span>
+                  <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
+                    <span>{{ translationService.isGeorgian() ? 'სტუდენტების სტატუსის დამადასტურებელი ცნობა' : 'Student status confirmation certificate' }}</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                    <span><strong>Immatrikulationsbescheinigung</strong> — უნივერსიტეტში ჩარიცხვის დამადასტურებელი დოკუმენტი</span>
+                  <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
+                    <span>{{ translationService.isGeorgian() ? 'Immatrikulationsbescheinigung — უნივერსიტეტში ჩარიცხვის დამადასტურებელი დოკუმენტი' : 'Immatrikulationsbescheinigung — university enrollment confirmation document' }}</span>
                   </li>
-                  <li class="flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-check text-emerald-400 mt-1 flex-shrink-0"></i>
-                    <span><strong>ფსიქიატრიული ცნობა</strong></span>
+                  <li class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-check text-[#2b7a66] mt-1.5"></i>
+                    <span>{{ translationService.isGeorgian() ? 'ფსიქიატრიული ცნობა' : 'Psychiatric certificate' }}</span>
                   </li>
                 </ul>
 
-
-              </div>
-
-              <!-- Official Form External Link Card -->
-              <div class="p-4 bg-blue-950/40 border border-blue-500/30 rounded-xl flex items-center justify-between flex-wrap gap-3">
-                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-file-pdf text-2xl text-rose-400 shrink-0"></i>
-                  <div class="overflow-hidden">
-                    <div class="font-bold text-white text-xs truncate">Arbeitsagentur Immatrikulationsbescheinigung</div>
-                    <div class="text-[10px] text-slate-400 truncate">https://www.arbeitsagentur.de/datei/b-immatrikulation-en_ba015238.pdf</div>
-                  </div>
+                <div class="mt-4 flex items-start gap-3 rounded-xl border border-[#c38d68]/70 bg-[#f7f1eb] px-3 py-3 text-base sm:text-lg text-[#5d2f1d] font-medium">
+                  <i class="fa-solid fa-triangle-exclamation text-[#a9542c] mt-1"></i>
+                  <span>{{ translationService.isGeorgian() ? 'გთხოვთ, გაითვალისწინოთ, რომ ყველა ეს დოკუმენტი უნდა იყოს წარმოდგენილი გარკვეული წესით.' : 'Please note that all of these documents must be submitted in the required format.' }}</span>
                 </div>
-
-                <a
-                  href="https://www.arbeitsagentur.de/datei/b-immatrikulation-en_ba015238.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-secondary btn-sm text-xs flex items-center gap-1.5 shrink-0">
-                  <span>{{ translationService.isGeorgian() ? 'გახსენი PDF ბმული' : 'Open PDF Link' }}</span>
-                  <i class="fa-solid fa-up-right-from-square"></i>
-                </a>
               </div>
             </div>
 
