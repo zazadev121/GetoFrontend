@@ -204,10 +204,10 @@ interface StaticTemplateItem {
             </div>
 
             <p class="text-xs text-slate-400">
-              Download required template forms for your current phase ({{ userPhase | phaseLabel }}), fill them out, and upload above.
+              {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი ოფიციალური დოკუმენტები თქვენი მიმდინარე ეტაპისთვის (' + (userPhase | phaseLabel) + ').' : 'Official documents issued by administration for your current phase (' + (userPhase | phaseLabel) + ').' }}
             </p>
 
-            <!-- Combined List: Backend Issued + Frontend Phase Templates -->
+            <!-- Combined List: Backend Issued Documents -->
             <div class="space-y-3">
               
               <!-- Frontend Phase Templates & External Links -->
@@ -260,10 +260,10 @@ interface StaticTemplateItem {
                 *ngIf="getActivePhaseTemplates().length === 0 && adminPhaseDocuments.length === 0" 
                 class="p-4 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center space-y-1">
                 <div class="text-xs text-slate-300 font-semibold">
-                  {{ translationService.isGeorgian() ? 'ამ ეტაპისთვის დამატებითი დოკუმენტები არ არის' : 'No extra documents issued for this phase yet' }}
+                  {{ translationService.isGeorgian() ? 'ამ ეტაპისთვის დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued for this phase yet' }}
                 </div>
                 <div class="text-[10px] text-slate-500">
-                  {{ translationService.isGeorgian() ? 'გამოიყენეთ ზემოთ მოცემული შაბლონები' : 'Please use the required templates above' }}
+                  {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი დოკუმენტები გამოჩნდება აქ' : 'Documents sent by administration will appear here' }}
                 </div>
               </div>
 
@@ -608,57 +608,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   showDeleteModal = false;
   showTermsModal = false;
 
-  staticTemplates: StaticTemplateItem[] = [
-    {
-      id: 'p1_resume',
-      phase: 0,
-      fileName: 'Resume--.docx',
-      fileUrl: '/templates/phase1/Resume--.docx',
-      fileSize: 11940,
-      descriptionKa: 'პირველი ეტაპის რეზიუმეს (CV) შაბლონის ჩამოტვირთვა',
-      descriptionEn: 'Phase 1 Resume (CV) Template Form Download'
-    },
-    {
-      id: 'p2_arbeitsagentur',
-      phase: 1,
-      fileName: 'Immatrikulationsbescheinigung (arbeitsagentur.de)',
-      fileUrl: 'https://www.arbeitsagentur.de/datei/b-immatrikulation-en_ba015238.pdf',
-      fileSize: 0,
-      isExternalLink: true,
-      descriptionKa: 'გერმანიის დასაქმების სააგენტოს ოფიციალური ცნობის ბმული (PDF)',
-      descriptionEn: 'Official German Employment Agency Certificate Link (PDF)'
-    },
-    {
-      id: 'p3_work_permit',
-      phase: 2,
-      fileName: '3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
-      fileUrl: '/templates/phase3/3ეტაპი - საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება.docx.pdf',
-      fileSize: 201381,
-      descriptionKa: 'მესამე ეტაპის საკონსულტაციო და ადმინისტრაციული საშუამავლო მომსახურების ხელშეკრულება (PDF)',
-      descriptionEn: 'Phase 3 Consulting & Administrative Intermediary Service Agreement (PDF)'
-    }
-  ];
+  staticTemplates: StaticTemplateItem[] = [];
 
-  generalStaticTemplates: StaticTemplateItem[] = [
-    {
-      id: 'gen_bank',
-      phase: -1,
-      fileName: 'შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
-      fileUrl: '/templates/general/შპს გეთო ფროჯექთი საბანკო რეკვიზიტი.pdf',
-      fileSize: 1444484,
-      descriptionKa: 'შპს გეთო ფროჯექთის ოფიციალური საბანკო რეკვიზიტები',
-      descriptionEn: 'Official Bank Account Details of GETO Project LLC'
-    },
-    {
-      id: 'gen_extract',
-      phase: -1,
-      fileName: 'შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
-      fileUrl: '/templates/general/შპს გეთო ფროჯექთი ამონაწერი საჯარო რეესტრიდან.pdf',
-      fileSize: 118613,
-      descriptionKa: 'შპს გეთო ფროჯექთის ამონაწერი საჯარო რეესტრიდან',
-      descriptionEn: 'Public Register Extract of GETO Project LLC'
-    }
-  ];
+  generalStaticTemplates: StaticTemplateItem[] = [];
 
   ngOnInit() {
     this.checkPrivacyPolicyStatus();

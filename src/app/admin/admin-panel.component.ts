@@ -518,8 +518,6 @@ interface ManagedTemplateItem {
         </div>
       </div>
 
-      </div>
-
       <!-- Single User Send Document Modal -->
       <div *ngIf="showSendDocModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
         <div class="glass-card max-w-md w-full p-6 border-blue-500/30 shadow-2xl space-y-5">
@@ -1298,7 +1296,6 @@ export class AdminPanelComponent implements OnInit {
 
   bulkPhase: number = 0;
   bulkFile: File | null = null;
-  isUploadingBulk = false;
 
   managedTemplates: ManagedTemplateItem[] = [
     {
