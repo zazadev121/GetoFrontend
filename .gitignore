@@ -1,0 +1,25 @@
+# Root .gitignore
+
+# IDE / Editor
+.claude/
+.vs/
+.vscode/
+*.user
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets & environment
+*.env
+*.local
+appsettings.Development.json
+
+# Build outputs
+dist/
+bin/
+obj/
+
+# Node
+node_modules/
