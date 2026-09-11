@@ -690,7 +690,9 @@ interface ManagedTemplateItem {
               [(ngModel)]="changeComment"
               placeholder="e.g. გაუქმების მიზეზი, დამატებითი ინსტრუქცია სტუდენტისთვის..."
               class="form-control text-xs resize-none"></textarea>
-            <p class="text-[10px] text-slate-500 mt-1">This comment will be included at the end of the email notification sent to the student.</p>
+            <p class="text-[10px] text-slate-500 mt-1">
+              {{ changeType === 'status' ? 'This comment will be included in the email notification sent to the student.' : 'This comment will be sent as a push notification (no email will be sent).' }}
+            </p>
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-2">
@@ -701,7 +703,10 @@ interface ManagedTemplateItem {
               (click)="confirmChangeModal()"
               [disabled]="isSubmittingChange"
               class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
-              <span *ngIf="!isSubmittingChange"><i class="fa-solid fa-paper-plane mr-1"></i> Confirm & Send Email</span>
+              <span *ngIf="!isSubmittingChange">
+                <i class="fa-solid" [ngClass]="changeType === 'status' ? 'fa-paper-plane mr-1' : 'fa-check mr-1'"></i>
+                {{ changeType === 'status' ? 'Confirm & Send Email' : 'Confirm Phase Change' }}
+              </span>
               <span *ngIf="isSubmittingChange"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Updating...</span>
             </button>
           </div>
