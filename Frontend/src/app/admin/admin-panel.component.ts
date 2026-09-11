@@ -196,34 +196,42 @@ interface ManagedTemplateItem {
                   </span>
                 </td>
                 <td class="text-right">
-                  <div class="flex flex-wrap items-center justify-end gap-1">
-                    <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer"
-                       class="btn btn-secondary btn-sm px-2 py-1 text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-red-500/60 bg-red-500/10"
+                  <div class="flex flex-wrap items-center justify-end gap-1.5">
+                    <a *ngIf="u.email" [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-secondary btn-sm px-2.5 py-1 text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-red-500/60 bg-red-500/10"
                        title="Send Email (Gmail)">
                       <i class="fa-solid fa-envelope"></i>
                     </a>
+                    <span *ngIf="!u.email" class="btn btn-secondary btn-sm px-2.5 py-1 text-xs text-slate-600 border-slate-800 bg-slate-900/40 opacity-40 cursor-not-allowed" title="No Email Address">
+                      <i class="fa-solid fa-envelope"></i>
+                    </span>
+
                     <a *ngIf="u.phoneNumber" [href]="getWhatsAppUrl(u.phoneNumber)" target="_blank" rel="noopener noreferrer"
-                       class="btn btn-secondary btn-sm px-2 py-1 text-xs text-emerald-400 hover:text-emerald-300 border-emerald-500/30 hover:border-emerald-500/60 bg-emerald-500/10"
+                       class="btn btn-secondary btn-sm px-2.5 py-1 text-xs text-emerald-400 hover:text-emerald-300 border-emerald-500/30 hover:border-emerald-500/60 bg-emerald-500/10"
                        title="Send WhatsApp Message">
                       <i class="fa-brands fa-whatsapp text-sm"></i>
                     </a>
+                    <span *ngIf="!u.phoneNumber" class="btn btn-secondary btn-sm px-2.5 py-1 text-xs text-slate-600 border-slate-800 bg-slate-900/40 opacity-40 cursor-not-allowed" title="No Phone Number">
+                      <i class="fa-brands fa-whatsapp text-sm"></i>
+                    </span>
+
                     <button (click)="openSendDocModal(u)"
-                            class="btn btn-primary btn-sm px-2 py-1 text-xs bg-gradient-to-r from-blue-600 to-indigo-600"
+                            class="btn btn-primary btn-sm px-2.5 py-1 text-xs bg-gradient-to-r from-blue-600 to-indigo-600"
                             [title]="'admin.sendDoc' | translate">
                       <i class="fa-solid fa-file-export"></i>
                     </button>
                     <button (click)="inspectUser(u)"
-                            class="btn btn-secondary btn-sm px-2 py-1 text-xs"
+                            class="btn btn-secondary btn-sm px-2.5 py-1 text-xs"
                             [title]="'admin.view' | translate">
                       <i class="fa-solid fa-eye"></i>
                     </button>
                     <button (click)="promptDeleteUserDocs(u)"
-                            class="btn btn-secondary btn-sm px-2 py-1 text-xs"
+                            class="btn btn-secondary btn-sm px-2.5 py-1 text-xs"
                             [title]="'admin.clearDocs' | translate">
                       <i class="fa-solid fa-folder-minus"></i>
                     </button>
                     <button (click)="promptDeleteUser(u)"
-                            class="btn btn-danger btn-sm px-2 py-1 text-xs"
+                            class="btn btn-danger btn-sm px-2.5 py-1 text-xs"
                             [title]="'admin.delete' | translate">
                       <i class="fa-solid fa-trash"></i>
                     </button>
@@ -278,32 +286,57 @@ interface ManagedTemplateItem {
               </div>
             </div>
 
-              <div class="pt-2 border-t border-slate-800 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs text-slate-400">{{ u.documents.length }} files</span>
-                  <div class="flex flex-wrap items-center justify-end gap-1">
-                    <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer"
-                       class="btn btn-secondary btn-sm text-xs px-2 py-1 text-red-400 border-red-500/30 bg-red-500/10 flex items-center gap-1">
-                      <i class="fa-solid fa-envelope"></i>
-                    </a>
-                    <a *ngIf="u.phoneNumber" [href]="getWhatsAppUrl(u.phoneNumber)" target="_blank" rel="noopener noreferrer"
-                       class="btn btn-secondary btn-sm text-xs px-2 py-1 text-emerald-400 border-emerald-500/30 bg-emerald-500/10 flex items-center gap-1">
-                      <i class="fa-brands fa-whatsapp"></i>
-                    </a>
-                    <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm text-xs px-2 py-1 bg-gradient-to-r from-blue-600 to-indigo-600">
-                      <i class="fa-solid fa-file-export"></i>
-                    </button>
-                    <button (click)="inspectUser(u)" class="btn btn-secondary btn-sm text-xs px-2 py-1">
-                      <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button (click)="promptDeleteUserDocs(u)" class="btn btn-secondary btn-sm text-xs px-2 py-1">
-                      <i class="fa-solid fa-folder-minus"></i>
-                    </button>
-                    <button (click)="promptDeleteUser(u)" class="btn btn-danger btn-sm text-xs px-2 py-1">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
+            <div class="pt-2 border-t border-slate-800 space-y-2">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <span class="text-xs text-slate-400 font-medium">{{ u.documents.length }} files</span>
+                <div class="flex flex-wrap items-center justify-end gap-1.5">
+                  <a *ngIf="u.email" [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer"
+                     class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 text-red-400 border-red-500/30 bg-red-500/10 flex items-center justify-center gap-1"
+                     title="Send Email (Gmail)">
+                    <i class="fa-solid fa-envelope"></i>
+                  </a>
+                  <span *ngIf="!u.email"
+                        class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 text-slate-600 border-slate-800 bg-slate-900/40 opacity-40 cursor-not-allowed flex items-center justify-center gap-1"
+                        title="No Email Address">
+                    <i class="fa-solid fa-envelope"></i>
+                  </span>
+
+                  <a *ngIf="u.phoneNumber" [href]="getWhatsAppUrl(u.phoneNumber)" target="_blank" rel="noopener noreferrer"
+                     class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 text-emerald-400 border-emerald-500/30 bg-emerald-500/10 flex items-center justify-center gap-1"
+                     title="Send WhatsApp Message">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                  </a>
+                  <span *ngIf="!u.phoneNumber"
+                        class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 text-slate-600 border-slate-800 bg-slate-900/40 opacity-40 cursor-not-allowed flex items-center justify-center gap-1"
+                        title="No Phone Number">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                  </span>
+
+                  <button (click)="openSendDocModal(u)"
+                          class="btn btn-primary btn-sm text-xs px-2.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center"
+                          [title]="'admin.sendDoc' | translate">
+                    <i class="fa-solid fa-file-export"></i>
+                  </button>
+
+                  <button (click)="inspectUser(u)"
+                          class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 flex items-center justify-center"
+                          [title]="'admin.view' | translate">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+
+                  <button (click)="promptDeleteUserDocs(u)"
+                          class="btn btn-secondary btn-sm text-xs px-2.5 py-1.5 flex items-center justify-center"
+                          [title]="'admin.clearDocs' | translate">
+                    <i class="fa-solid fa-folder-minus"></i>
+                  </button>
+
+                  <button (click)="promptDeleteUser(u)"
+                          class="btn btn-danger btn-sm text-xs px-2.5 py-1.5 flex items-center justify-center"
+                          [title]="'admin.delete' | translate">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
                 </div>
+              </div>
             </div>
           </div>
         </div>
