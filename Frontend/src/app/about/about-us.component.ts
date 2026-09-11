@@ -20,24 +20,6 @@ import { PageHeroComponent } from '../shared/components/page-hero/page-hero.comp
         [tags]="heroTags()">
       </app-page-hero>
 
-      <!-- The story, set as an editorial pull-quote block -->
-      <section class="reveal reveal-blur relative grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
-        <div class="w-16 h-16 sm:w-20 sm:h-20 blob blob-morph grid place-items-center text-2xl sm:text-3xl shrink-0
-                    text-blue-300 border border-blue-500/30"
-          style="background: rgb(var(--c-clay-500) / .18)">
-          <i class="fa-solid fa-quote-left"></i>
-        </div>
-
-        <div class="space-y-5">
-          <h2 class="font-heading text-white">
-            {{ 'about.title' | translate }} <span class="text-blue-400">— Geto Project</span>
-          </h2>
-          <p class="text-base sm:text-lg leading-relaxed text-slate-300">
-            {{ 'about.body' | translate }}
-          </p>
-        </div>
-      </section>
-
       <!-- Three pillars -->
       <section class="stagger grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         <article *ngFor="let pillar of pillars; let i = index"

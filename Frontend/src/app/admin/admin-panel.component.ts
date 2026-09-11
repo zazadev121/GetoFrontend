@@ -197,6 +197,9 @@ interface ManagedTemplateItem {
                 </td>
                 <td class="text-right">
                   <div class="flex items-center justify-end gap-1.5">
+                    <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm px-2 py-1 text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-red-500/60 bg-red-500/10" title="Send Email (Gmail)">
+                      <i class="fa-solid fa-envelope"></i>
+                    </a>
                     <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm px-2 py-1 text-xs bg-gradient-to-r from-blue-600 to-indigo-600" [title]="'admin.sendDoc' | translate">
                       <i class="fa-solid fa-file-export"></i>
                     </button>
@@ -263,6 +266,9 @@ interface ManagedTemplateItem {
               <div class="flex items-center justify-between pt-2 border-t border-slate-800">
               <span class="text-xs text-slate-400">{{ u.documents.length }} files</span>
               <div class="flex items-center gap-1.5">
+                <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm text-xs px-2.5 py-1 text-red-400 border-red-500/30 bg-red-500/10 flex items-center gap-1">
+                  <i class="fa-solid fa-envelope"></i> Gmail
+                </a>
                 <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm text-xs px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600">
                   <i class="fa-solid fa-file-export"></i>
                 </button>
@@ -307,7 +313,13 @@ interface ManagedTemplateItem {
                 <h3 class="text-lg font-bold text-white font-heading">
                   {{ selectedUserForInspect.name }} {{ selectedUserForInspect.lastName }}
                 </h3>
-                <p class="text-xs text-slate-400">{{ selectedUserForInspect.email }} &bull; {{ selectedUserForInspect.phoneNumber }}</p>
+                <p class="text-xs text-slate-400 flex items-center gap-2 flex-wrap">
+                  <span>{{ selectedUserForInspect.email }}</span>
+                  <a [href]="getGmailUrl(selectedUserForInspect.email)" target="_blank" rel="noopener noreferrer" class="text-red-400 hover:text-red-300 hover:underline font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-envelope"></i> Gmail
+                  </a>
+                  <span>&bull; {{ selectedUserForInspect.phoneNumber }}</span>
+                </p>
               </div>
             </div>
 
@@ -1346,6 +1358,10 @@ export class AdminPanelComponent implements OnInit {
 
   managedTemplates: ManagedTemplateItem[] = [];
 
+  getGmailUrl(email: string): string {
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email || '')}`;
+  }
+
   toggleAdminMusic(): void {
     void this.backgroundMusic.toggle();
     this.isMusicPlaying = this.backgroundMusic.isPlaying();
@@ -1613,7 +1629,7 @@ export class AdminPanelComponent implements OnInit {
           this.showChangeModal = false;
           if (res.statusCode === 200) {
             user.userPhase = this.targetNewValue;
-            this.notificationService.success(`Phase for ${user.name} updated & email sent!`, 'Phase Updated');
+            this.notificationService.success(`Phase for ${user.name} updated!`, 'Phase Updated');
           } else {
             this.notificationService.error(res.message || 'Failed to update phase', 'Error');
           }
