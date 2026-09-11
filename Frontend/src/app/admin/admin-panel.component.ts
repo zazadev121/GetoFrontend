@@ -691,7 +691,7 @@ interface ManagedTemplateItem {
               placeholder="e.g. გაუქმების მიზეზი, დამატებითი ინსტრუქცია სტუდენტისთვის..."
               class="form-control text-xs resize-none"></textarea>
             <p class="text-[10px] text-slate-500 mt-1">
-              {{ changeType === 'status' ? 'This comment will be included in the email notification sent to the student.' : 'This comment will be sent as a push notification (no email will be sent).' }}
+              This comment will be sent as a push notification to the student (no email will be sent).
             </p>
           </div>
 
@@ -704,8 +704,8 @@ interface ManagedTemplateItem {
               [disabled]="isSubmittingChange"
               class="btn btn-primary btn-sm bg-gradient-to-r from-blue-600 to-indigo-600 text-xs">
               <span *ngIf="!isSubmittingChange">
-                <i class="fa-solid" [ngClass]="changeType === 'status' ? 'fa-paper-plane mr-1' : 'fa-check mr-1'"></i>
-                {{ changeType === 'status' ? 'Confirm & Send Email' : 'Confirm Phase Change' }}
+                <i class="fa-solid" [ngClass]="changeType === 'status' ? 'fa-user-check mr-1' : 'fa-layer-group mr-1'"></i>
+                {{ changeType === 'status' ? 'Confirm Status Change' : 'Confirm Phase Change' }}
               </span>
               <span *ngIf="isSubmittingChange"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Updating...</span>
             </button>
@@ -1636,7 +1636,7 @@ export class AdminPanelComponent implements OnInit {
           this.showChangeModal = false;
           if (res.statusCode === 200) {
             user.status = this.targetNewValue;
-            this.notificationService.success(`Status for ${user.name} updated & email sent!`, 'Status Updated');
+            this.notificationService.success(`Status for ${user.name} updated!`, 'Status Updated');
           } else {
             this.notificationService.error(res.message || 'Failed to update status', 'Error');
           }
