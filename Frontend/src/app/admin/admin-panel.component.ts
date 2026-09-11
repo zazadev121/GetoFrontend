@@ -200,6 +200,9 @@ interface ManagedTemplateItem {
                     <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm px-2 py-1 text-xs text-red-400 hover:text-red-300 border-red-500/30 hover:border-red-500/60 bg-red-500/10" title="Send Email (Gmail)">
                       <i class="fa-solid fa-envelope"></i>
                     </a>
+                    <a *ngIf="u.phoneNumber" [href]="getWhatsAppUrl(u.phoneNumber)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm px-2 py-1 text-xs text-emerald-400 hover:text-emerald-300 border-emerald-500/30 hover:border-emerald-500/60 bg-emerald-500/10" title="Send WhatsApp Message">
+                      <i class="fa-brands fa-whatsapp text-sm"></i>
+                    </a>
                     <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm px-2 py-1 text-xs bg-gradient-to-r from-blue-600 to-indigo-600" [title]="'admin.sendDoc' | translate">
                       <i class="fa-solid fa-file-export"></i>
                     </button>
@@ -269,6 +272,9 @@ interface ManagedTemplateItem {
                 <a [href]="getGmailUrl(u.email)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm text-xs px-2.5 py-1 text-red-400 border-red-500/30 bg-red-500/10 flex items-center gap-1">
                   <i class="fa-solid fa-envelope"></i> Gmail
                 </a>
+                <a *ngIf="u.phoneNumber" [href]="getWhatsAppUrl(u.phoneNumber)" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm text-xs px-2.5 py-1 text-emerald-400 border-emerald-500/30 bg-emerald-500/10 flex items-center gap-1">
+                  <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                </a>
                 <button (click)="openSendDocModal(u)" class="btn btn-primary btn-sm text-xs px-2.5 py-1 bg-gradient-to-r from-blue-600 to-indigo-600">
                   <i class="fa-solid fa-file-export"></i>
                 </button>
@@ -319,6 +325,9 @@ interface ManagedTemplateItem {
                     <i class="fa-solid fa-envelope"></i> Gmail
                   </a>
                   <span>&bull; {{ selectedUserForInspect.phoneNumber }}</span>
+                  <a *ngIf="selectedUserForInspect.phoneNumber" [href]="getWhatsAppUrl(selectedUserForInspect.phoneNumber)" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 hover:underline font-semibold flex items-center gap-1">
+                    <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                  </a>
                 </p>
               </div>
             </div>
@@ -1360,6 +1369,15 @@ export class AdminPanelComponent implements OnInit {
 
   getGmailUrl(email: string): string {
     return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email || '')}`;
+  }
+
+  getWhatsAppUrl(phone: string): string {
+    if (!phone) return '#';
+    let cleaned = phone.replace(/[^\d]/g, '');
+    if (cleaned.length === 9 && cleaned.startsWith('5')) {
+      cleaned = '995' + cleaned;
+    }
+    return `https://wa.me/${cleaned}`;
   }
 
   toggleAdminMusic(): void {
