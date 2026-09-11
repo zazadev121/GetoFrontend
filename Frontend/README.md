@@ -1,59 +1,73 @@
-# FrontendApp
+# GETO Project — Frontend
+**Repo:** `zazadev121/GetoFrontend`
+**Deployed on:** Vercel
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+## ⚠️ CRITICAL — READ BEFORE PUSHING
 
-## Development server
+> **DO NOT push the entire monorepo (`FullStackapp/`) here.**
+>
+> This repo contains **ONLY** the `Frontend/` folder (Angular app).
+> The backend (`apiprojnew/`) has its own separate repo → **[GetoBackend](https://github.com/zazadev121/GetoBackend)**
+>
+> Pushing the whole app to this repo almost broke the entire project.
+> **Always push only frontend changes here.**
 
-To start a local development server, run:
+---
 
+## How to push correctly
+
+The monorepo lives at `d:\Csharp things brada\FullStackapp\`.
+It has two subfolders — each goes to its own GitHub repo:
+
+| Folder | GitHub Repo | Platform |
+|---|---|---|
+| `Frontend/` | **GetoFrontend** (this repo) | Vercel |
+| `apiprojnew/` | **GetoBackend** | Render |
+
+### Push frontend changes
 ```bash
-ng serve
+# From FullStackapp/ root
+git add Frontend/
+git commit -m "your message"
+git push origin main
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### Push backend changes
 ```bash
-ng generate component component-name
+# From FullStackapp/ root
+git add apiprojnew/
+git commit -m "your message"
+git push origin main
+
+# Then sync to GetoBackend (Render reads from here)
+$splitHash = git subtree split --prefix=apiprojnew HEAD
+git push backend "${splitHash}:refs/heads/main" --force
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+> If `backend` remote is not set up yet:
+> ```bash
+> git remote add backend https://github.com/zazadev121/GetoBackend.git
+> ```
+
+---
+
+## Tech Stack
+
+- **Framework:** Angular 17+
+- **Styling:** Tailwind CSS + custom CSS
+- **Language:** TypeScript
+- **Build:** `ng build`
+- **Dev server:** `ng serve`
+
+## Install & run locally
 
 ```bash
-ng generate --help
+cd Frontend
+npm install
+npm run start
 ```
 
-## Building
+## Environment
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `src/environments/environment.ts` — local dev
+- `src/environments/environment.prod.ts` — production (Vercel)
