@@ -384,9 +384,9 @@ export class PollNotificationService {
   private phaseBody(phase: number): string {
     const ka = this.ka();
     switch (phase) {
-      case 0: return ka ? 'I ეტაპი: გთხოვთ ატვირთოთ თქვენი რეზიუმე (CV).' : 'Stage I: please upload your CV.';
-      case 1: return ka ? 'II ეტაპი: ჩამოტვირთეთ ხელშეკრულება, შეავსეთ და ატვირთეთ PDF-ად.' : 'Stage II: download the contract, complete it and upload it as a PDF.';
-      case 2: return ka ? 'III ეტაპი: გადმოგეცემათ სამუშაო ნებართვა. დეტალებისთვის ეწვიეთ კაბინეტს.' : 'Stage III: your work permit is being issued. See your cabinet for details.';
+      case 0: return ka ? 'გთხოვთ, ატვირთოთ თქვენი რეზიუმე (CV).\n\nCV-ის ატვირთვის შემდეგ გამოგეგზავნებათ ხელშეკრულება ხელმოსაწერად' : 'Please upload your CV. After uploading your CV, a contract will be sent to you for signature.';
+      case 1: return ka ? 'გთხოვთ, გაეცნოთ იანვარში წარმოსადგენი დოკუმენტების ნუსხას და მოამზადოთ ყველა საჭირო დოკუმენტი' : 'Please review the list of required documents for January and prepare all necessary documents.';
+      case 2: return ka ? 'გთხოვთ, ხელი მოაწეროთ ხელშეკრულებას.\n\nხელმოწერის შემდეგ სამუშაო ნებართვა აგეტვირთებათ თქვენს პროფილში.' : 'Please sign the contract. After signing, your work permit will be uploaded to your profile.';
       case 3: return ka ? 'თქვენი ეტაპი გაუქმებულია. კითხვებისთვის დაგვიკავშირდით.' : 'Your stage was cancelled. Contact us with any questions.';
       default: return ka ? 'თქვენი ეტაპი განახლდა. გადახედეთ პირად კაბინეტს.' : 'Your stage was updated. Please check your cabinet.';
     }
