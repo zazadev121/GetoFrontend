@@ -149,6 +149,7 @@ interface ManagedTemplateItem {
                 <th>{{ 'admin.client' | translate }}</th>
                 <th>{{ 'admin.status' | translate }}</th>
                 <th>{{ 'admin.phase' | translate }}</th>
+                <th>Max Limit</th>
                 <th>{{ 'admin.files' | translate }}</th>
                 <th class="text-right">{{ 'admin.actions' | translate }}</th>
               </tr>
@@ -189,6 +190,18 @@ interface ManagedTemplateItem {
                     <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
                     <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                   </select>
+                </td>
+                <td>
+                  <div class="flex items-center gap-1 min-w-[5.5rem]">
+                    <input
+                      type="number"
+                      min="1"
+                      max="500"
+                      [ngModel]="u.maxFileSizeMb || 25"
+                      (change)="onUpdateMaxFileSize(u, $any($event.target).value)"
+                      class="form-control py-1 px-1.5 text-xs w-14 text-center font-semibold bg-slate-900 border-slate-700 text-emerald-400 font-mono">
+                    <span class="text-[10px] text-slate-400 font-semibold">MB</span>
+                  </div>
                 </td>
                 <td>
                   <span class="text-xs font-semibold text-slate-300">
@@ -259,8 +272,8 @@ interface ManagedTemplateItem {
               <span class="text-[10px] font-mono text-slate-500">#{{ u.id }}</span>
             </div>
 
-            <!-- Selects row -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <!-- Selects & Limit row -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div>
                 <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.status' | translate }}</label>
                 <select
@@ -283,6 +296,19 @@ interface ManagedTemplateItem {
                   <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
                   <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                 </select>
+              </div>
+              <div>
+                <label class="text-[10px] text-slate-500 block mb-1">Max Limit (MB)</label>
+                <div class="flex items-center gap-1">
+                  <input
+                    type="number"
+                    min="1"
+                    max="500"
+                    [ngModel]="u.maxFileSizeMb || 25"
+                    (change)="onUpdateMaxFileSize(u, $any($event.target).value)"
+                    class="form-control py-1.5 px-2 text-xs w-full font-semibold bg-slate-900 border-slate-700 text-emerald-400 font-mono">
+                  <span class="text-xs text-slate-400 font-semibold">MB</span>
+                </div>
               </div>
             </div>
 
@@ -387,7 +413,7 @@ interface ManagedTemplateItem {
           </div>
 
           <!-- User Stats Cards Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
               <span class="text-slate-500 block mb-1">{{ 'admin.status' | translate }}</span>
               <span class="badge" [ngClass]="getStatusBadgeClass(selectedUserForInspect.status)">
@@ -400,6 +426,20 @@ interface ManagedTemplateItem {
               <span class="badge badge-phase">
                 {{ selectedUserForInspect.userPhase | phaseLabel }}
               </span>
+            </div>
+
+            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+              <span class="text-slate-500 block mb-1">Max File Limit</span>
+              <div class="flex items-center gap-1 mt-1">
+                <input
+                  type="number"
+                  min="1"
+                  max="500"
+                  [ngModel]="selectedUserForInspect.maxFileSizeMb || 25"
+                  (change)="onUpdateMaxFileSize(selectedUserForInspect, $any($event.target).value)"
+                  class="form-control py-1 px-1.5 text-xs w-16 text-center font-semibold bg-slate-900 border-emerald-500/40 text-emerald-400 font-mono">
+                <span class="text-xs text-slate-300 font-bold">MB</span>
+              </div>
             </div>
 
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
@@ -1591,6 +1631,29 @@ export class AdminPanelComponent implements OnInit {
       },
       error: () => {
         this.notificationService.error('Failed to update phase', 'Error');
+      }
+    });
+  }
+
+  onUpdateMaxFileSize(user: UserWithDocumentsDto, limitMb: any) {
+    const newLimit = Number(limitMb);
+    if (isNaN(newLimit) || newLimit <= 0) return;
+    if (newLimit === (user.maxFileSizeMb || 25)) return;
+
+    this.adminService.updateUserMaxFileSize(user.id, newLimit).subscribe({
+      next: (res) => {
+        if (res.statusCode === 200) {
+          user.maxFileSizeMb = newLimit;
+          if (this.selectedUserForInspect && this.selectedUserForInspect.id === user.id) {
+            this.selectedUserForInspect.maxFileSizeMb = newLimit;
+          }
+          this.notificationService.success(`Max file limit for ${user.name} set to ${newLimit} MB!`, 'Limit Updated');
+        } else {
+          this.notificationService.error(res.message || 'Failed to update file limit', 'Error');
+        }
+      },
+      error: () => {
+        this.notificationService.error('Failed to update file limit', 'Error');
       }
     });
   }

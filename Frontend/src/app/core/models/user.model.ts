@@ -11,5 +11,6 @@ export interface UserWithDocumentsDto {
   status: UserStatus;
   userPhase: UserPhase;
   isVerified: boolean;
+  maxFileSizeMb?: number;
   documents: DocumentDto[];
 }

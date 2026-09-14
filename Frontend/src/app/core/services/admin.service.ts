@@ -72,6 +72,11 @@ export class AdminService {
     return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/phase`, null, { params });
   }
 
+  updateUserMaxFileSize(userId: number, maxFileSizeMb: number): Observable<ApiResponse<any>> {
+    const params = { maxFileSizeMb: maxFileSizeMb.toString() };
+    return this.http.put<ApiResponse<any>>(`${this.baseUrl}/users/${userId}/max-file-size`, null, { params });
+  }
+
   deleteUser(userId: number): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.baseUrl}/users/${userId}`);
   }

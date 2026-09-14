@@ -131,7 +131,7 @@ interface StaticTemplateItem {
                 <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i>
                 {{ 'dash.uploadTitle' | translate }}
               </h3>
-              <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-white/5">Max 10MB</span>
+              <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-white/5">Max {{ userMaxFileSizeMb || 25 }}MB</span>
             </div>
 
             <!-- Drag & Drop Zone -->
@@ -672,6 +672,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   userStatus = 0; // Default Pending
   userPhase = 0; // Default Phase One
+  userMaxFileSizeMb = 25; // Default 25MB limit
 
   copyNamingTemplate(text: string) {
     if (navigator?.clipboard) {
@@ -815,6 +816,9 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
         if (res.statusCode === 200 && res.data) {
           this.userStatus = Number(res.data.status);
           this.userPhase = Number(res.data.userPhase);
+          if (res.data.maxFileSizeMb) {
+            this.userMaxFileSizeMb = Number(res.data.maxFileSizeMb);
+          }
           this.loadAdminPhaseDocuments();
         }
       }
@@ -884,10 +888,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleFile(file: File) {
-    // Validate File Size (10MB limit)
-    const maxSizeBytes = 10 * 1024 * 1024;
+    // Validate File Size (dynamic user limit, default 25MB)
+    const limitMb = this.userMaxFileSizeMb || 25;
+    const maxSizeBytes = limitMb * 1024 * 1024;
     if (file.size > maxSizeBytes) {
-      this.notificationService.error('File size exceeds maximum limit of 10MB.', 'File Too Large');
+      this.notificationService.error(`File size exceeds maximum limit of ${limitMb}MB.`, 'File Too Large');
       return;
     }
 
