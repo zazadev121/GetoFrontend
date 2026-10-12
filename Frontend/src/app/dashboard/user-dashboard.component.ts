@@ -82,26 +82,20 @@ interface StaticTemplateItem {
           <div class="space-y-3 flex-1 w-full">
             <div class="flex items-center justify-between flex-wrap gap-2">
               <h3 class="text-base sm:text-lg font-bold text-white font-heading">
-                {{ translationService.isGeorgian() ? 'სარეგისტრაციო დოკუმენტების წარდგენა' : 'Registration Document Submission' }}
+                {{ translationService.isGeorgian() ? 'ატვირთეთ პროგრამაში მონაწილეობისათვის საჭირო ყველა დოკუმენტი ერთ სივრცეში.' : 'Upload all required program documents in one place.' }}
               </h3>
               <span class="text-[10px] sm:text-xs text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20 font-semibold">
                 {{ translationService.isGeorgian() ? 'გზამკვლევი' : 'Guide' }}
               </span>
             </div>
 
-            <!-- Steps Progress list -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
-                <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
-                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'ჩამოტვირთეთ ფორმა (CV)' : 'Download Form Template' }}</span>
-              </div>
-              <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
-                <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">2</span>
-                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'შეავსეთ დოკუმენტები' : 'Fill & Sign Documents' }}</span>
-              </div>
-              <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
-                <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">3</span>
-                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'ატვირთეთ PDF ან DOCX' : 'Upload PDF or DOCX' }}</span>
+            <!-- Single step -->
+            <div class="grid grid-cols-1 gap-3">
+              <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-emerald-800/50 flex items-center gap-3">
+                <span class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                  <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i>
+                </span>
+                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'ატვირთეთ დოკუმენტები pdf და word document ფორმატში' : 'Upload documents in PDF and Word format' }}</span>
               </div>
             </div>
           </div>
@@ -183,48 +177,17 @@ interface StaticTemplateItem {
             </div>
           </div>
 
-          <!-- Template Documents Section (Phase Specific Downloadable Forms) -->
+          <!-- Admin Sent Documents Section -->
           <div class="glass-card p-4 sm:p-6 border-slate-700/50 space-y-4">
             <div class="flex items-center justify-between">
               <h3 class="text-base font-bold text-white font-heading flex items-center gap-2">
-                <i class="fa-solid fa-file-signature text-emerald-400"></i>
-                {{ 'dash.templatesTitle' | translate }}
+                <i class="fa-solid fa-file-contract text-blue-400"></i>
+                {{ translationService.isGeorgian() ? 'ადმინის დოკუმენტები' : 'Admin Documents' }}
               </h3>
-              <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">Required</span>
             </div>
 
-            <p class="text-xs text-slate-400">
-              {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ მოწოდებული ოფიციალური დოკუმენტები და ფორმები.' : 'Official documents and forms provided by administration.' }}
-            </p>
-
-            <!-- Combined List: Backend Issued Documents -->
+            <!-- Backend Issued Admin Documents -->
             <div class="space-y-3">
-
-              <!-- Frontend Phase Templates & External Links -->
-              <div
-                *ngFor="let tpl of getActivePhaseTemplates()"
-                class="p-3 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl flex items-center justify-between transition-colors gap-2">
-                <div class="flex items-center gap-3 overflow-hidden">
-                  <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base shrink-0">
-                    <i class="fa-solid" [ngClass]="tpl.isExternalLink ? 'fa-link text-blue-400' : 'fa-file-pdf'"></i>
-                  </div>
-                  <div class="truncate">
-                    <div class="text-xs font-semibold text-slate-200 truncate">{{ tpl.fileName }}</div>
-                    <div class="text-[10px] text-slate-400 truncate">{{ translationService.isGeorgian() ? tpl.descriptionKa : tpl.descriptionEn }}</div>
-                  </div>
-                </div>
-
-                <a
-                  [href]="tpl.fileUrl"
-                  [target]="tpl.isExternalLink ? '_blank' : '_self'"
-                  [download]="tpl.isExternalLink ? null : tpl.fileName"
-                  class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0">
-                  <i class="fa-solid" [ngClass]="tpl.isExternalLink ? 'fa-up-right-from-square' : 'fa-download'"></i>
-                  <span>{{ tpl.isExternalLink ? (translationService.isGeorgian() ? 'ბმულის გახსნა' : 'Open Link') : (translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download') }}</span>
-                </a>
-              </div>
-
-              <!-- Backend Issued Admin Documents -->
               <div
                 *ngFor="let doc of getAdminSentDocuments()"
                 class="p-3 bg-slate-900/60 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-between transition-colors gap-2">
@@ -241,13 +204,13 @@ interface StaticTemplateItem {
                 <button
                   (click)="downloadAdminDoc(doc)"
                   class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
-                  <i class="fa-solid fa-download"></i> Download
+                  <i class="fa-solid fa-download"></i> {{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}
                 </button>
               </div>
 
-              <!-- Friendly Notice When No Extra Backend Documents Exist -->
+              <!-- Friendly Notice When No Admin Documents Exist -->
               <div
-                *ngIf="getActivePhaseTemplates().length === 0 && getAdminSentDocuments().length === 0"
+                *ngIf="getAdminSentDocuments().length === 0"
                 class="p-4 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center space-y-1">
                 <div class="text-xs text-slate-300 font-semibold">
                   {{ translationService.isGeorgian() ? 'დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued yet' }}
@@ -256,7 +219,6 @@ interface StaticTemplateItem {
                   {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი დოკუმენტები გამოჩნდება აქ' : 'Documents sent by administration will appear here' }}
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -449,13 +411,18 @@ interface StaticTemplateItem {
                 </p>
               </div>
 
-              <div class="p-4 bg-amber-950/40 border border-amber-500/30 rounded-xl space-y-2 text-amber-200">
-                <div class="flex items-center gap-2 font-bold text-amber-400 text-xs sm:text-sm">
-                  <i class="fa-solid fa-clock"></i>
-                  <span>{{ translationService.isGeorgian() ? 'მნიშვნელოვანი გაფრთხილება — 24 საათიანი ვადა' : 'Critical Notice — 24 Hour Deadline' }}</span>
+              <div class="p-4 bg-blue-950/40 border border-blue-500/30 rounded-xl space-y-3 text-blue-100">
+                <div class="flex items-center gap-2 font-bold text-blue-300 text-xs sm:text-sm">
+                  <i class="fa-solid fa-circle-info"></i>
+                  <span>{{ translationService.isGeorgian() ? 'მნიშვნელოვანი ინფორმაცია სტუდენტებისთვის!' : 'Important Information for Students!' }}</span>
                 </div>
-                <p class="leading-relaxed text-xs">
-                  {{ translationService.isGeorgian() ? 'თუ აღნიშნული დოკუმენტები 24 საათის განმავლობაში არ იქნება წარმოდგენილი, რეგისტრაციის პროცესი ავტომატურად შეწყდება და შექმნილი ანგარიში გაუქმდება.' : 'If these documents are not submitted within 24 hours, the registration process will automatically terminate and the created account will be cancelled.' }}
+                <p class="leading-relaxed text-xs text-blue-200/90">
+                  {{ translationService.isGeorgian()
+                    ? 'გერმანიაში სტუდენტური დასაქმების პროგრამის შესახებ ინფორმაცია — ვაკანსიები, ანაზღაურება, საცხოვრებელი პირობები, მომსახურების ხელშეკრულება და პროგრამის სრული გზამკვლევი — ხელმისაწვდომია ჩვენი ვებგვერდის „სიახლეების" განყოფილებაში.'
+                    : 'Information about the student employment program in Germany — vacancies, remuneration, accommodation, service agreement and full program guide — is available in the "News" section of our website.' }}
+                </p>
+                <p class="text-xs font-semibold text-blue-300">
+                  {{ translationService.isGeorgian() ? 'ყველა საჭირო ინფორმაცია ერთ სივრცეში!' : 'All the information you need in one place!' }}
                 </p>
               </div>
             </div>
