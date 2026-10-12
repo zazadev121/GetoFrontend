@@ -177,50 +177,7 @@ interface StaticTemplateItem {
             </div>
           </div>
 
-          <!-- Admin Sent Documents Section -->
-          <div class="glass-card p-4 sm:p-6 border-slate-700/50 space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="text-base font-bold text-white font-heading flex items-center gap-2">
-                <i class="fa-solid fa-file-contract text-blue-400"></i>
-                {{ translationService.isGeorgian() ? 'ადმინის დოკუმენტები' : 'Admin Documents' }}
-              </h3>
-            </div>
 
-            <!-- Backend Issued Admin Documents -->
-            <div class="space-y-3">
-              <div
-                *ngFor="let doc of getAdminSentDocuments()"
-                class="p-3 bg-slate-900/60 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-between transition-colors gap-2">
-                <div class="flex items-center gap-3 overflow-hidden">
-                  <div class="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-base shrink-0">
-                    <i class="fa-solid fa-file-contract"></i>
-                  </div>
-                  <div class="truncate">
-                    <div class="text-xs font-semibold text-slate-200 truncate">{{ doc.fileName }}</div>
-                    <div class="text-[10px] text-slate-500">{{ doc.fileSize | fileSize }}</div>
-                  </div>
-                </div>
-
-                <button
-                  (click)="downloadAdminDoc(doc)"
-                  class="btn btn-secondary btn-sm text-xs px-2.5 py-1">
-                  <i class="fa-solid fa-download"></i> {{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}
-                </button>
-              </div>
-
-              <!-- Friendly Notice When No Admin Documents Exist -->
-              <div
-                *ngIf="getAdminSentDocuments().length === 0"
-                class="p-4 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center space-y-1">
-                <div class="text-xs text-slate-300 font-semibold">
-                  {{ translationService.isGeorgian() ? 'დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued yet' }}
-                </div>
-                <div class="text-[10px] text-slate-500">
-                  {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი დოკუმენტები გამოჩნდება აქ' : 'Documents sent by administration will appear here' }}
-                </div>
-              </div>
-            </div>
-          </div>
 
           <!-- Universal Static General Documents (From public/templates/general) -->
           <div *ngIf="getGeneralTemplates().length > 0" class="glass-card p-4 sm:p-6 border-slate-700/50 space-y-4">
@@ -378,36 +335,38 @@ interface StaticTemplateItem {
             <!-- REGISTRATION DOCUMENTS GUIDELINES -->
             <div class="space-y-4 text-xs sm:text-sm animate-fade-in">
               <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
-                <p class="leading-relaxed text-slate-300 font-medium">
-                  {{ translationService.isGeorgian() ? 'რეგისტრაციისთვის აუცილებელია შემდეგი დოკუმენტების წარმოდგენა (PDF ან DOCX ფორმატში):' : 'Mandatory documents to submit for registration (PDF or DOCX format):' }}
+                <p class="leading-relaxed text-slate-300 font-semibold">
+                  {{ translationService.isGeorgian() ? 'რეგისტრაციისთვის აუცილებელი დოკუმენტები:' : 'Required documents for registration:' }}
                 </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                  <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0"></i>
-                    <div>
-                      <div class="font-semibold text-slate-200 text-xs sm:text-sm">
-                        {{ translationService.isGeorgian() ? 'რეზიუმე (CV)' : 'Curriculum Vitae (CV)' }}
-                      </div>
-                      <div class="text-[11px] text-slate-400">
-                        {{ translationService.isGeorgian() ? 'ატვირთეთ თქვენი რეზიუმე' : 'Upload your updated resume' }}
-                      </div>
-                    </div>
+                <div class="space-y-2 pt-1">
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+                    <span class="text-slate-300">{{ translationService.isGeorgian() ? 'შევსებული რეზიუმე (CV);' : 'Completed resume (CV);' }}</span>
                   </div>
-                  <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0"></i>
-                    <div>
-                      <div class="font-semibold text-slate-200 text-xs sm:text-sm">
-                        {{ translationService.isGeorgian() ? 'გადახდის ქვითარი' : 'Payment Confirmation Proof' }}
-                      </div>
-                      <div class="text-[11px] text-slate-400">
-                        {{ translationService.isGeorgian() ? 'საბანკო ამონაწერი ან PDF ქვითარი' : 'Bank statement or official PDF receipt' }}
-                      </div>
-                    </div>
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+                    <span class="text-slate-300">{{ translationService.isGeorgian() ? 'პასპორტის სკანირებული ასლი (PDF ფორმატში);' : 'Scanned copy of passport (PDF format);' }}</span>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+                    <span class="text-slate-300">{{ translationService.isGeorgian() ? 'სტუდენტის სტატუსის დამადასტურებელი ცნობა;' : 'Student status certificate;' }}</span>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+                    <span class="text-slate-300">{{ translationService.isGeorgian() ? 'იმატრიკულაციის ფორმა (Immatrikulation);' : 'Enrolment certificate (Immatrikulation);' }}</span>
+                  </div>
+                  <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0 mt-0.5"></i>
+                    <span class="text-slate-300">{{ translationService.isGeorgian() ? 'რეგისტრაციის საფასურის გადახდის დამადასტურებელი ქვითარი.' : 'Registration fee payment confirmation receipt.' }}</span>
                   </div>
                 </div>
                 <p class="leading-relaxed text-slate-400 text-xs pt-2 border-t border-white/5">
-                  <i class="fa-solid fa-circle-info text-amber-400 mr-1.5"></i>
-                  {{ translationService.isGeorgian() ? 'გთხოვთ, გადახდის შემდეგ 24 საათის განმავლობაში ატვირთოთ გადახდის დამადასტურებელი დოკუმენტი თქვენს პირად გვერდზე.' : 'Please upload payment confirmation to your personal page within 24 hours of payment.' }}
+                  <i class="fa-solid fa-circle-info text-blue-400 mr-1.5"></i>
+                  {{ translationService.isGeorgian() ? 'გთხოვთ, ყველა დოკუმენტი ატვირთოთ PDF ფორმატში. პასპორტის სკანირება შესაძლებელია საკანცელარიო მომსახურების ცენტრში.' : 'Please upload all documents in PDF format. Passport scanning is available at office service centres.' }}
+                </p>
+                <p class="leading-relaxed text-slate-300 text-xs pt-1 font-medium">
+                  <i class="fa-solid fa-shield-check text-emerald-400 mr-1.5"></i>
+                  {{ translationService.isGeorgian() ? 'რეგისტრაცია ოფიციალურად დადასტურებულად ჩაითვლება მხოლოდ რეგისტრაციის საფასურის გადახდისა და რეზიუმეს (CV) წარმოდგენის შემდეგ.' : 'Registration will be considered officially confirmed only after the registration fee is paid and the resume (CV) is submitted.' }}
                 </p>
               </div>
 
