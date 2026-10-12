@@ -4,6 +4,7 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
 import { NotificationPromptComponent } from './shared/components/notification-prompt/notification-prompt.component';
+import { ChatbotComponent } from './shared/components/chatbot/chatbot.component';
 import { AuthService } from './core/services/auth.service';
 import { WebPushService } from './core/services/web-push.service';
 import { PollNotificationService } from './core/services/poll-notification.service';
@@ -16,7 +17,8 @@ import { PollNotificationService } from './core/services/poll-notification.servi
     NavbarComponent,
     FooterComponent,
     ToastContainerComponent,
-    NotificationPromptComponent
+    NotificationPromptComponent,
+    ChatbotComponent
   ],
   template: `
     <div class="min-h-screen flex flex-col font-sans">
@@ -33,6 +35,7 @@ import { PollNotificationService } from './core/services/poll-notification.servi
 
       <app-toast-container></app-toast-container>
       <app-notification-prompt></app-notification-prompt>
+      <app-chatbot></app-chatbot>
     </div>
   `
 })
