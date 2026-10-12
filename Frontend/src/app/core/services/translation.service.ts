@@ -148,7 +148,7 @@ export class TranslationService {
       'dash.cabinet': 'პირადი კაბინეტი',
       'dash.phase': 'თქვენი ეტაპი',
       'dash.status': 'განაცხადის სტატუსი',
-      'dash.uploadTitle': 'დოკუმენტის ატვირთვა',
+      'dash.uploadTitle': 'დოკუმენტების ატვირთვა',
       'dash.dragDrop': 'ჩააგდეთ დოკუმენტი აქ',
       'dash.browse': 'აირჩიეთ ფაილი',
       'dash.templatesTitle': 'ეტაპის შაბლონები',
