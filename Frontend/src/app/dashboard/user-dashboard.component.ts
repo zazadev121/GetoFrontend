@@ -6,7 +6,6 @@ import { NotificationService } from '../core/services/notification.service';
 import { TranslationService } from '../core/services/translation.service';
 import { DocumentDto } from '../core/models/document.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
-import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
@@ -31,7 +30,6 @@ interface StaticTemplateItem {
   imports: [
     CommonModule,
     StatusLabelPipe,
-    PhaseLabelPipe,
     FileSizePipe,
     TranslatePipe,
     ConfirmDialogComponent,
@@ -62,16 +60,8 @@ interface StaticTemplateItem {
             </div>
           </div>
 
-          <!-- Phase & Status Indicators -->
+          <!-- Status Indicator -->
           <div class="flex items-center gap-2 sm:gap-3 flex-wrap w-full md:w-auto">
-            <div class="glass-card px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900/60 border-slate-700/60 flex-1 md:flex-initial">
-              <div class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 sm:mb-1">{{ 'dash.phase' | translate }}</div>
-              <span class="badge badge-phase text-xs">
-                <i class="fa-solid fa-layer-group text-xs"></i>
-                {{ userPhase | phaseLabel }}
-              </span>
-            </div>
-
             <div class="glass-card px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-900/60 border-slate-700/60 flex-1 md:flex-initial">
               <div class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5 sm:mb-1">{{ 'dash.status' | translate }}</div>
               <span class="badge text-xs" [ngClass]="getStatusBadgeClass(userStatus)">
@@ -87,15 +77,15 @@ interface StaticTemplateItem {
       <div class="glass-card p-4 sm:p-6 border-blue-500/30 bg-gradient-to-r from-blue-950/40 to-slate-900/60 space-y-4">
         <div class="flex flex-col sm:flex-row items-start gap-4">
           <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-blue-600/20 text-blue-400 flex-shrink-0 flex items-center justify-center text-lg sm:text-xl border border-blue-500/30">
-            <i class="fa-solid fa-compass-drafting"></i>
+            <i class="fa-solid fa-file-circle-check"></i>
           </div>
           <div class="space-y-3 flex-1 w-full">
             <div class="flex items-center justify-between flex-wrap gap-2">
               <h3 class="text-base sm:text-lg font-bold text-white font-heading">
-                {{ getPhaseInstructionTitle() }}
+                {{ translationService.isGeorgian() ? 'სარეგისტრაციო დოკუმენტების წარდგენა' : 'Registration Document Submission' }}
               </h3>
               <span class="text-[10px] sm:text-xs text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full border border-blue-500/20 font-semibold">
-                Phase {{ userPhase + 1 }} Progress
+                {{ translationService.isGeorgian() ? 'გზამკვლევი' : 'Guide' }}
               </span>
             </div>
 
@@ -103,15 +93,15 @@ interface StaticTemplateItem {
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
                 <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
-                <span class="text-xs text-slate-300 font-medium">Download Phase Template</span>
+                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'ჩამოტვირთეთ ფორმა (CV)' : 'Download Form Template' }}</span>
               </div>
               <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
                 <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shrink-0">2</span>
-                <span class="text-xs text-slate-300 font-medium">Fill & Sign Form</span>
+                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'შეავსეთ დოკუმენტები' : 'Fill & Sign Documents' }}</span>
               </div>
               <div class="p-2.5 sm:p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center gap-3">
                 <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">3</span>
-                <span class="text-xs text-slate-300 font-medium">Upload Document</span>
+                <span class="text-xs text-slate-300 font-medium">{{ translationService.isGeorgian() ? 'ატვირთეთ PDF ან DOCX' : 'Upload PDF or DOCX' }}</span>
               </div>
             </div>
           </div>
@@ -204,7 +194,7 @@ interface StaticTemplateItem {
             </div>
 
             <p class="text-xs text-slate-400">
-              {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი ოფიციალური დოკუმენტები თქვენი მიმდინარე ეტაპისთვის (' + (userPhase | phaseLabel) + ').' : 'Official documents issued by administration for your current phase (' + (userPhase | phaseLabel) + ').' }}
+              {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ მოწოდებული ოფიციალური დოკუმენტები და ფორმები.' : 'Official documents and forms provided by administration.' }}
             </p>
 
             <!-- Combined List: Backend Issued Documents -->
@@ -260,7 +250,7 @@ interface StaticTemplateItem {
                 *ngIf="getActivePhaseTemplates().length === 0 && getAdminSentDocuments().length === 0"
                 class="p-4 bg-slate-900/60 border border-dashed border-slate-800 rounded-xl text-center space-y-1">
                 <div class="text-xs text-slate-300 font-semibold">
-                  {{ translationService.isGeorgian() ? 'ამ ეტაპისთვის დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued for this phase yet' }}
+                  {{ translationService.isGeorgian() ? 'დოკუმენტები ჯერ არ არის გამოგზავნილი' : 'No documents issued yet' }}
                 </div>
                 <div class="text-[10px] text-slate-500">
                   {{ translationService.isGeorgian() ? 'ადმინისტრაციის მიერ გამოგზავნილი დოკუმენტები გამოჩნდება აქ' : 'Documents sent by administration will appear here' }}
@@ -411,23 +401,23 @@ interface StaticTemplateItem {
                 </div>
                 <div>
                   <h3 class="text-base sm:text-lg font-bold text-white font-heading">
-                    {{ getPhaseInstructionTitle() }}
+                    {{ translationService.isGeorgian() ? 'სარეგისტრაციო დოკუმენტების ინსტრუქცია' : 'Document Submission Guidelines' }}
                   </h3>
                   <p class="text-xs text-slate-400 mt-0.5">
-                    {{ translationService.isGeorgian() ? 'ეტაპის ოფიციალური დეტალური ინსტრუქცია და მოთხოვნილი დოკუმენტების ნუსხა' : 'Official phase guidelines, procedures & required document checklist' }}
+                    {{ translationService.isGeorgian() ? 'ოფიციალური დეტალური ინსტრუქცია და მოთხოვნილი დოკუმენტების ნუსხა' : 'Official guidelines, procedures & required document checklist' }}
                   </p>
                 </div>
               </div>
               <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                Phase {{ userPhase + 1 }} Official Guidelines
+                {{ translationService.isGeorgian() ? 'ოფიციალური ინსტრუქცია' : 'Official Guidelines' }}
               </span>
             </div>
 
-            <!-- PHASE 1 VIEW -->
-            <div *ngIf="userPhase === 0" class="space-y-4 text-xs sm:text-sm animate-fade-in">
+            <!-- REGISTRATION DOCUMENTS GUIDELINES -->
+            <div class="space-y-4 text-xs sm:text-sm animate-fade-in">
               <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
                 <p class="leading-relaxed text-slate-300 font-medium">
-                  {{ translationService.isGeorgian() ? 'რეგისტრაციის პირველ ეტაპზე აუცილებელია შემდეგი დოკუმენტების წარმოდგენა:' : 'At the first stage of registration, it is mandatory to submit:' }}
+                  {{ translationService.isGeorgian() ? 'რეგისტრაციისთვის აუცილებელია შემდეგი დოკუმენტების წარმოდგენა (PDF ან DOCX ფორმატში):' : 'Mandatory documents to submit for registration (PDF or DOCX format):' }}
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                   <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-3">
@@ -466,170 +456,6 @@ interface StaticTemplateItem {
                 </div>
                 <p class="leading-relaxed text-xs">
                   {{ translationService.isGeorgian() ? 'თუ აღნიშნული დოკუმენტები 24 საათის განმავლობაში არ იქნება წარმოდგენილი, რეგისტრაციის პროცესი ავტომატურად შეწყდება და შექმნილი ანგარიში გაუქმდება.' : 'If these documents are not submitted within 24 hours, the registration process will automatically terminate and the created account will be cancelled.' }}
-                </p>
-              </div>
-            </div>
-
-            <!-- PHASE 2 VIEW -->
-            <div *ngIf="userPhase === 1" class="space-y-4 text-xs sm:text-sm animate-fade-in">
-              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
-                <p class="leading-relaxed text-slate-300 font-medium">
-                  {{ translationService.isGeorgian() ? 'II ეტაპზე აუცილებელია შემდეგი დოკუმენტების წარმოდგენა:' : 'At Phase 2, it is mandatory to submit the following documents:' }}
-                </p>
-
-                <div class="space-y-2 pt-1">
-                  <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0"></i>
-                    <div>
-                      <div class="font-semibold text-slate-200 text-xs sm:text-sm">
-                        {{ translationService.isGeorgian() ? 'ბიომეტრიული პასპორტი' : 'Biometric Passport' }}
-                        <span class="text-amber-400 font-normal text-xs ml-1">(Biometrischer Reisepass)</span>
-                      </div>
-                      <div class="text-[11px] text-slate-400">
-                        {{ translationService.isGeorgian() ? 'მოქმედი ბიომეტრიული საზღვარგარეთის პასპორტი' : 'Valid biometric passport copy' }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-3">
-                    <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0"></i>
-                    <div>
-                      <div class="font-semibold text-slate-200 text-xs sm:text-sm">
-                        {{ translationService.isGeorgian() ? 'სტუდენტის სტატუსის დამადასტურებელი ცნობა' : 'Student Status Confirmation Certificate' }}
-                      </div>
-                      <div class="text-[11px] text-slate-400">
-                        {{ translationService.isGeorgian() ? 'უნივერსიტეტის მიერ გაცემული ოფიციალური ცნობა' : 'Official university-issued student status certificate' }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 overflow-hidden">
-                      <i class="fa-solid fa-circle-check text-emerald-400 text-sm shrink-0"></i>
-                      <div class="truncate">
-                        <div class="font-semibold text-slate-200 text-xs sm:text-sm truncate">
-                          Immatrikulationsbescheinigung
-                          <span class="text-slate-400 font-normal text-xs ml-1">— {{ translationService.isGeorgian() ? 'უნივერსიტეტში ჩარიცხვის დამადასტურებელი დოკუმენტი' : 'University enrollment confirmation' }}</span>
-                        </div>
-                        <div class="text-[11px] text-slate-400 truncate">
-                          {{ translationService.isGeorgian() ? 'გერმანულენოვანი ჩარიცხვის დოკუმენტი' : 'German university matriculation certificate' }}
-                        </div>
-                      </div>
-                    </div>
-                    <a
-                      href="https://shorturl.at/QLblJ"
-                      target="_blank"
-                      class="btn btn-secondary btn-sm text-xs px-2.5 py-1 flex items-center gap-1 shrink-0">
-                      <i class="fa-solid fa-up-right-from-square text-blue-400"></i>
-                      <span>{{ translationService.isGeorgian() ? 'ბმულის გახსნა' : 'Open Link' }}</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Phase 2 Naming & Protocol Notice Box -->
-              <div class="p-4 bg-amber-950/40 border border-amber-500/30 rounded-xl space-y-3 text-amber-200">
-                <div class="flex items-center gap-2 font-bold text-amber-400 text-xs sm:text-sm">
-                  <i class="fa-solid fa-triangle-exclamation"></i>
-                  <span>{{ translationService.isGeorgian() ? 'მნიშვნელოვანი მოთხოვნა დოკუმენტების წარმოდგენასთან დაკავშირებით' : 'Important Document Submission & Naming Protocol' }}</span>
-                </div>
-                <p class="leading-relaxed text-xs text-slate-300">
-                  {{ translationService.isGeorgian() ? 'გთხოვთ, გაითვალისწინოთ, რომ თითოეული დოკუმენტი უნდა იყოს წარმოდგენილი ცალკე PDF ფაილის სახით. დოკუმენტები არ უნდა იყოს გაერთიანებული ერთ PDF ფაილში.' : 'Please note that each document must be submitted as an individual PDF file. Documents must not be combined into one single PDF file.' }}
-                </p>
-
-                <!-- Format Box with Copy -->
-                <div class="p-2.5 bg-black/50 rounded-lg border border-amber-500/30 flex items-center justify-between gap-2">
-                  <span class="font-mono text-xs text-amber-300 font-bold">
-                    {{ translationService.isGeorgian() ? 'გვარი სახელი — დოკუმენტის დასახელება' : 'Surname Name — Document Name' }}
-                  </span>
-                  <button
-                    type="button"
-                    (click)="copyNamingTemplate(translationService.isGeorgian() ? 'გვარი სახელი — დოკუმენტის დასახელება' : 'Surname Name — Document Name')"
-                    class="btn btn-secondary btn-sm text-[11px] px-2 py-0.5 flex items-center gap-1 shrink-0">
-                    <i class="fa-solid fa-copy text-amber-400"></i>
-                    <span>Copy</span>
-                  </button>
-                </div>
-
-                <!-- Togglable Dropdown for Examples (Vertically Aligned) -->
-                <details class="group text-[11px] text-slate-400">
-                  <summary class="font-semibold text-amber-300/90 text-xs cursor-pointer select-none flex items-center gap-2 hover:text-amber-200 transition-colors py-1">
-                    <i class="fa-solid fa-chevron-right text-[10px] group-open:rotate-90 transition-transform text-amber-400"></i>
-                    <span>{{ translationService.isGeorgian() ? 'მაგალითები (ფაილის დასახელებები):' : 'File Naming Examples:' }}</span>
-                  </summary>
-                  <div class="flex flex-col gap-1.5 font-mono text-[11px] pt-2">
-                    <div (click)="copyNamingTemplate('Getia Zviad — Biometrischer Reisepass.pdf')" class="p-2 bg-slate-900/90 rounded-lg border border-slate-800 text-slate-300 flex items-center justify-between cursor-pointer hover:border-amber-500/50 transition-colors group/chip" title="Click to copy">
-                      <span class="truncate">Getia Zviad — Biometrischer Reisepass.pdf</span>
-                      <i class="fa-solid fa-copy text-amber-400/80 text-xs shrink-0 group-hover/chip:scale-110 transition-transform"></i>
-                    </div>
-                    <div (click)="copyNamingTemplate('Getia Zviad — Student Status Certificate.pdf')" class="p-2 bg-slate-900/90 rounded-lg border border-slate-800 text-slate-300 flex items-center justify-between cursor-pointer hover:border-amber-500/50 transition-colors group/chip" title="Click to copy">
-                      <span class="truncate">Getia Zviad — Student Status Certificate.pdf</span>
-                      <i class="fa-solid fa-copy text-amber-400/80 text-xs shrink-0 group-hover/chip:scale-110 transition-transform"></i>
-                    </div>
-                    <div (click)="copyNamingTemplate('Getia Zviad — Immatrikulationsbescheinigung.pdf')" class="p-2 bg-slate-900/90 rounded-lg border border-slate-800 text-slate-300 flex items-center justify-between cursor-pointer hover:border-amber-500/50 transition-colors group/chip" title="Click to copy">
-                      <span class="truncate">Getia Zviad — Immatrikulationsbescheinigung.pdf</span>
-                      <i class="fa-solid fa-copy text-amber-400/80 text-xs shrink-0 group-hover/chip:scale-110 transition-transform"></i>
-                    </div>
-                  </div>
-                </details>
-
-                <p class="leading-relaxed text-[11px] text-rose-300 pt-1 border-t border-amber-500/20">
-                  <i class="fa-solid fa-circle-exclamation mr-1"></i>
-                  {{ translationService.isGeorgian() ? 'არასწორად დასათაურებული ან ერთ ფაილად გაერთიანებული დოკუმენტები არ ჩაითვლება სწორად წარმოდგენილად.' : 'Incorrectly named or combined documents will not be accepted as properly submitted.' }}
-                </p>
-              </div>
-            </div>
-
-            <!-- PHASE 3 VIEW -->
-            <div *ngIf="userPhase === 2" class="space-y-4 text-xs sm:text-sm animate-fade-in">
-              <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-3">
-                <p class="leading-relaxed text-slate-300">
-                  {{ translationService.isGeorgian()
-                    ? 'III ეტაპზე სტუდენტს გადაეცემა გერმანიის შესაბამისი უწყებიდან გამოგზავნილი სამუშაო ნებართვა, რის შემდეგაც იწყება გერმანიაში გამგზავრებისთვის საჭირო პროცედურების დაგეგმვა და ორგანიზება.'
-                    : 'In Phase 3, the student receives the official work permit issued by the relevant German authority, after which departure procedures and travel to Germany are organized.'
-                  }}
-                </p>
-                <p class="leading-relaxed text-slate-300 border-t border-white/5 pt-2">
-                  {{ translationService.isGeorgian() ? 'ამ ეტაპზე ასევე ხდება მომსახურების ხელშეკრულების გაფორმება სტუდენტსა და მომსახურების მიმწოდებელს შორის.' : 'At this stage, the official service agreement between the student and service provider is also signed.' }}
-                </p>
-
-                <div class="pt-2">
-                  <div class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
-                    {{ translationService.isGeorgian() ? 'დამატებითი მხარდაჭერის სერვისები (სურვილისამებრ):' : 'Optional Departure Support Services:' }}
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-2.5">
-                      <span class="text-base">✈️</span>
-                      <div>
-                        <div class="font-bold text-slate-200 text-xs">{{ translationService.isGeorgian() ? 'ავიაბილეთი' : 'Flight Tickets' }}</div>
-                        <div class="text-[10px] text-slate-400">{{ translationService.isGeorgian() ? 'შეძენის დახმარება' : 'Search & booking aid' }}</div>
-                      </div>
-                    </div>
-                    <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-2.5">
-                      <span class="text-base">🛡️</span>
-                      <div>
-                        <div class="font-bold text-slate-200 text-xs">{{ translationService.isGeorgian() ? 'სამოგზაურო დაზღვევა' : 'Travel Insurance' }}</div>
-                        <div class="text-[10px] text-slate-400">{{ translationService.isGeorgian() ? 'დაზღვევის გაფორმება' : 'Insurance setup' }}</div>
-                      </div>
-                    </div>
-                    <div class="p-2.5 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-center gap-2.5">
-                      <span class="text-base">📋</span>
-                      <div>
-                        <div class="font-bold text-slate-200 text-xs">{{ translationService.isGeorgian() ? 'საჭირო პროცედურები' : 'Relocation Guidance' }}</div>
-                        <div class="text-[10px] text-slate-400">{{ translationService.isGeorgian() ? 'გამგზავრების ორგანიზება' : 'Departure logistics' }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="p-4 bg-slate-900/60 border border-slate-800 rounded-xl space-y-1 text-slate-300 text-xs">
-                <div class="flex items-center gap-2 font-bold text-amber-400 text-xs uppercase tracking-wider">
-                  <i class="fa-solid fa-circle-info"></i>
-                  <span>{{ translationService.isGeorgian() ? 'საინფორმაციო შეტყობინება' : 'Informational Notice' }}</span>
-                </div>
-                <p class="leading-relaxed text-[11px] text-slate-400">
-                  {{ translationService.isGeorgian() ? 'მნიშვნელოვანია: ავიაბილეთის შეძენა და სამოგზაურო დაზღვევის გაფორმება წარმოადგენს დამატებით, სურვილისამებრ მომსახურებას და სტუდენტს შეუძლია აღნიშნული მომსახურებები დამოუკიდებლადაც განახორციელოს.' : 'Important: Flight ticket purchasing and travel insurance arrangement are optional additional services. Students may also arrange these independently.' }}
                 </p>
               </div>
             </div>
@@ -701,18 +527,8 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       fileName: 'Resume--.docx',
       fileUrl: '/partners/Resume--.docx',
       fileSize: 0,
-      descriptionKa: 'რეზიუმე – ფაზა 1',
-      descriptionEn: 'Resume – Phase 1'
-    },
-    {
-      id: 'phase2_immatrikulation_link',
-      phase: 1,
-      fileName: 'Immatrikulationsbescheinigung Formular',
-      fileUrl: 'https://shorturl.at/QLblJ',
-      fileSize: 0,
-      isExternalLink: true,
-      descriptionKa: 'Immatrikulationsbescheinigung - ჩარიცხვის ცნობის ფორმა',
-      descriptionEn: 'Immatrikulationsbescheinigung - Enrollment Certificate Form'
+      descriptionKa: 'რეზიუმე – CV ფორმა',
+      descriptionEn: 'Resume – CV Form Template'
     }
   ];
 
@@ -758,13 +574,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   getActivePhaseTemplates(): StaticTemplateItem[] {
     const disabledIds = this.getDisabledTemplateIds();
-    const templates = this.staticTemplates.filter(t => t.phase === this.userPhase && !disabledIds.includes(t.id));
-
-    if (this.userPhase === 0) {
-      return templates.filter(t => t.fileName.trim().toLowerCase() === 'resume--.docx');
-    }
-
-    return templates;
+    return this.staticTemplates.filter(t => !disabledIds.includes(t.id));
   }
 
   getGeneralTemplates(): StaticTemplateItem[] {
@@ -774,16 +584,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
 
   getPhaseInstructionTitle(): string {
     const isKa = this.translationService.isGeorgian();
-    switch (this.userPhase) {
-      case 0:
-        return isKa ? 'I ეტაპი — რეგისტრაცია' : 'Phase 1 — Registration';
-      case 1:
-        return isKa ? 'II ეტაპი — წარმოსადგენი დოკუმენტების ნუსხა' : 'Phase 2 — Required Documents';
-      case 2:
-        return isKa ? 'III ეტაპი — სამუშაო ნებართვა და გამგზავრება' : 'Phase 3 — Work Permit & Departure';
-      default:
-        return isKa ? 'ეტაპის ინსტრუქცია' : 'Phase Instructions';
-    }
+    return isKa ? 'სარეგისტრაციო დოკუმენტები' : 'Registration Documents';
   }
 
   checkPrivacyPolicyStatus() {

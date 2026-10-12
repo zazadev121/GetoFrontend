@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
-import { NewsDto } from '../../core/models/news.model';
+import { NewsDto, NewsAttachmentDto } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news-detail',
@@ -132,14 +132,14 @@ import { NewsDto } from '../../core/models/news.model';
                 </div>
               </div>
 
-              <a
-                [href]="newsService.getAttachmentDownloadUrl(att.id)"
-                target="_blank"
-                [download]="att.fileName"
-                class="btn btn-secondary btn-sm text-xs px-3 py-1.5 flex items-center gap-1.5 shrink-0 bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors">
-                <i class="fa-solid fa-download text-[10px]"></i>
+              <button
+                type="button"
+                (click)="downloadAttachment(att)"
+                [disabled]="isDownloadingId === att.id"
+                class="btn btn-secondary btn-sm text-xs px-3 py-1.5 flex items-center gap-1.5 shrink-0 bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:bg-emerald-600 hover:text-white transition-colors cursor-pointer">
+                <i class="fa-solid" [ngClass]="isDownloadingId === att.id ? 'fa-spinner fa-spin' : 'fa-download text-[10px]'"></i>
                 <span>{{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -155,6 +155,20 @@ export class NewsDetailComponent implements OnInit {
 
   news: NewsDto | null = null;
   isLoading = true;
+  isDownloadingId: number | null = null;
+
+  downloadAttachment(att: NewsAttachmentDto) {
+    this.isDownloadingId = att.id;
+    this.newsService.downloadAttachment(att.id, att.fileName).subscribe({
+      next: () => {
+        this.isDownloadingId = null;
+      },
+      error: () => {
+        this.isDownloadingId = null;
+        alert(this.translationService.isGeorgian() ? 'ფაილის ჩამოტვირთვა ვერ მოხერხდა (ფაილი ვერ მოიძებნა)' : 'Failed to download file (file not found)');
+      }
+    });
+  }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));

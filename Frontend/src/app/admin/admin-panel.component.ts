@@ -9,9 +9,8 @@ import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
 import { NewsDto, NewsLinkDto, NewsAttachmentDto } from '../core/models/news.model';
-import { VacancyDto, VacancyLinkDto } from '../core/models/vacancy.model';
+import { VacancyDto, VacancyLinkDto, VacancyAttachmentDto } from '../core/models/vacancy.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
-import { PhaseLabelPipe } from '../shared/pipes/phase-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
@@ -34,7 +33,6 @@ interface ManagedTemplateItem {
     CommonModule,
     FormsModule,
     StatusLabelPipe,
-    PhaseLabelPipe,
     FileSizePipe,
     TranslatePipe,
     ConfirmDialogComponent
@@ -148,7 +146,6 @@ interface ManagedTemplateItem {
                 <th>{{ 'admin.id' | translate }}</th>
                 <th>{{ 'admin.client' | translate }}</th>
                 <th>{{ 'admin.status' | translate }}</th>
-                <th>{{ 'admin.phase' | translate }}</th>
                 <th>Max Limit</th>
                 <th>{{ 'admin.files' | translate }}</th>
                 <th class="text-right">{{ 'admin.actions' | translate }}</th>
@@ -178,17 +175,6 @@ interface ManagedTemplateItem {
                     <option [value]="1">{{ 'status.rejected' | translate }}</option>
                     <option [value]="2">{{ 'status.approved' | translate }}</option>
                     <option [value]="3">{{ 'status.resubmission' | translate }}</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    [ngModel]="u.userPhase"
-                    (ngModelChange)="onUpdatePhase(u, $event)"
-                    class="form-control form-select form-select-compact py-1 px-2 text-xs w-full min-w-[9.5rem] font-semibold">
-                    <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
-                    <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
-                    <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
-                    <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                   </select>
                 </td>
                 <td>
@@ -284,17 +270,6 @@ interface ManagedTemplateItem {
                   <option [value]="1">{{ 'status.rejected' | translate }}</option>
                   <option [value]="2">{{ 'status.approved' | translate }}</option>
                   <option [value]="3">{{ 'status.resubmission' | translate }}</option>
-                </select>
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</label>
-                <select
-                  [ngModel]="u.userPhase" (ngModelChange)="onUpdatePhase(u, $event)"
-                  class="form-control form-select form-select-compact py-1.5 px-2 text-xs w-full font-semibold">
-                  <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
-                  <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
-                  <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
-                  <option [value]="3">{{ 'phase.canceled' | translate }}</option>
                 </select>
               </div>
               <div>
@@ -413,18 +388,11 @@ interface ManagedTemplateItem {
           </div>
 
           <!-- User Stats Cards Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
               <span class="text-slate-500 block mb-1">{{ 'admin.status' | translate }}</span>
               <span class="badge" [ngClass]="getStatusBadgeClass(selectedUserForInspect.status)">
                 {{ selectedUserForInspect.status | statusLabel }}
-              </span>
-            </div>
-
-            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span class="text-slate-500 block mb-1">{{ 'admin.phase' | translate }}</span>
-              <span class="badge badge-phase">
-                {{ selectedUserForInspect.userPhase | phaseLabel }}
               </span>
             </div>
 
@@ -637,16 +605,6 @@ interface ManagedTemplateItem {
           </p>
 
           <!-- Phase Dropdown -->
-          <div>
-            <label class="form-label" for="bulk-phase">{{ 'admin.targetPhase' | translate }}</label>
-            <select id="bulk-phase" [(ngModel)]="bulkPhase" class="form-control form-select">
-              <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
-              <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
-              <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
-              <option [value]="3">{{ 'phase.canceled' | translate }}</option>
-            </select>
-          </div>
-
           <!-- File Input -->
           <div>
             <label class="form-label" for="bulk-file">{{ 'admin.selectFile' | translate }}</label>
@@ -692,17 +650,6 @@ interface ManagedTemplateItem {
             <div class="text-slate-500">Recipient:</div>
             <div class="font-bold text-white">{{ selectedUserForSendDoc?.name }} {{ selectedUserForSendDoc?.lastName }}</div>
             <div class="text-slate-400 text-[11px] font-mono">{{ selectedUserForSendDoc?.email }}</div>
-          </div>
-
-          <!-- Phase Dropdown -->
-          <div>
-            <label class="form-label" for="senddoc-phase">{{ 'admin.targetPhase' | translate }}</label>
-            <select id="senddoc-phase" [(ngModel)]="sendDocPhase" class="form-control form-select">
-              <option [value]="0">{{ 'phase.phaseOne' | translate }}</option>
-              <option [value]="1">{{ 'phase.phaseTwo' | translate }}</option>
-              <option [value]="2">{{ 'phase.phaseThree' | translate }}</option>
-              <option [value]="3">{{ 'phase.canceled' | translate }}</option>
-            </select>
           </div>
 
           <!-- Note Input -->
@@ -937,9 +884,9 @@ interface ManagedTemplateItem {
                       <span class="text-[10px] text-slate-400">({{ att.fileSize | fileSize }})</span>
                     </div>
                     <div class="flex items-center gap-1">
-                      <a [href]="newsService.getAttachmentDownloadUrl(att.id)" target="_blank" download class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
+                      <button type="button" (click)="downloadNewsAttachment(att)" class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
                         <i class="fa-solid fa-download"></i>
-                      </a>
+                      </button>
                       <button type="button" (click)="deleteNewsAttachment(att.id)" class="btn btn-danger btn-sm text-[10px] px-2 py-0.5">
                         <i class="fa-solid fa-trash"></i>
                       </button>
@@ -1187,10 +1134,9 @@ interface ManagedTemplateItem {
                       <span class="text-[10px] text-slate-400">({{ att.fileSize | fileSize }})</span>
                     </div>
                     <div class="flex items-center gap-1">
-                      <a [href]="vacancyService.getAttachmentDownloadUrl(att.id)" target="_blank" download
-                        class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
+                      <button type="button" (click)="downloadVacancyAttachment(att)" class="btn btn-secondary btn-sm text-[10px] px-2 py-0.5">
                         <i class="fa-solid fa-download"></i>
-                      </a>
+                      </button>
                       <button type="button" (click)="deleteVacancyAttachment(att.id)" class="btn btn-danger btn-sm text-[10px] px-2 py-0.5">
                         <i class="fa-solid fa-trash"></i>
                       </button>
@@ -1891,6 +1837,12 @@ export class AdminPanelComponent implements OnInit {
     this.selectedNewsFiles.splice(index, 1);
   }
 
+  downloadNewsAttachment(att: NewsAttachmentDto) {
+    this.newsService.downloadAttachment(att.id, att.fileName).subscribe({
+      error: () => this.notificationService.error('Failed to download attachment', 'Error')
+    });
+  }
+
   deleteNewsAttachment(attachmentId: number) {
     this.newsService.deleteAttachment(attachmentId).subscribe({
       next: (res) => {
@@ -2097,6 +2049,12 @@ export class AdminPanelComponent implements OnInit {
 
   removeSelectedVacancyFile(index: number) {
     this.selectedVacancyFiles.splice(index, 1);
+  }
+
+  downloadVacancyAttachment(att: VacancyAttachmentDto) {
+    this.vacancyService.downloadAttachment(att.id, att.fileName).subscribe({
+      error: () => this.notificationService.error('Failed to download attachment', 'Error')
+    });
   }
 
   deleteVacancyAttachment(attachmentId: number) {

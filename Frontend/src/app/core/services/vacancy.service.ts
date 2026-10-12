@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { API_CONFIG } from '../config/api.config';
 import { ApiResponse } from '../models/api-response.model';
 import { VacancyDto, CreateVacancyDto, VacancyAttachmentDto } from '../models/vacancy.model';
@@ -42,7 +42,33 @@ export class VacancyService {
     return `${this.baseUrl}/attachments/${attachmentId}/download`;
   }
 
-  downloadAttachment(attachmentId: number, fileName: string): Observable<Blob> {
-    return this.http.get(this.getAttachmentDownloadUrl(attachmentId), { responseType: 'blob' });
+  downloadAttachment(attachmentId: number, defaultFileName: string = 'attachment'): Observable<void> {
+    const url = this.getAttachmentDownloadUrl(attachmentId);
+    return this.http.get(url, {
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        const blob = response.body as Blob;
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = defaultFileName;
+
+        if (contentDisposition) {
+          const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+          if (matches != null && matches[1]) {
+            filename = matches[1].replace(/['"]/g, '');
+          }
+        }
+
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      })
+    );
   }
 }

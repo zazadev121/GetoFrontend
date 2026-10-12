@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { VacancyService } from '../../core/services/vacancy.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
-import { VacancyDto } from '../../core/models/vacancy.model';
+import { VacancyDto, VacancyAttachmentDto } from '../../core/models/vacancy.model';
 
 @Component({
   selector: 'app-vacancy-detail',
@@ -132,12 +132,14 @@ import { VacancyDto } from '../../core/models/vacancy.model';
                 </div>
               </div>
 
-              <a [href]="vacancyService.getAttachmentDownloadUrl(att.id)"
-                target="_blank" [download]="att.fileName"
-                class="btn btn-secondary btn-sm shrink-0">
-                <i class="fa-solid fa-download text-[10px]"></i>
+              <button
+                type="button"
+                (click)="downloadAttachment(att)"
+                [disabled]="isDownloadingId === att.id"
+                class="btn btn-secondary btn-sm shrink-0 cursor-pointer">
+                <i class="fa-solid" [ngClass]="isDownloadingId === att.id ? 'fa-spinner fa-spin' : 'fa-download text-[10px]'"></i>
                 <span>{{ translationService.isGeorgian() ? 'ჩამოტვირთვა' : 'Download' }}</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -153,6 +155,20 @@ export class VacancyDetailComponent implements OnInit {
 
   vacancy: VacancyDto | null = null;
   isLoading = true;
+  isDownloadingId: number | null = null;
+
+  downloadAttachment(att: VacancyAttachmentDto) {
+    this.isDownloadingId = att.id;
+    this.vacancyService.downloadAttachment(att.id, att.fileName).subscribe({
+      next: () => {
+        this.isDownloadingId = null;
+      },
+      error: () => {
+        this.isDownloadingId = null;
+        alert(this.translationService.isGeorgian() ? 'ფაილის ჩამოტვირთვა ვერ მოხერხდა (ფაილი ვერ მოიძებნა)' : 'Failed to download file (file not found)');
+      }
+    });
+  }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
