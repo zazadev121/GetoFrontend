@@ -17,9 +17,10 @@ export class AiChatService {
   private http = inject(HttpClient);
   private readonly baseUrl = `${API_CONFIG.baseUrl}/Ai`;
 
-  sendMessage(message: string, history: ChatMessage[]): Observable<ChatResponse> {
+  sendMessage(message: string, history: ChatMessage[], language: 'ka' | 'en'): Observable<ChatResponse> {
     return this.http.post<ChatResponse>(`${this.baseUrl}/chat`, {
       message,
+      language,
       history: history.map(h => ({ role: h.role, content: h.content }))
     });
   }

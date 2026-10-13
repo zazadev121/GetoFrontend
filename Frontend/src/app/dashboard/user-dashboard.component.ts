@@ -377,8 +377,8 @@ interface StaticTemplateItem {
                 </div>
                 <p class="leading-relaxed text-xs text-blue-200/90">
                   {{ translationService.isGeorgian()
-                    ? 'გერმანიაში სტუდენტური დასაქმების პროგრამის შესახებ ინფორმაცია — ვაკანსიები, ანაზღაურება, საცხოვრებელი პირობები, მომსახურების ხელშეკრულება და პროგრამის სრული გზამკვლევი — ხელმისაწვდომია ჩვენი ვებგვერდის „სიახლეების" განყოფილებაში.'
-                    : 'Information about the student employment program in Germany — vacancies, remuneration, accommodation, service agreement and full program guide — is available in the "News" section of our website.' }}
+                    ? 'ვაკანსიები და მათში მითითებული ანაზღაურება იხილეთ „ვაკანსიების“ გვერდზე. პროგრამის სიახლეები, საცხოვრებელი პირობების შესახებ ინფორმაცია, მომსახურების ხელშეკრულება და გზამკვლევი იხილეთ „სიახლეების“ გვერდზე.'
+                    : 'See the Vacancies page for job listings and any pay stated in them. See the News page for program updates, accommodation information, the service agreement and the program guide.' }}
                 </p>
                 <p class="text-xs font-semibold text-blue-300">
                   {{ translationService.isGeorgian() ? 'ყველა საჭირო ინფორმაცია ერთ სივრცეში!' : 'All the information you need in one place!' }}

@@ -1,13 +1,14 @@
 import { Component, inject, signal, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AiChatService, ChatMessage } from '../../../core/services/ai-chat.service';
 import { TranslationService } from '../../../core/services/translation.service';
 
 @Component({
   selector: 'app-chatbot',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <!-- Floating Blob Button -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
@@ -74,6 +75,16 @@ import { TranslationService } from '../../../core/services/translation.service';
                 ? 'bg-blue-600 text-white rounded-tr-sm'
                 : 'bg-slate-800 text-slate-200 rounded-tl-sm border border-white/10'">
               {{ msg.content }}
+              <a *ngIf="msg.role === 'assistant' && msg.content.includes('/vacancies')"
+                routerLink="/vacancies"
+                class="block mt-2 font-semibold text-blue-300 hover:text-blue-200 underline">
+                {{ translationService.isGeorgian() ? 'ვაკანსიების ნახვა' : 'View vacancies' }}
+              </a>
+              <a *ngIf="msg.role === 'assistant' && msg.content.includes('/news')"
+                routerLink="/news"
+                class="block mt-2 font-semibold text-blue-300 hover:text-blue-200 underline">
+                {{ translationService.isGeorgian() ? 'სიახლეების ნახვა' : 'View news' }}
+              </a>
             </div>
           </div>
 
@@ -193,7 +204,7 @@ export class ChatbotComponent implements AfterViewChecked {
     this.messages.update(m => [...m, { role: 'user', content: msg }]);
     this.isLoading.set(true);
 
-    this.aiChatService.sendMessage(msg, currentHistory).subscribe({
+    this.aiChatService.sendMessage(msg, currentHistory, this.translationService.currentLang()).subscribe({
       next: (res) => {
         this.messages.update(m => [...m, { role: 'assistant', content: res.reply }]);
         this.isLoading.set(false);
