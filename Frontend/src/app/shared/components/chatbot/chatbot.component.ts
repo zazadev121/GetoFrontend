@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AiChatService, ChatMessage } from '../../../core/services/ai-chat.service';
 import { TranslationService } from '../../../core/services/translation.service';
+import { formatChatReply } from './chat-reply-format';
 
 @Component({
   selector: 'app-chatbot',
@@ -75,15 +76,10 @@ import { TranslationService } from '../../../core/services/translation.service';
                 ? 'bg-blue-600 text-white rounded-tr-sm'
                 : 'bg-slate-800 text-slate-200 rounded-tl-sm border border-white/10'">
               {{ msg.content }}
-              <a *ngIf="msg.role === 'assistant' && msg.content.includes('/vacancies')"
-                routerLink="/vacancies"
+              <a *ngFor="let link of msg.links"
+                [routerLink]="link.path"
                 class="block mt-2 font-semibold text-blue-300 hover:text-blue-200 underline">
-                {{ translationService.isGeorgian() ? 'ვაკანსიების ნახვა' : 'View vacancies' }}
-              </a>
-              <a *ngIf="msg.role === 'assistant' && msg.content.includes('/news')"
-                routerLink="/news"
-                class="block mt-2 font-semibold text-blue-300 hover:text-blue-200 underline">
-                {{ translationService.isGeorgian() ? 'სიახლეების ნახვა' : 'View news' }}
+                {{ link.label }}
               </a>
             </div>
           </div>
@@ -206,7 +202,8 @@ export class ChatbotComponent implements AfterViewChecked {
 
     this.aiChatService.sendMessage(msg, currentHistory, this.translationService.currentLang()).subscribe({
       next: (res) => {
-        this.messages.update(m => [...m, { role: 'assistant', content: res.reply }]);
+        const formatted = formatChatReply(res.reply, this.translationService.currentLang());
+        this.messages.update(m => [...m, { role: 'assistant', ...formatted, rawContent: res.reply }]);
         this.isLoading.set(false);
       },
       error: () => {

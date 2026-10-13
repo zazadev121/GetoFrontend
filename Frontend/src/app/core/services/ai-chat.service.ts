@@ -6,6 +6,8 @@ import { API_CONFIG } from '../config/api.config';
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  rawContent?: string;
+  links?: { path: string; label: string }[];
 }
 
 export interface ChatResponse {
@@ -21,7 +23,7 @@ export class AiChatService {
     return this.http.post<ChatResponse>(`${this.baseUrl}/chat`, {
       message,
       language,
-      history: history.map(h => ({ role: h.role, content: h.content }))
+      history: history.map(h => ({ role: h.role, content: h.rawContent ?? h.content }))
     });
   }
 }
