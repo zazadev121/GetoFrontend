@@ -23,11 +23,9 @@ import { formatChatReply } from './chat-reply-format';
         <!-- Header -->
         <div class="flex items-center gap-3 px-4 py-3 border-b border-white/10"
           style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);">
-          <div class="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-robot text-blue-400 text-sm"></i>
-          </div>
+          <img src="/images/geta-ai-assistant.png" alt="Geta AI assistant" class="w-9 h-9 rounded-full object-cover border border-blue-400/50 shrink-0">
           <div class="flex-1 min-w-0">
-            <div class="font-bold text-white text-sm font-heading">GETO Assistant</div>
+            <div class="font-bold text-white text-sm font-heading">{{ translationService.isGeorgian() ? 'გეთა' : 'Geta' }} <span class="text-blue-300 font-normal">· GETO AI</span></div>
             <div class="text-[10px] text-emerald-400 flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
               {{ translationService.isGeorgian() ? 'ონლაინ' : 'Online' }}
@@ -44,9 +42,7 @@ import { formatChatReply } from './chat-reply-format';
           <!-- Welcome message -->
           <div *ngIf="messages().length === 0" class="space-y-3">
             <div class="flex items-start gap-2.5">
-              <div class="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5">
-                <i class="fa-solid fa-robot text-blue-400 text-[11px]"></i>
-              </div>
+              <img src="/images/geta-ai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0 mt-0.5">
               <div class="bg-slate-800/80 border border-white/5 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-xs text-slate-200 leading-relaxed max-w-[85%]">
                 {{ welcomeMessage() }}
               </div>
@@ -65,11 +61,7 @@ import { formatChatReply } from './chat-reply-format';
 
           <!-- Chat messages -->
           <div *ngFor="let msg of messages()" class="flex items-start gap-2.5" [class.flex-row-reverse]="msg.role === 'user'">
-            <div
-              *ngIf="msg.role === 'assistant'"
-              class="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0 mt-0.5">
-              <i class="fa-solid fa-robot text-blue-400 text-[11px]"></i>
-            </div>
+            <img *ngIf="msg.role === 'assistant'" src="/images/geta-ai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0 mt-0.5">
             <div
               class="rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[82%] whitespace-pre-wrap"
               [ngClass]="msg.role === 'user'
@@ -86,9 +78,7 @@ import { formatChatReply } from './chat-reply-format';
 
           <!-- Typing indicator -->
           <div *ngIf="isLoading()" class="flex items-start gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center shrink-0">
-              <i class="fa-solid fa-robot text-blue-400 text-[11px]"></i>
-            </div>
+            <img src="/images/geta-ai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0">
             <div class="bg-slate-800/80 border border-white/5 rounded-2xl rounded-tl-sm px-3.5 py-2.5">
               <div class="flex gap-1 items-center h-3">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style="animation-delay:0ms"></span>
@@ -129,15 +119,13 @@ import { formatChatReply } from './chat-reply-format';
         <!-- Pulse ring -->
         <span *ngIf="!isOpen()" class="absolute inset-0 rounded-full bg-blue-500/30 animate-ping"></span>
 
-        <i class="fa-solid transition-all duration-300 text-white text-lg"
-          [class.fa-robot]="!isOpen()"
-          [class.fa-xmark]="isOpen()">
-        </i>
+        <img *ngIf="!isOpen()" src="/images/geta-ai-assistant.png" alt="Geta AI assistant" class="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-blue-300/60">
+        <i *ngIf="isOpen()" class="fa-solid fa-xmark text-white text-lg"></i>
 
         <!-- Tooltip -->
         <span *ngIf="!isOpen()"
           class="absolute right-16 bg-slate-900 border border-white/10 text-white text-[10px] font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          {{ translationService.isGeorgian() ? 'GETO ასისტენტი' : 'GETO Assistant' }}
+          {{ translationService.isGeorgian() ? 'გეთა · GETO AI ასისტენტი' : 'Geta · GETO AI Assistant' }}
         </span>
       </button>
 
@@ -167,8 +155,8 @@ export class ChatbotComponent implements AfterViewChecked {
 
   welcomeMessage(): string {
     return this.translationService.isGeorgian()
-      ? 'გამარჯობა! მე ვარ GETO-ს ასისტენტი. დაგეხმარებათ სარეგისტრაციო პროცესში, საჭირო დოკუმენტებისა და პროგრამის შესახებ კითხვებზე. ✋'
-      : "Hello! I'm GETO's AI assistant. I can help you with registration, required documents, and program questions. ✋";
+      ? 'გამარჯობა! მე ვარ გეთა, GETO-ს AI ასისტენტი. დაგეხმარებით რეგისტრაციის, საჭირო დოკუმენტებისა და პროგრამის შესახებ კითხვებზე.'
+      : "Hello! I'm Geta, GETO's AI assistant. I can help with registration, required documents, and program questions.";
   }
 
   quickPrompts() {

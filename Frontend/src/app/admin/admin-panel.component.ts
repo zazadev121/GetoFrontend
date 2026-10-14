@@ -15,6 +15,7 @@ import { FileSizePipe } from '../shared/pipes/file-size.pipe';
 import { TranslatePipe } from '../shared/pipes/translate.pipe';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog.component';
 import { BackgroundMusicService } from '../core/services/background-music.service';
+import { AdminAnalyticsComponent } from './admin-analytics.component';
 
 interface ManagedTemplateItem {
   id: string;
@@ -35,7 +36,8 @@ interface ManagedTemplateItem {
     StatusLabelPipe,
     FileSizePipe,
     TranslatePipe,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    AdminAnalyticsComponent
   ],
   template: `
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-fade-in w-full overflow-hidden">
@@ -112,6 +114,8 @@ interface ManagedTemplateItem {
           </div>
         </div>
       </div>
+
+      <app-admin-analytics />
 
       <!-- Main Users Card -->
       <div class="glass-card p-4 sm:p-6 space-y-5 w-full">
