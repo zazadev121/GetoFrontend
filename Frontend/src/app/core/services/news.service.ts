@@ -42,6 +42,10 @@ export class NewsService {
     return `${this.baseUrl}/attachments/${attachmentId}/download`;
   }
 
+  getAttachmentViewUrl(attachmentId: number): string {
+    return `${this.baseUrl}/attachments/${attachmentId}/view`;
+  }
+
   downloadAttachment(attachmentId: number, defaultFileName: string = 'attachment'): Observable<void> {
     const url = this.getAttachmentDownloadUrl(attachmentId);
     return this.http.get(url, {

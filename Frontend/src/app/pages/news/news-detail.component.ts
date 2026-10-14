@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { FileSizePipe } from '../../shared/pipes/file-size.pipe';
-import { NewsDto, NewsAttachmentDto } from '../../core/models/news.model';
+import { NewsDto, NewsAttachmentDto, isNewsPhotoFileName } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news-detail',
@@ -102,8 +102,25 @@ import { NewsDto, NewsAttachmentDto } from '../../core/models/news.model';
           </div>
         </div>
 
-        <!-- Downloadable Attachments Card (separate card) -->
-        <div *ngIf="news.attachments && news.attachments.length > 0" class="glass-card p-6 sm:p-8 border-emerald-500/20 space-y-4">
+        <!-- Photos are displayed in the article; other files remain downloadable. -->
+        <div *ngIf="photos.length > 0" class="glass-card p-6 sm:p-8 border-blue-500/20 space-y-4">
+          <h2 class="font-bold text-white text-sm font-heading">
+            {{ translationService.isGeorgian() ? 'ფოტოები' : 'Photos' }}
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <a *ngFor="let photo of photos"
+              [href]="newsService.getAttachmentViewUrl(photo.id)"
+              target="_blank" rel="noopener noreferrer"
+              class="block overflow-hidden rounded-xl border border-slate-700 hover:border-blue-400 transition-colors">
+              <img [src]="newsService.getAttachmentViewUrl(photo.id)"
+                [alt]="photo.fileName" loading="lazy"
+                class="w-full aspect-[4/3] object-cover">
+            </a>
+          </div>
+        </div>
+
+        <!-- Downloadable non-photo attachments -->
+        <div *ngIf="otherAttachments.length > 0" class="glass-card p-6 sm:p-8 border-emerald-500/20 space-y-4">
           <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg shrink-0">
               <i class="fa-solid fa-paperclip"></i>
@@ -113,14 +130,14 @@ import { NewsDto, NewsAttachmentDto } from '../../core/models/news.model';
                 {{ translationService.isGeorgian() ? 'მიმაგრებული ფაილები' : 'Downloadable Attachments' }}
               </div>
               <div class="text-[11px] text-slate-400">
-                {{ news.attachments.length }} {{ translationService.isGeorgian() ? 'ფაილი ჩამოსატვირთი' : (news.attachments.length === 1 ? 'file available' : 'files available') }}
+                {{ otherAttachments.length }} {{ translationService.isGeorgian() ? 'ფაილი ჩამოსატვირთი' : (otherAttachments.length === 1 ? 'file available' : 'files available') }}
               </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div
-              *ngFor="let att of news.attachments"
+              *ngFor="let att of otherAttachments"
               class="p-4 bg-slate-900/80 border border-slate-800 hover:border-emerald-500/40 rounded-xl flex items-center justify-between transition-all gap-3 group/att">
               <div class="flex items-center gap-3 overflow-hidden">
                 <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base shrink-0">
@@ -156,6 +173,14 @@ export class NewsDetailComponent implements OnInit {
   news: NewsDto | null = null;
   isLoading = true;
   isDownloadingId: number | null = null;
+
+  get photos(): NewsAttachmentDto[] {
+    return this.news?.attachments?.filter(att => isNewsPhotoFileName(att.fileName)) ?? [];
+  }
+
+  get otherAttachments(): NewsAttachmentDto[] {
+    return this.news?.attachments?.filter(att => !isNewsPhotoFileName(att.fileName)) ?? [];
+  }
 
   downloadAttachment(att: NewsAttachmentDto) {
     this.isDownloadingId = att.id;

@@ -6,6 +6,12 @@ export interface NewsAttachmentDto {
   uploadedAt: string;
 }
 
+export const MAX_NEWS_PHOTOS = 4;
+
+export function isNewsPhotoFileName(fileName: string): boolean {
+  return /\.(jpe?g|png|webp|gif)$/i.test(fileName);
+}
+
 export interface NewsLinkDto {
   label: string;
   url: string;

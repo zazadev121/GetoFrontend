@@ -4,7 +4,7 @@ import { NewsService } from '../../core/services/news.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { PageHeroComponent } from '../../shared/components/page-hero/page-hero.component';
-import { NewsDto } from '../../core/models/news.model';
+import { NewsDto, NewsAttachmentDto, isNewsPhotoFileName } from '../../core/models/news.model';
 
 @Component({
   selector: 'app-news',
@@ -45,8 +45,11 @@ import { NewsDto } from '../../core/models/news.model';
           class="glass-card p-5 sm:p-7 border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 flex items-center justify-between gap-4 group cursor-pointer no-underline block">
 
           <div class="flex items-center gap-4 overflow-hidden">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 text-lg group-hover:bg-blue-500/20 transition-colors">
-              <i class="fa-solid fa-bullhorn"></i>
+            <div class="w-14 h-14 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 text-lg overflow-hidden group-hover:bg-blue-500/20 transition-colors">
+              <ng-container *ngIf="firstPhoto(news) as photo; else defaultNewsIcon">
+                <img [src]="newsService.getAttachmentViewUrl(photo.id)" [alt]="photo.fileName" loading="lazy" class="w-full h-full object-cover">
+              </ng-container>
+              <ng-template #defaultNewsIcon><i class="fa-solid fa-bullhorn"></i></ng-template>
             </div>
             <div class="overflow-hidden">
               <span
@@ -102,6 +105,10 @@ export class NewsComponent implements OnInit {
       return news.titleEn;
     }
     return news.title;
+  }
+
+  firstPhoto(news: NewsDto): NewsAttachmentDto | undefined {
+    return news.attachments?.find(att => isNewsPhotoFileName(att.fileName));
   }
 
   loadNews() {

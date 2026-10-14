@@ -25,7 +25,7 @@ import { SealBadgeComponent } from '../seal-badge/seal-badge.component';
                 icon="fa-stamp"></app-seal-badge>
             </div>
 
-            <ul class="grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            <ul class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
               <li *ngFor="let channel of channels">
                 <a [href]="channel.href"
                   [attr.target]="channel.external ? '_blank' : null"
@@ -96,14 +96,6 @@ export class FooterComponent {
       icon: 'fa-brands fa-facebook-f',
       accent: 'clay',
       external: true
-    },
-    {
-      label: 'Phone',
-      value: '577 54 75 77',
-      href: 'tel:+995577547577',
-      icon: 'fa-solid fa-phone',
-      accent: 'honey',
-      external: false
     },
     {
       label: 'Email',

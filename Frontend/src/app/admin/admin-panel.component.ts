@@ -8,7 +8,7 @@ import { NotificationService } from '../core/services/notification.service';
 import { TranslationService } from '../core/services/translation.service';
 import { UserWithDocumentsDto } from '../core/models/user.model';
 import { DocumentDto } from '../core/models/document.model';
-import { NewsDto, NewsLinkDto, NewsAttachmentDto } from '../core/models/news.model';
+import { NewsDto, NewsLinkDto, NewsAttachmentDto, MAX_NEWS_PHOTOS, isNewsPhotoFileName } from '../core/models/news.model';
 import { VacancyDto, VacancyLinkDto, VacancyAttachmentDto } from '../core/models/vacancy.model';
 import { StatusLabelPipe } from '../shared/pipes/status-label.pipe';
 import { FileSizePipe } from '../shared/pipes/file-size.pipe';
@@ -740,7 +740,7 @@ interface ManagedTemplateItem {
               <i class="fa-solid fa-newspaper text-lg"></i>
               <h3 class="text-lg text-white font-heading">{{ 'news.adminTitle' | translate }}</h3>
             </div>
-            <button (click)="showNewsModal = false" class="text-slate-400 hover:text-white">
+            <button (click)="closeNewsModal()" class="text-slate-400 hover:text-white">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -868,16 +868,47 @@ interface ManagedTemplateItem {
                 </div>
               </div>
 
-              <!-- Attachments / Files Section -->
+              <!-- News photos -->
+              <div class="p-3 bg-slate-950/60 rounded-lg border border-blue-500/20 space-y-3">
+                <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-images text-blue-400"></i>
+                  {{ translationService.isGeorgian() ? 'სიახლის ფოტოები' : 'News photos' }}
+                  <span class="text-slate-400 font-normal">({{ newsPhotoCount() }}/{{ maxNewsPhotos }})</span>
+                </div>
+                <div *ngIf="existingNewsPhotos().length || selectedNewsPhotos.length" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div *ngFor="let photo of existingNewsPhotos()" class="relative overflow-hidden rounded-lg border border-slate-700">
+                    <img [src]="newsService.getAttachmentViewUrl(photo.id)" [alt]="photo.fileName" class="w-full aspect-square object-cover">
+                    <button type="button" (click)="deleteNewsAttachment(photo.id)"
+                      class="absolute top-1 right-1 rounded bg-slate-950/80 text-rose-300 px-1.5 py-0.5" [attr.aria-label]="'Remove ' + photo.fileName">
+                      <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
+                  </div>
+                  <div *ngFor="let photo of selectedNewsPhotos; let i = index" class="relative overflow-hidden rounded-lg border border-blue-500/40">
+                    <img [src]="photo.previewUrl" [alt]="photo.file.name" class="w-full aspect-square object-cover">
+                    <button type="button" (click)="removeSelectedNewsPhoto(i)"
+                      class="absolute top-1 right-1 rounded bg-slate-950/80 text-rose-300 px-1.5 py-0.5" [attr.aria-label]="'Remove ' + photo.file.name">
+                      <i class="fa-solid fa-xmark text-[10px]"></i>
+                    </button>
+                  </div>
+                </div>
+                <input type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif"
+                  (change)="onNewsPhotoSelected($event)" [disabled]="newsPhotoCount() >= maxNewsPhotos"
+                  class="form-control text-xs">
+                <p class="text-[10px] text-slate-400">
+                  {{ translationService.isGeorgian() ? 'აირჩიეთ მაქსიმუმ 4 ფოტო (JPG, PNG, WebP ან GIF).' : 'Choose up to 4 photos (JPG, PNG, WebP or GIF).' }}
+                </p>
+              </div>
+
+              <!-- Other attachments / files -->
               <div class="p-3 bg-slate-950/60 rounded-lg border border-slate-800 space-y-3">
                 <div class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-paperclip text-emerald-400"></i>
-                  <span>File Attachments</span>
+                  <span>Other File Attachments</span>
                 </div>
 
                 <!-- Existing attachments when editing -->
-                <div *ngIf="editingNews && editingNews.attachments && editingNews.attachments.length > 0" class="space-y-1.5">
-                  <div *ngFor="let att of editingNews.attachments" class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded border border-slate-800">
+                <div *ngIf="existingNewsFiles().length > 0" class="space-y-1.5">
+                  <div *ngFor="let att of existingNewsFiles()" class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded border border-slate-800">
                     <div class="flex items-center gap-2 truncate">
                       <i class="fa-solid fa-file text-blue-400"></i>
                       <span class="font-semibold text-white truncate">{{ att.fileName }}</span>
@@ -911,7 +942,7 @@ interface ManagedTemplateItem {
                     multiple
                     (change)="onNewsFileSelected($event)"
                     class="form-control text-xs">
-                  <p class="text-[10px] text-slate-500 mt-1">Select files to attach to this news post (PDF, DOCX, Images, etc.)</p>
+                  <p class="text-[10px] text-slate-500 mt-1">PDF, DOCX and other files. Photos selected here will be added to the gallery above.</p>
                 </div>
               </div>
 
@@ -1003,7 +1034,7 @@ interface ManagedTemplateItem {
           </div>
 
           <div class="pt-3 border-t border-white/10 flex justify-end">
-            <button (click)="showNewsModal = false" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
+            <button (click)="closeNewsModal()" class="btn btn-secondary btn-sm">{{ 'admin.close' | translate }}</button>
           </div>
         </div>
       </div>
@@ -1290,6 +1321,8 @@ export class AdminPanelComponent implements OnInit {
   newLinkLabel = '';
   newLinkUrl = '';
   selectedNewsFiles: File[] = [];
+  selectedNewsPhotos: { file: File; previewUrl: string }[] = [];
+  readonly maxNewsPhotos = MAX_NEWS_PHOTOS;
   isPostingNews = false;
   editingNews: NewsDto | null = null;
   isUpdatingNews = false;
@@ -1794,6 +1827,11 @@ export class AdminPanelComponent implements OnInit {
     this.loadNewsForAdmin();
   }
 
+  closeNewsModal() {
+    this.showNewsModal = false;
+    this.resetNewsForm();
+  }
+
   loadNewsForAdmin() {
     this.isLoadingNews = true;
     this.newsService.getAllNews().subscribe({
@@ -1825,12 +1863,57 @@ export class AdminPanelComponent implements OnInit {
     this.newsLinks.splice(index, 1);
   }
 
-  onNewsFileSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      for (let i = 0; i < event.target.files.length; i++) {
-        this.selectedNewsFiles.push(event.target.files[i]);
+  existingNewsPhotos(): NewsAttachmentDto[] {
+    return this.editingNews?.attachments?.filter(att => isNewsPhotoFileName(att.fileName)) ?? [];
+  }
+
+  existingNewsFiles(): NewsAttachmentDto[] {
+    return this.editingNews?.attachments?.filter(att => !isNewsPhotoFileName(att.fileName)) ?? [];
+  }
+
+  newsPhotoCount(): number {
+    return this.existingNewsPhotos().length + this.selectedNewsPhotos.length;
+  }
+
+  onNewsPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.addNewsPhotos(Array.from(input.files ?? []));
+    input.value = '';
+  }
+
+  onNewsFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    for (const file of Array.from(input.files ?? [])) {
+      if (isNewsPhotoFileName(file.name) || file.type.startsWith('image/')) {
+        this.addNewsPhotos([file]);
+      } else {
+        this.selectedNewsFiles.push(file);
       }
     }
+    input.value = '';
+  }
+
+  private addNewsPhotos(files: File[]) {
+    for (const file of files) {
+      if (!isNewsPhotoFileName(file.name)) {
+        this.notificationService.error('Use JPG, PNG, WebP or GIF photos.', 'Invalid photo');
+      } else if (this.newsPhotoCount() >= MAX_NEWS_PHOTOS) {
+        this.notificationService.error('A news post can have at most 4 photos.', 'Photo limit');
+        break;
+      } else {
+        this.selectedNewsPhotos.push({ file, previewUrl: URL.createObjectURL(file) });
+      }
+    }
+  }
+
+  removeSelectedNewsPhoto(index: number) {
+    const [removed] = this.selectedNewsPhotos.splice(index, 1);
+    if (removed) URL.revokeObjectURL(removed.previewUrl);
+  }
+
+  private clearSelectedNewsPhotos() {
+    for (const photo of this.selectedNewsPhotos) URL.revokeObjectURL(photo.previewUrl);
+    this.selectedNewsPhotos = [];
   }
 
   removeSelectedNewsFile(index: number) {
@@ -1873,29 +1956,7 @@ export class AdminPanelComponent implements OnInit {
       next: (res) => {
         if (res.statusCode === 200 && res.data) {
           const createdNews = res.data;
-          // Upload files if any selected
-          if (this.selectedNewsFiles.length > 0) {
-            let uploadedCount = 0;
-            const filesToUpload = [...this.selectedNewsFiles];
-            filesToUpload.forEach(file => {
-              this.newsService.uploadAttachment(createdNews.id, file).subscribe({
-                next: () => {
-                  uploadedCount++;
-                  if (uploadedCount === filesToUpload.length) {
-                    this.finishCreateNews();
-                  }
-                },
-                error: () => {
-                  uploadedCount++;
-                  if (uploadedCount === filesToUpload.length) {
-                    this.finishCreateNews();
-                  }
-                }
-              });
-            });
-          } else {
-            this.finishCreateNews();
-          }
+          this.uploadPendingNewsFiles(createdNews.id, failures => this.finishCreateNews(failures));
         } else {
           this.isPostingNews = false;
           this.notificationService.error(res.message || 'Failed to post news item', 'Error');
@@ -1909,9 +1970,34 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
-  private finishCreateNews() {
+  private uploadPendingNewsFiles(newsId: number, done: (failures: number) => void) {
+    const files = [...this.selectedNewsPhotos.map(photo => photo.file), ...this.selectedNewsFiles];
+    let index = 0;
+    let failures = 0;
+
+    const uploadNext = () => {
+      if (index === files.length) {
+        done(failures);
+        return;
+      }
+      this.newsService.uploadAttachment(newsId, files[index++]).subscribe({
+        next: res => {
+          if (res.statusCode !== 200) failures++;
+          uploadNext();
+        },
+        error: () => {
+          failures++;
+          uploadNext();
+        }
+      });
+    };
+    uploadNext();
+  }
+
+  private finishCreateNews(failures = 0) {
     this.isPostingNews = false;
-    this.notificationService.success('News item posted successfully.', 'News Posted');
+    if (failures) this.notificationService.error(`News posted, but ${failures} attachment(s) failed to upload.`, 'Upload incomplete');
+    else this.notificationService.success('News item posted successfully.', 'News Posted');
     this.resetNewsForm();
     this.loadNewsForAdmin();
   }
@@ -1926,6 +2012,7 @@ export class AdminPanelComponent implements OnInit {
     this.newLinkLabel = '';
     this.newLinkUrl = '';
     this.selectedNewsFiles = [];
+    this.clearSelectedNewsPhotos();
     this.editingNews = null;
   }
 
@@ -1938,6 +2025,7 @@ export class AdminPanelComponent implements OnInit {
     this.newsFormLang = 'ka';
     this.newsLinks = news.links ? [...news.links] : [];
     this.selectedNewsFiles = [];
+    this.clearSelectedNewsPhotos();
   }
 
   cancelEditNews() {
@@ -1958,28 +2046,7 @@ export class AdminPanelComponent implements OnInit {
     }).subscribe({
       next: (res) => {
         if (res.statusCode === 200) {
-          if (this.selectedNewsFiles.length > 0) {
-            let uploadedCount = 0;
-            const filesToUpload = [...this.selectedNewsFiles];
-            filesToUpload.forEach(file => {
-              this.newsService.uploadAttachment(newsId, file).subscribe({
-                next: () => {
-                  uploadedCount++;
-                  if (uploadedCount === filesToUpload.length) {
-                    this.finishUpdateNews();
-                  }
-                },
-                error: () => {
-                  uploadedCount++;
-                  if (uploadedCount === filesToUpload.length) {
-                    this.finishUpdateNews();
-                  }
-                }
-              });
-            });
-          } else {
-            this.finishUpdateNews();
-          }
+          this.uploadPendingNewsFiles(newsId, failures => this.finishUpdateNews(failures));
         } else {
           this.isUpdatingNews = false;
           this.notificationService.error(res.message || 'Failed to update news item', 'Error');
@@ -1993,9 +2060,10 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
-  private finishUpdateNews() {
+  private finishUpdateNews(failures = 0) {
     this.isUpdatingNews = false;
-    this.notificationService.success('News item updated successfully.', 'News Updated');
+    if (failures) this.notificationService.error(`News updated, but ${failures} attachment(s) failed to upload.`, 'Upload incomplete');
+    else this.notificationService.success('News item updated successfully.', 'News Updated');
     this.resetNewsForm();
     this.loadNewsForAdmin();
   }
