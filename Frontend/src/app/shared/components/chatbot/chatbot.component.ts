@@ -11,87 +11,142 @@ import { formatChatReply } from './chat-reply-format';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   template: `
-    <!-- Floating Blob Button -->
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <!-- Floating Launcher & Chat Window -->
+    <div class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3">
 
       <!-- Chat Window -->
       <div
         *ngIf="isOpen()"
-        class="w-[340px] sm:w-[380px] h-[500px] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-[#0d1117] animate-fade-in"
-        style="box-shadow: 0 0 40px rgba(59,130,246,0.15), 0 20px 60px rgba(0,0,0,0.5);">
+        class="w-[340px] sm:w-[410px] h-[560px] max-h-[85vh] flex flex-col rounded-3xl overflow-hidden border border-white/15 bg-[#090d16]/95 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8),0_0_50px_rgba(59,130,246,0.2)] animate-in fade-in zoom-in-95 duration-200"
+        role="dialog"
+        aria-label="GetAI Assistant">
 
-        <!-- Header -->
-        <div class="flex items-center gap-3 px-4 py-3 border-b border-white/10"
-          style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);">
-          <img src="/images/getai-assistant.png" alt="GetAI assistant" class="w-9 h-9 rounded-full object-cover border border-blue-400/50 shrink-0">
-          <div class="flex-1 min-w-0">
-            <div class="font-bold text-white text-sm font-heading">GetAI <span class="text-blue-300 font-normal">· GETO</span></div>
-            <div class="text-[10px] text-emerald-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
-              {{ translationService.isGeorgian() ? 'ონლაინ' : 'Online' }}
+        <!-- Ambient header lighting -->
+        <div class="absolute -top-16 -left-16 w-44 h-44 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-16 -right-16 w-44 h-44 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Chat Header -->
+        <div class="relative z-10 flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-white/10 bg-gradient-to-r from-slate-900/90 via-indigo-950/70 to-slate-900/90">
+          <div class="flex items-center gap-3 min-w-0">
+            <!-- Glowing Avatar -->
+            <div class="relative shrink-0">
+              <img
+                src="/images/getai-assistant.png"
+                alt="GetAI assistant"
+                class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.4)]">
+              <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-[#090d16]"></span>
             </div>
-          </div>
-          <button (click)="close()" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors flex items-center justify-center">
-            <i class="fa-solid fa-xmark text-xs"></i>
-          </button>
-        </div>
-
-        <!-- Messages -->
-        <div #messagesContainer class="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin">
-
-          <!-- Welcome message -->
-          <div *ngIf="messages().length === 0" class="space-y-3">
-            <div class="flex items-start gap-2.5">
-              <img src="/images/getai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0 mt-0.5">
-              <div class="bg-slate-800/80 border border-white/5 rounded-2xl rounded-tl-sm px-3.5 py-2.5 text-xs text-slate-200 leading-relaxed max-w-[85%]">
-                {{ welcomeMessage() }}
+            
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-white text-base tracking-tight font-heading">GetAI</span>
+                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                  AI ASSISTANT
+                </span>
+              </div>
+              <div class="text-[11px] text-emerald-400 font-medium flex items-center gap-1.5 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>{{ translationService.isGeorgian() ? 'ონლაინ • მზადაა დასახმარებლად' : 'Online • Ready to help' }}</span>
               </div>
             </div>
-
-            <!-- Quick prompts -->
-            <div class="flex flex-wrap gap-1.5 pl-9">
-              <button
-                *ngFor="let prompt of quickPrompts()"
-                (click)="sendQuickPrompt(prompt)"
-                class="text-[10px] px-2.5 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20 hover:text-white transition-all cursor-pointer">
-                {{ prompt }}
-              </button>
-            </div>
           </div>
 
-          <!-- Chat messages -->
-          <div *ngFor="let msg of messages()" class="flex items-start gap-2.5" [class.flex-row-reverse]="msg.role === 'user'">
-            <img *ngIf="msg.role === 'assistant'" src="/images/getai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0 mt-0.5">
+          <!-- Header Actions -->
+          <div class="flex items-center gap-1 shrink-0">
+            <!-- Clear Chat Button -->
+            <button
+              *ngIf="messages().length > 0"
+              (click)="clearChat()"
+              type="button"
+              [title]="translationService.isGeorgian() ? 'ჩატის გასუფთავება' : 'Clear chat'"
+              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center justify-center text-xs active:scale-95">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+
+            <!-- Close Button -->
+            <button
+              (click)="close()"
+              type="button"
+              aria-label="Close"
+              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center justify-center text-xs active:scale-95">
+              <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div #messagesContainer class="relative z-10 flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 scrollbar-thin">
+
+          <!-- Welcome Hero / Empty State (Pre-made questions removed) -->
+          <div *ngIf="messages().length === 0" class="flex flex-col items-center justify-center h-full min-h-[260px] text-center p-5 rounded-2xl border border-white/5 bg-gradient-to-b from-white/[0.04] to-transparent">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 ring-4 ring-blue-500/15 mb-3.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-white text-xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-white font-heading">
+              {{ translationService.isGeorgian() ? 'რით შემიძლია დაგეხმაროთ?' : 'How can I assist you today?' }}
+            </h3>
+            <p class="text-xs text-slate-300 mt-2 leading-relaxed max-w-[280px]">
+              {{ welcomeMessage() }}
+            </p>
+          </div>
+
+          <!-- Message Bubbles -->
+          <div *ngFor="let msg of messages()" class="flex items-start gap-2.5 animate-in fade-in duration-200" [class.flex-row-reverse]="msg.role === 'user'">
+            
+            <!-- Bot Avatar -->
+            <img
+              *ngIf="msg.role === 'assistant'"
+              src="/images/getai-assistant.png"
+              alt="GetAI"
+              class="w-7 h-7 rounded-full object-cover ring-1 ring-blue-400/40 shadow-sm shrink-0 mt-0.5">
+
+            <!-- Message Body -->
             <div
-              class="rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed max-w-[82%] whitespace-pre-wrap"
+              class="text-xs leading-relaxed max-w-[84%] whitespace-pre-wrap transition-all shadow-md"
               [ngClass]="msg.role === 'user'
-                ? 'bg-blue-600 text-white rounded-tr-sm'
-                : 'bg-slate-800 text-slate-200 rounded-tl-sm border border-white/10'">
-              {{ msg.content }}
-              <a *ngFor="let link of msg.links"
-                [routerLink]="link.path"
-                class="block mt-2 font-semibold text-blue-300 hover:text-blue-200 underline">
-                {{ link.label }}
-              </a>
+                ? 'rounded-2xl rounded-tr-xs px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-blue-600/20'
+                : 'rounded-2xl rounded-tl-xs px-4 py-3 bg-slate-900/90 border border-white/10 text-slate-100 backdrop-blur-sm'">
+              
+              <span>{{ msg.content }}</span>
+
+              <!-- Action Link Chips -->
+              <div *ngIf="msg.links && msg.links.length > 0" class="mt-2.5 pt-2 border-t border-white/10 space-y-1.5">
+                <a
+                  *ngFor="let link of msg.links"
+                  [routerLink]="link.path"
+                  (click)="close()"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-400/30 text-blue-300 hover:text-white font-semibold text-[11px] transition-all">
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  <span>{{ link.label }}</span>
+                </a>
+              </div>
             </div>
+
           </div>
 
-          <!-- Typing indicator -->
-          <div *ngIf="isLoading()" class="flex items-start gap-2.5">
-            <img src="/images/getai-assistant.png" alt="" class="w-7 h-7 rounded-full object-cover border border-blue-400/40 shrink-0">
-            <div class="bg-slate-800/80 border border-white/5 rounded-2xl rounded-tl-sm px-3.5 py-2.5">
-              <div class="flex gap-1 items-center h-3">
+          <!-- Typing Indicator -->
+          <div *ngIf="isLoading()" class="flex items-start gap-2.5 animate-in fade-in duration-150">
+            <img
+              src="/images/getai-assistant.png"
+              alt="GetAI"
+              class="w-7 h-7 rounded-full object-cover ring-1 ring-blue-400/40 shadow-sm shrink-0">
+            <div class="rounded-2xl rounded-tl-xs px-4 py-3 bg-slate-900/90 border border-white/10 text-slate-300 shadow-md">
+              <div class="flex items-center gap-1.5 h-3">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style="animation-delay:0ms"></span>
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style="animation-delay:150ms"></span>
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce" style="animation-delay:300ms"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style="animation-delay:150ms"></span>
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400 animate-bounce" style="animation-delay:300ms"></span>
+                <span class="text-[10px] text-slate-400 ml-1.5 font-medium">
+                  {{ translationService.isGeorgian() ? 'ფიქრობს...' : 'Thinking...' }}
+                </span>
               </div>
             </div>
           </div>
+
         </div>
 
-        <!-- Input Area -->
-        <div class="px-3 py-3 border-t border-white/10 bg-slate-900/80">
-          <div class="flex items-center gap-2">
+        <!-- Input Area / Bottom Dock -->
+        <div class="relative z-10 px-3.5 py-3 border-t border-white/10 bg-slate-950/90 backdrop-blur-md">
+          <div class="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-900/90 p-1.5 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all shadow-inner">
             <input
               #inputField
               type="text"
@@ -99,33 +154,52 @@ import { formatChatReply } from './chat-reply-format';
               (keydown.enter)="send()"
               [disabled]="isLoading()"
               [placeholder]="translationService.isGeorgian() ? 'დასვით კითხვა...' : 'Ask a question...'"
-              class="flex-1 bg-slate-800/80 border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500/50 transition-colors min-w-0">
+              class="flex-1 bg-transparent px-3 py-1 text-xs text-white placeholder-slate-400 focus:outline-none min-w-0">
+            
             <button
               (click)="send()"
               [disabled]="isLoading() || !userInput.trim()"
-              class="w-8 h-8 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-colors shrink-0">
+              type="button"
+              [title]="translationService.isGeorgian() ? 'გაგზავნა' : 'Send message'"
+              class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all shadow-md shadow-blue-500/25 active:scale-95 shrink-0">
               <i class="fa-solid fa-paper-plane text-[11px]"></i>
             </button>
           </div>
+
+          <div class="mt-2 text-center text-[10px] text-slate-400 flex items-center justify-center gap-1">
+            <i class="fa-solid fa-sparkles text-[9px] text-blue-400"></i>
+            <span>{{ translationService.isGeorgian() ? 'GetAI · აღჭურვილი ხელოვნური ინტელექტით' : 'Powered by GETO Intelligence' }}</span>
+          </div>
         </div>
+
       </div>
 
-      <!-- Blob Toggle Button -->
+      <!-- Floating Trigger Button -->
       <button
         (click)="toggle()"
-        class="relative w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 group"
-        style="background: linear-gradient(135deg, #2563eb, #7c3aed); box-shadow: 0 0 30px rgba(99,102,241,0.5);">
+        type="button"
+        [attr.aria-expanded]="isOpen()"
+        class="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 group"
+        style="background: linear-gradient(135deg, #2563eb, #6366f1, #7c3aed); box-shadow: 0 0 35px rgba(99,102,241,0.5);">
 
-        <!-- Pulse ring -->
-        <span *ngIf="!isOpen()" class="absolute inset-0 rounded-full bg-blue-500/30 animate-ping"></span>
+        <!-- Pulsing ring when closed -->
+        <span *ngIf="!isOpen()" class="absolute inset-0 rounded-full bg-blue-500/40 animate-ping"></span>
 
-        <img *ngIf="!isOpen()" src="/images/getai-assistant.png" alt="GetAI assistant" class="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-blue-300/60">
-        <i *ngIf="isOpen()" class="fa-solid fa-xmark text-white text-lg"></i>
+        <!-- Bot Face when closed -->
+        <img
+          *ngIf="!isOpen()"
+          src="/images/getai-assistant.png"
+          alt="GetAI assistant"
+          class="absolute inset-0 w-full h-full rounded-full object-cover border-2 border-blue-300/60 shadow-inner">
+        
+        <!-- X Icon when open -->
+        <i *ngIf="isOpen()" class="fa-solid fa-xmark text-white text-xl"></i>
 
         <!-- Tooltip -->
-        <span *ngIf="!isOpen()"
-          class="absolute right-16 bg-slate-900 border border-white/10 text-white text-[10px] font-semibold px-2.5 py-1 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          {{ translationService.isGeorgian() ? 'GetAI · GETO-ს AI ასისტენტი' : 'GetAI · GETO AI Assistant' }}
+        <span
+          *ngIf="!isOpen()"
+          class="absolute right-16 bg-slate-900/95 backdrop-blur-md border border-white/10 text-white text-xs font-semibold px-3 py-1.5 rounded-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-xl pointer-events-none">
+          {{ translationService.isGeorgian() ? 'GetAI · AI ასისტენტი' : 'GetAI · AI Assistant' }}
         </span>
       </button>
 
@@ -134,11 +208,17 @@ import { formatChatReply } from './chat-reply-format';
   styles: [`
     .scrollbar-thin {
       scrollbar-width: thin;
-      scrollbar-color: rgba(100,116,139,0.3) transparent;
+      scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
     }
-    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+    .scrollbar-thin::-webkit-scrollbar { width: 5px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.3); border-radius: 9999px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.45);
+    }
   `]
 })
 export class ChatbotComponent implements AfterViewChecked {
@@ -155,31 +235,26 @@ export class ChatbotComponent implements AfterViewChecked {
 
   welcomeMessage(): string {
     return this.translationService.isGeorgian()
-      ? 'გამარჯობა! მე ვარ GetAI, GETO-ს AI ასისტენტი. დაგეხმარებით რეგისტრაციის, საჭირო დოკუმენტებისა და პროგრამის შესახებ კითხვებზე.'
-      : "Hello! I'm GetAI, GETO's AI assistant. I can help with registration, required documents, and program questions.";
+      ? 'გამარჯობა! მე ვარ GetAI. დაგეხმარებით რეგისტრაციის, საჭირო დოკუმენტებისა და პროგრამის შესახებ ნებისმიერ შეკითხვაზე.'
+      : "Hello! I'm GetAI. I can help you with registration, required documents, and any questions about our program.";
   }
 
-  quickPrompts() {
-    return this.translationService.isGeorgian()
-      ? ['რა დოკუმენტები მჭირდება?', 'როგორ ავტვირთო ფაილი?', 'პასპორტის სკანი?', 'რეგისტრაციის გადახდა?']
-      : ['What documents do I need?', 'How do I upload a file?', 'Passport scan info?', 'Registration payment?'];
-  }
-
-  toggle() {
+  toggle(): void {
     this.isOpen.update(v => !v);
     if (this.isOpen()) {
-      setTimeout(() => this.inputField?.nativeElement.focus(), 100);
+      setTimeout(() => this.inputField?.nativeElement.focus(), 120);
     }
   }
 
-  close() { this.isOpen.set(false); }
-
-  sendQuickPrompt(prompt: string) {
-    this.userInput = prompt;
-    this.send();
+  close(): void {
+    this.isOpen.set(false);
   }
 
-  send() {
+  clearChat(): void {
+    this.messages.set([]);
+  }
+
+  send(): void {
     const msg = this.userInput.trim();
     if (!msg || this.isLoading()) return;
 
@@ -206,10 +281,11 @@ export class ChatbotComponent implements AfterViewChecked {
     });
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     if (this.messagesContainer) {
       const el = this.messagesContainer.nativeElement;
       el.scrollTop = el.scrollHeight;
     }
   }
 }
+
